@@ -2,6 +2,8 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import Badge from "../ui/badge/Badge";
 import { useTheme } from "../../context/ThemeContext";
+import { useState } from "react";
+import { IconButton, Select, MenuItem, TextField } from "@mui/material";
 
 // Define the TypeScript interface for the table rows
 interface Container {
@@ -122,6 +124,44 @@ const paginationModel = { page: 0, pageSize: 10 };
 export default function RecentOrders() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  
+  // State management
+  const [tableData, setTableData] = useState<Container[]>(rows);
+  const [editingRowId, setEditingRowId] = useState<number | null>(null);
+  const [editedData, setEditedData] = useState<{
+    arrivalDate: string;
+    deliveryStatus: "Delivered" | "InTransit";
+  } | null>(null);
+
+  // Handle edit button click
+  const handleEdit = (row: Container) => {
+    setEditingRowId(row.id);
+    setEditedData({
+      arrivalDate: row.arrivalDate,
+      deliveryStatus: row.deliveryStatus,
+    });
+  };
+
+  // Handle save button click
+  const handleSave = () => {
+    if (editingRowId !== null && editedData) {
+      setTableData((prevData) =>
+        prevData.map((row) =>
+          row.id === editingRowId
+            ? { ...row, ...editedData }
+            : row
+        )
+      );
+      setEditingRowId(null);
+      setEditedData(null);
+    }
+  };
+
+  // Handle cancel
+  const handleCancel = () => {
+    setEditingRowId(null);
+    setEditedData(null);
+  };
 
   // Define columns for DataGrid
   const columns: GridColDef[] = [
@@ -157,18 +197,82 @@ export default function RecentOrders() {
     {
       field: "arrivalDate",
       headerName: "Arrival Date",
-      width: 150,
+      width: 180,
       sortable: true,
       filterable: false,
+      renderCell: (params) => {
+        const isEditing = editingRowId === params.row.id;
+        
+        if (isEditing && editedData) {
+          return (
+            <div style={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+              <TextField
+                type="date"
+                value={editedData.arrivalDate}
+                onChange={(e) =>
+                  setEditedData({ ...editedData, arrivalDate: e.target.value })
+                }
+                size="small"
+                sx={{
+                  '& .MuiInputBase-root': {
+                    color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
+                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+                  },
+                  '& .MuiInputBase-input': {
+                    padding: '4px 8px',
+                    fontSize: '0.875rem',
+                  },
+                }}
+              />
+            </div>
+          );
+        }
+        
+        return <span>{params.value}</span>;
+      },
     },
     {
       field: "deliveryStatus",
       headerName: "Delivery Status",
-      width: 150,
+      width: 180,
       sortable: true,
       filterable: true,
       renderCell: (params) => {
+        const isEditing = editingRowId === params.row.id;
         const status = params.value as "Delivered" | "InTransit";
+        
+        if (isEditing && editedData) {
+          return (
+            <div style={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+              <Select
+                value={editedData.deliveryStatus}
+                onChange={(e) =>
+                  setEditedData({
+                    ...editedData,
+                    deliveryStatus: e.target.value as "Delivered" | "InTransit",
+                  })
+                }
+                size="small"
+                sx={{
+                  minWidth: 120,
+                  '& .MuiSelect-select': {
+                    padding: '4px 8px',
+                    fontSize: '0.875rem',
+                    color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: isDark ? 'rgb(75 85 99)' : 'rgb(209 213 219)',
+                  },
+                  backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+                }}
+              >
+                <MenuItem value="Delivered">Delivered</MenuItem>
+                <MenuItem value="InTransit">In Transit</MenuItem>
+              </Select>
+            </div>
+          );
+        }
+        
         return (
           <Badge
             size="sm"
@@ -176,6 +280,99 @@ export default function RecentOrders() {
           >
             {status}
           </Badge>
+        );
+      },
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 120,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => {
+        const isEditing = editingRowId === params.row.id;
+        
+        if (isEditing) {
+          return (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', height: '100%', width: '100%' }}>
+              <IconButton
+                size="small"
+                onClick={handleSave}
+                sx={{
+                  color: isDark ? '#10b981' : '#059669',
+                  '&:hover': {
+                    backgroundColor: isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(5, 150, 105, 0.1)',
+                  },
+                }}
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </IconButton>
+              <IconButton
+                size="small"
+                onClick={handleCancel}
+                sx={{
+                  color: isDark ? '#ef4444' : '#dc2626',
+                  '&:hover': {
+                    backgroundColor: isDark ? 'rgba(239, 68, 68, 0.1)' : 'rgba(220, 38, 38, 0.1)',
+                  },
+                }}
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </IconButton>
+            </div>
+          );
+        }
+        
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%' }}>
+            <IconButton
+              size="small"
+              onClick={() => handleEdit(params.row)}
+              sx={{
+                color: isDark ? '#60a5fa' : '#2563eb',
+                '&:hover': {
+                  backgroundColor: isDark ? 'rgba(96, 165, 250, 0.1)' : 'rgba(37, 99, 235, 0.1)',
+                },
+              }}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+            </IconButton>
+          </div>
         );
       },
     },
@@ -197,7 +394,7 @@ export default function RecentOrders() {
         }}
       >
         <DataGrid
-          rows={rows}
+          rows={tableData}
           columns={columns}
           initialState={{ pagination: { paginationModel } }}
           pageSizeOptions={[5, 10, 15]}
