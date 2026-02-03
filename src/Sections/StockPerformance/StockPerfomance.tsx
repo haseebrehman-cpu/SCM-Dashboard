@@ -541,7 +541,7 @@ export default function StockPerformance() {
             color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgb(229 231 235)',
           },
           '& .MuiDataGrid-sortIcon': {
-            color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
+            color: isDark ? '#000' : 'rgb(107 114 128)',
           },
           '& .MuiDataGrid-menuIconButton': {
             color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',

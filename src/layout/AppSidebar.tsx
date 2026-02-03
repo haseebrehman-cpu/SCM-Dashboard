@@ -50,7 +50,7 @@ const navItems: NavItem[] = [
   {
     name: "Summary Dashboard",
     icon: <ListIcon />,
-    path: "/form-elements",
+    path: "/summary-dashboard",
   }
 ];
 

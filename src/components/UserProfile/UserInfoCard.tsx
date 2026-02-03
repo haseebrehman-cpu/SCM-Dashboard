@@ -1,4 +1,3 @@
-
 export default function UserInfoCard() {
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
@@ -47,10 +46,10 @@ export default function UserInfoCard() {
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Bio
+                Location
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Frontend Engineer
+                Islamabad, Pakistan
               </p>
             </div>
           </div>
