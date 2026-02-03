@@ -18,6 +18,10 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import PurchaseOrderPage from "./pages/Dashboard/PurchaseOrder";
+import FileUploadPage from "./pages/Dashboard/FileUploadPage";
+import ProductionRemainingReportPage from "./pages/Dashboard/ProductionRemainingReport";
+import StockPerfomanceReportPage from "./pages/Dashboard/StockPerfomanceReport";
 
 export default function App() {
   return (
@@ -28,7 +32,10 @@ export default function App() {
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
-
+            <Route path="/purchase-order" element={<PurchaseOrderPage />} />
+            <Route path="/file-upload" element={<FileUploadPage />} />
+            <Route path="/production-remaining-report" element={<ProductionRemainingReportPage />} />
+            <Route path="/stock-perfomance-report" element={<StockPerfomanceReportPage />} />
             {/* Others Page */}
             <Route path="/profile" element={<UserProfiles />} />
             <Route path="/calendar" element={<Calendar />} />

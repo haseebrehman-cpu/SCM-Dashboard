@@ -21,14 +21,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     // This code will only run on the client side
     const savedTheme = localStorage.getItem("theme") as Theme | null;
-    
-    // One-time migration: If saved theme is light, clear it to use new dark default
-    // Remove this block after all users have migrated
-    if (savedTheme === "light") {
-      localStorage.removeItem("theme");
-    }
-    
-    const initialTheme = savedTheme === "light" ? "dark" : savedTheme || "dark"; // Default to dark theme
+    const initialTheme = savedTheme || "dark"; // Default to dark theme
 
     setTheme(initialTheme);
     setIsInitialized(true);

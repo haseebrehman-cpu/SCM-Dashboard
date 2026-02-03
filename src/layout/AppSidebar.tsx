@@ -23,19 +23,29 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
-    icon: <GridIcon />,
-    name: "Purchase Order Report",
+    icon: <CalenderIcon />,
+    name: "Dashboard Home",
     path: "/"
   },
   {
     icon: <CalenderIcon />,
+    name: "File Upload",
+    path: "/file-upload"
+  },
+  {
+    icon: <GridIcon />,
+    name: "Purchase Order Report",
+    path: "/purchase-order"
+  },
+  {
+    icon: <CalenderIcon />,
     name: "Production Remaining Report",
-    path: "/calendar",
+    path: "/production-remaining-report",
   },
   {
     icon: <UserCircleIcon />,
     name: "Stock Performance Report",
-    path: "/profile",
+    path: "/stock-perfomance-report",
   },
   {
     name: "Summary Dashboard",
