@@ -193,6 +193,12 @@ export default function RecentOrders() {
       width: 150,
       sortable: true,
       filterable: false,
+      renderHeader: () => (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          <span style={{ fontWeight: 600, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>Departure Date</span>
+          <span style={{ fontSize: '0.7rem', opacity: 0.7, fontWeight: 400, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>(YYYY-MM-DD)</span>
+        </div>
+      ),
     },
     {
       field: "arrivalDate",
@@ -200,6 +206,12 @@ export default function RecentOrders() {
       width: 180,
       sortable: true,
       filterable: false,
+      renderHeader: () => (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          <span style={{ fontWeight: 600, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>Arrival Date</span>
+          <span style={{ fontSize: '0.7rem', opacity: 0.7, fontWeight: 400, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>(YYYY-MM-DD)</span>
+        </div>
+      ),
       renderCell: (params) => {
         const isEditing = editingRowId === params.row.id;
         
@@ -385,7 +397,7 @@ export default function RecentOrders() {
       </h3>
       <Paper
         sx={{
-          height: 550,
+          height: 'auto',
           width: "100%",
           backgroundColor: "transparent !important",
           boxShadow: "none !important",
@@ -446,7 +458,19 @@ export default function RecentOrders() {
               color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
             },
             '& .MuiDataGrid-columnSeparator': {
-              color: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
+              color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgb(229 231 235)',
+            },
+            '& .MuiDataGrid-sortIcon': {
+              color: isDark ? '#000' : 'rgb(107 114 128)',
+            },
+            '& .MuiDataGrid-menuIconButton': {
+              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
+            },
+            '& .MuiDataGrid-iconButtonContainer': {
+              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
+            },
+            '& .MuiDataGrid-columnHeader .MuiIconButton-root': {
+              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
             },
           }}
         // disableRowSelectionOnClick

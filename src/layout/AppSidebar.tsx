@@ -11,6 +11,8 @@ import {
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
+import { Typography } from "@mui/material";
+import { useTheme } from "../context/ThemeContext";
 
 type NavItem = {
   name: string;
@@ -225,6 +227,8 @@ const AppSidebar: React.FC = () => {
     </ul>
   );
 
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
     <aside
       className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
@@ -244,30 +248,10 @@ const AppSidebar: React.FC = () => {
           }`}
       >
         <Link to="/">
-          {isExpanded || isHovered || isMobileOpen ? (
-            <>
-              <img
-                className="dark:hidden"
-                src="/images/logo/logo.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-              <img
-                className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-            </>
-          ) : (
-            <img
-              src="/images/logo/logo-icon.svg"
-              alt="Logo"
-              width={32}
-              height={32}
-            />
+          {(isExpanded || isHovered || isMobileOpen) && (
+            <Typography variant="h6" sx={{ fontWeight: 600, color: isDark ? "#ffffff" : "#000" }}>
+              SCM Dashboard
+            </Typography>
           )}
         </Link>
       </div>
