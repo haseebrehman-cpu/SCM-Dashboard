@@ -1,66 +1,37 @@
-import { createContext, useContext, useState, useEffect } from "react";
-
-type SidebarContextType = {
-  isExpanded: boolean;
-  isMobileOpen: boolean;
-  isHovered: boolean;
-  activeItem: string | null;
-  openSubmenu: string | null;
-  toggleSidebar: () => void;
-  toggleMobileSidebar: () => void;
-  setIsHovered: (isHovered: boolean) => void;
-  setActiveItem: (item: string | null) => void;
-  toggleSubmenu: (item: string) => void;
-};
-
-const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
-
-export const useSidebar = () => {
-  const context = useContext(SidebarContext);
-  if (!context) {
-    throw new Error("useSidebar must be used within a SidebarProvider");
-  }
-  return context;
-};
+import React, { useState, useCallback, useEffect } from "react";
+import { useWindowResize } from "../hooks/useWindowResize";
+import { SidebarContext } from "./sidebarContextValue";
 
 export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+  
+  // Use custom hook for window resize detection
+  const isMobile = useWindowResize(768);
 
+  // Close mobile sidebar when switching to desktop
   useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      if (!mobile) {
-        setIsMobileOpen(false);
-      }
-    };
+    if (!isMobile && isMobileOpen) {
+      setIsMobileOpen(false);
+    }
+  }, [isMobile, isMobileOpen]);
 
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+  const toggleSidebar = useCallback(() => {
+    setIsExpanded((prev) => !prev);
   }, []);
 
-  const toggleSidebar = () => {
-    setIsExpanded((prev) => !prev);
-  };
-
-  const toggleMobileSidebar = () => {
+  const toggleMobileSidebar = useCallback(() => {
     setIsMobileOpen((prev) => !prev);
-  };
+  }, []);
 
-  const toggleSubmenu = (item: string) => {
+  const toggleSubmenu = useCallback((item: string) => {
     setOpenSubmenu((prev) => (prev === item ? null : item));
-  };
+  }, []);
 
   return (
     <SidebarContext.Provider

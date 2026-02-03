@@ -1,8 +1,9 @@
-import type React from "react";
-import type { FC } from "react";
+import React from "react";
 
-interface InputProps {
-  type?: "text" | "number" | "email" | "password" | "date" | "time" | string;
+type InputType = "text" | "number" | "email" | "password" | "date" | "time" | "tel" | "url" | "search";
+
+export interface InputProps {
+  type?: InputType;
   id?: string;
   name?: string;
   placeholder?: string;
@@ -18,7 +19,7 @@ interface InputProps {
   hint?: string;
 }
 
-const Input: FC<InputProps> = ({
+const Input: React.FC<InputProps> = React.memo(({
   type = "text",
   id,
   name,
@@ -77,6 +78,8 @@ const Input: FC<InputProps> = ({
       )}
     </div>
   );
-};
+});
+
+Input.displayName = "Input";
 
 export default Input;

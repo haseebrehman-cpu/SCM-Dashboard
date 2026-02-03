@@ -1,17 +1,18 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
-interface ButtonProps {
-  children: ReactNode; // Button text or content
-  size?: "sm" | "md"; // Button size
-  variant?: "primary" | "outline"; // Button variant
-  startIcon?: ReactNode; // Icon before the text
-  endIcon?: ReactNode; // Icon after the text
-  onClick?: () => void; // Click handler
-  disabled?: boolean; // Disabled state
-  className?: string; // Disabled state
+export interface ButtonProps {
+  children: ReactNode;
+  size?: "sm" | "md";
+  variant?: "primary" | "outline";
+  startIcon?: ReactNode;
+  endIcon?: ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  className?: string;
+  type?: "button" | "submit" | "reset";
 }
 
-const Button: React.FC<ButtonProps> = ({
+const Button: React.FC<ButtonProps> = React.memo(({
   children,
   size = "md",
   variant = "primary",
@@ -20,6 +21,7 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   className = "",
   disabled = false,
+  type = "button",
 }) => {
   // Size Classes
   const sizeClasses = {
@@ -37,6 +39,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
+      type={type}
       className={`inline-flex items-center justify-center gap-2 rounded-lg transition ${className} ${
         sizeClasses[size]
       } ${variantClasses[variant]} ${
@@ -50,6 +53,8 @@ const Button: React.FC<ButtonProps> = ({
       {endIcon && <span className="flex items-center">{endIcon}</span>}
     </button>
   );
-};
+});
+
+Button.displayName = "Button";
 
 export default Button;

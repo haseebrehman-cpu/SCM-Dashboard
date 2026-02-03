@@ -1,18 +1,15 @@
-import { useState } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { Link } from "react-router";
+import { useDropdown } from "../../hooks/useDropdown";
+import React from "react";
 
-export default function UserDropdown() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  function toggleDropdown() {
-    setIsOpen(!isOpen);
-  }
-
-  function closeDropdown() {
-    setIsOpen(false);
-  }
+/**
+ * User dropdown component
+ * Uses custom hook for dropdown state management - follows Single Responsibility Principle
+ */
+const UserDropdown: React.FC = React.memo(() => {
+  const { isOpen, toggleDropdown, closeDropdown } = useDropdown();
   return (
     <div className="relative">
       <button
@@ -121,4 +118,8 @@ export default function UserDropdown() {
       </Dropdown>
     </div>
   );
-}
+});
+
+UserDropdown.displayName = "UserDropdown";
+
+export default UserDropdown;

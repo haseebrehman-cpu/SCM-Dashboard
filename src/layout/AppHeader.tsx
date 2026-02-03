@@ -1,17 +1,18 @@
-import { useEffect, useRef, useState } from "react";
-
+import { useState } from "react";
 import { Link } from "react-router";
-import { useSidebar } from "../context/SidebarContext";
+import { useSidebar } from "../hooks/useSidebar";
 import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
 import UserDropdown from "../components/header/UserDropdown";
+import { useKeyboardShortcut } from "../hooks/useKeyboardShortcut";
+import { useWindowResize } from "../hooks/useWindowResize";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
-
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
+  const isDesktop = !useWindowResize(1024);
 
   const handleToggle = () => {
-    if (window.innerWidth >= 1024) {
+    if (isDesktop) {
       toggleSidebar();
     } else {
       toggleMobileSidebar();
@@ -22,22 +23,16 @@ const AppHeader: React.FC = () => {
     setApplicationMenuOpen(!isApplicationMenuOpen);
   };
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key === "k") {
-        event.preventDefault();
-        inputRef.current?.focus();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
+  // Keyboard shortcut for search (Cmd/Ctrl + K)
+  useKeyboardShortcut(
+    "k",
+    () => {
+      // Focus search input if it exists
+      const searchInput = document.querySelector('input[type="search"]') as HTMLInputElement;
+      searchInput?.focus();
+    },
+    { ctrlKey: true, metaKey: true }
+  );
 
   return (
     <header className="sticky top-0 flex w-full bg-white border-gray-200 z-99999 dark:border-gray-800 dark:bg-gray-900 lg:border-b">
