@@ -9,7 +9,6 @@ import Home from "./pages/Dashboard/Home";
 import PurchaseOrderPage from "./pages/Dashboard/PurchaseOrder";
 import ProductionRemainingReportPage from "./pages/Dashboard/ProductionRemainingReport";
 import StockPerfomanceReportPage from "./pages/Dashboard/StockPerfomanceReport";
-import SummaryDashboardView from "./Views/SummaryDash";
 import FileUploadPage from "./pages/Dashboard/FileUploadPage";
 import SummaryDashboardPage from "./pages/Dashboard/SummaryDashboard";
 
