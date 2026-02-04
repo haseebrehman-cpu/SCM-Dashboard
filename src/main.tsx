@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { Toaster } from "react-hot-toast";
 import "./index.css";
 import "swiper/swiper-bundle.css";
 import "flatpickr/dist/flatpickr.css";
@@ -16,6 +17,7 @@ createRoot(document.getElementById("root")!).render(
       <ThemeProvider>
         <MuiThemeProvider theme={muiTheme}>
           <AppWrapper>
+            <Toaster position="bottom-right" />
             <App />
           </AppWrapper>
         </MuiThemeProvider>
