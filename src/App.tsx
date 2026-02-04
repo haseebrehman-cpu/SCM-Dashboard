@@ -7,10 +7,10 @@ import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import PurchaseOrderPage from "./pages/Dashboard/PurchaseOrder";
-import FileUploadView from "./Views/FileUpload";
 import ProductionRemainingReportPage from "./pages/Dashboard/ProductionRemainingReport";
 import StockPerfomanceReportPage from "./pages/Dashboard/StockPerfomanceReport";
 import SummaryDashboardView from "./Views/SummaryDash";
+import FileUploadPage from "./pages/Dashboard/FileUploadPage";
 
 export default function App() {
   return (
@@ -22,7 +22,7 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
             <Route path="/purchase-order" element={<PurchaseOrderPage />} />
-            <Route path="/file-upload" element={<FileUploadView />} />
+            <Route path="/file-upload" element={<FileUploadPage />} />
             <Route path="/production-remaining-report" element={<ProductionRemainingReportPage />} />
             <Route path="/stock-perfomance-report" element={<StockPerfomanceReportPage />} />
             <Route path="/summary-dashboard" element={<SummaryDashboardView />} />
