@@ -1,5 +1,6 @@
 import FileUpload from '../../Sections/FileUpload/FileUpload'
 import PageMeta from '../../components/common/PageMeta'
+import FileLogsGrid from './FileLogsGrid'
 
 const FileUploadView = () => {
   return (
@@ -10,6 +11,7 @@ const FileUploadView = () => {
       />
       <div className="w-full max-w-full overflow-hidden">
         <FileUpload />
+        <FileLogsGrid />
       </div>
     </>
   )

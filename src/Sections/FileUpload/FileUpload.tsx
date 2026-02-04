@@ -7,38 +7,43 @@ import { StepIndicator } from '../../components/FileUpload/StepIndicator';
 import { UploadZone } from '../../components/FileUpload/UploadZone';
 import { useFileUpload } from '../../hooks/useFileUpload';
 import { UploadedFile } from '../../components/FileUpload/types';
+import { useFileUploadLogs } from '../../context/FileUploadContext';
 
 const FileUpload: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const { file1, file2, file3, isUploading, setFile1, setFile2, setFile3, formatFileSize, simulateUpload, handleRemoveFile } =
     useFileUpload();
+  const { addFileLogs } = useFileUploadLogs();
 
   const onDropStep1 = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
+        addFileLogs(acceptedFiles, 1);
         simulateUpload(acceptedFiles, setFile1);
       }
     },
-    [simulateUpload, setFile1],
+    [simulateUpload, setFile1, addFileLogs],
   );
 
   const onDropStep2 = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
+        addFileLogs(acceptedFiles, 2);
         simulateUpload(acceptedFiles, setFile2);
       }
     },
-    [simulateUpload, setFile2],
+    [simulateUpload, setFile2, addFileLogs],
   );
 
   const onDropStep3 = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
         const file = acceptedFiles[0];
+        addFileLogs([file], 3);
         simulateUpload([file], setFile3);
       }
     },
-    [simulateUpload, setFile3],
+    [simulateUpload, setFile3, addFileLogs],
   );
 
   const dropzone1 = useDropzone({
@@ -128,14 +133,14 @@ const FileUpload: React.FC = () => {
   ) => <UploadZone dropzone={dropzone} file={file} onRemove={onRemove} isDisabled={isDisabled} formatFileSize={formatFileSize} />;
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-200px)] py-12 px-4">
+    <div className="flex items-center justify-center py-4 px-4">
       <div className="w-full max-w-4xl">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <div className="text-center mb-4">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
            Linworks Files Upload
           </h1>
-          <p className="text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Upload your files in three simple steps
           </p>
         </div>
@@ -144,29 +149,29 @@ const FileUpload: React.FC = () => {
         {renderStepIndicator()}
 
         {/* Main Content */}
-        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
           {/* Step 1 Content */}
           {currentStep === 1 && (
-            <div className="space-y-6">
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <div className="space-y-3">
+              <div className="mb-3">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                   Step 1: Upload Last 60 days (According to current date) Files
                 </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   Please upload your last 60 days (According to current date) files to continue
                 </p>
               </div>
               {renderDropzone(dropzone1, file1, handleRemoveFile1, isUploading || !!file1)}
 
               {file1 && file1.status === 'completed' && (
-                <div className="flex justify-end mt-6">
+                <div className="flex justify-end mt-3">
                   <Button
                     onClick={handleNext}
-                    size="md"
+                    size="sm"
                     className="flex items-center gap-2"
                   >
                     Continue to Step 2
-                    <ArrowRightIcon className="w-5 h-5" />
+                    <ArrowRightIcon className="w-4 h-4" />
                   </Button>
                 </div>
               )}
@@ -175,21 +180,21 @@ const FileUpload: React.FC = () => {
 
           {/* Step 2 Content */}
           {currentStep === 2 && (
-            <div className="space-y-6">
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <div className="space-y-3">
+              <div className="mb-3">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                   Step 2: Upload Next 60 days (Of Last Year according to current date) Files
                 </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   Please upload your next 60 days (Last Year) files to continue
                 </p>
               </div>
               {renderDropzone(dropzone2, file2, handleRemoveFile2, isUploading || !!file2 || !file1 || file1.status !== 'completed')}
 
-              <div className="flex justify-between mt-6">
+              <div className="flex justify-between mt-3">
                 <Button
                   onClick={handleBack}
-                  size="md"
+                  size="sm"
                   variant="outline"
                 >
                   Back
@@ -197,32 +202,32 @@ const FileUpload: React.FC = () => {
                 {file2 && file2.status === 'completed' && (
                   <Button
                     onClick={handleNext}
-                    size="md"
+                    size="sm"
                     className="flex items-center gap-2"
                   >
                     Continue to Step 3
-                    <ArrowRightIcon className="w-5 h-5" />
+                    <ArrowRightIcon className="w-4 h-4" />
                   </Button>
                 )}
               </div>
             </div>
           )}
           {currentStep === 3 && (
-            <div className="space-y-6">
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <div className="space-y-3">
+              <div className="mb-3">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                   Step 3: Upload Purchase Orders by Status and Date (status : open last 12 month file) Files
                 </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   Please upload your purchase orders by status and date (status : open last 12 month file) file to complete the process
                 </p>
               </div>
               {renderDropzone(dropzone3, file3, handleRemoveFile3, isUploading || !!file3 || !file2 || file2.status !== 'completed')}
 
-              <div className="flex justify-between mt-6">
+              <div className="flex justify-between mt-3">
                 <Button
                   onClick={handleBack}
-                  size="md"
+                  size="sm"
                   variant="outline"
                 >
                   Back
@@ -230,11 +235,11 @@ const FileUpload: React.FC = () => {
                 {file3 && file3.status === 'completed' && (
                   <Button
                     onClick={handleComplete}
-                    size="md"
+                    size="sm"
                     className="flex items-center gap-2"
                   >
                     Complete Process
-                    <CheckCircleIcon className="w-5 h-5" />
+                    <CheckCircleIcon className="w-4 h-4" />
                   </Button>
                 )}
               </div>
@@ -244,14 +249,14 @@ const FileUpload: React.FC = () => {
 
         {/* Summary (when both files are uploaded) */}
         {file1 && file1.status === 'completed' && file2 && file2.status === 'completed' && file3 && file3.status === 'completed' && (
-          <div className="mt-6 p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl">
-            <div className="flex items-center gap-3">
-              <CheckCircleIcon className="w-6 h-6 text-green-600 dark:text-green-400" />
+          <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+            <div className="flex items-center gap-2">
+              <CheckCircleIcon className="w-5 h-5 text-green-600 dark:text-green-400" />
               <div>
-                <p className="text-sm font-semibold text-green-900 dark:text-green-100">
+                <p className="text-xs font-semibold text-green-900 dark:text-green-100">
                   All files uploaded successfully!
                 </p>
-                <p className="text-xs text-green-700 dark:text-green-300 mt-1">
+                <p className="text-xs text-green-700 dark:text-green-300 mt-0.5">
                   You can now proceed with your workflow.
                 </p>
               </div>

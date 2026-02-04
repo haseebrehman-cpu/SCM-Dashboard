@@ -11,15 +11,17 @@ import ProductionRemainingReportPage from "./pages/Dashboard/ProductionRemaining
 import StockPerfomanceReportPage from "./pages/Dashboard/StockPerfomanceReport";
 import FileUploadPage from "./pages/Dashboard/FileUploadPage";
 import SummaryDashboardPage from "./pages/Dashboard/SummaryDashboard";
+import { FileUploadProvider } from "./context/FileUploadContext";
 
 export default function App() {
   return (
     <>
-      <Router>
-        <ScrollToTop />
-        <Routes>
-          {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
+      <FileUploadProvider>
+        <Router>
+          <ScrollToTop />
+          <Routes>
+            {/* Dashboard Layout */}
+            <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
             <Route path="/purchase-order" element={<PurchaseOrderPage />} />
             <Route path="/file-upload" element={<FileUploadPage />} />
@@ -36,7 +38,8 @@ export default function App() {
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </Router>
+        </Router>
+      </FileUploadProvider>
     </>
   );
 }
