@@ -11,6 +11,7 @@ import ProductionRemainingReportPage from "./pages/Dashboard/ProductionRemaining
 import StockPerfomanceReportPage from "./pages/Dashboard/StockPerfomanceReport";
 import SummaryDashboardView from "./Views/SummaryDash";
 import FileUploadPage from "./pages/Dashboard/FileUploadPage";
+import SummaryDashboardPage from "./pages/Dashboard/SummaryDashboard";
 
 export default function App() {
   return (
@@ -25,7 +26,7 @@ export default function App() {
             <Route path="/file-upload" element={<FileUploadPage />} />
             <Route path="/production-remaining-report" element={<ProductionRemainingReportPage />} />
             <Route path="/stock-perfomance-report" element={<StockPerfomanceReportPage />} />
-            <Route path="/summary-dashboard" element={<SummaryDashboardView />} />
+            <Route path="/summary-dashboard" element={<SummaryDashboardPage />} />
             <Route path="/profile" element={<UserProfiles />} />
           </Route>
 

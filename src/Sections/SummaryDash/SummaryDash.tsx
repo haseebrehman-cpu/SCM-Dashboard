@@ -40,18 +40,32 @@ const SummaryDashGrid: React.FC = React.memo(() => {
         prevRows.map((row) =>
           row.id === id
             ? {
-                ...row,
-                status: editValues.status,
-                reason: editValues.reason,
-                factoryComments: editValues.factoryComments,
-              }
+              ...row,
+              status: editValues.status,
+              reason: editValues.reason,
+              factoryComments: editValues.factoryComments,
+              editedBy: "user@gmail.com"
+            }
             : row
         )
       );
       setEditingRowId(null);
-      setEditValues(null);
+      setEditValues(null);  
+      console.log("rows", rows);
+      const updatedRows = rows.map((row) =>
+        row.id === id
+          ? {
+            ...row,
+            status: editValues.status,
+            reason: editValues.reason,
+            factoryComments: editValues.factoryComments,
+            editedBy: "user@gmail.com"
+          }
+          : row
+      );
+      console.log("updatedRows", updatedRows);
     }
-  }, [editValues]);
+  }, [editValues, rows]);
 
   const handleCancel = useCallback(() => {
     setEditingRowId(null);

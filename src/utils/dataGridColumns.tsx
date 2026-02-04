@@ -192,6 +192,16 @@ export const createSummaryDashboardColumns = (
       },
     },
     {
+      field: "editedBy",
+      headerName: "Edited By",
+      width: 100,
+      sortable: true,
+      filterable: true,
+      headerAlign: "center",
+      align: "center",
+      renderHeader: () => renderHeader("Edited By"),
+    },
+    {
       field: "actions",
       type: "actions",
       headerName: "Action",
