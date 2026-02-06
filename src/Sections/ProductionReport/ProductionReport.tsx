@@ -513,7 +513,9 @@ export default function ProductionReport() {
           </Select>
 
           <Button variant="contained" onClick={() => exportToCsv(tableData, `Production-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.csv`)}>Export to CSV</Button>
-          <Button variant="contained" onClick={() => exportToPng(tableData, `Production-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.png`)}>Export to PNG</Button>
+          <Button variant="contained" onClick={() => exportToPng(tableData.map(row => ({
+            ...row,
+          })), `Production-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.png`)}>Export to PNG</Button>
         </FormControl>
       </div>
 
