@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { ArrowRightIcon, CheckCircleIcon } from '../../icons';
 import Button from '../../components/ui/button/Button';
-import toast from 'react-hot-toast';
+import { showToast } from '../../utils/toastNotification';
 import { StepIndicator } from '../../components/FileUpload/StepIndicator';
 import { UploadZone } from '../../components/FileUpload/UploadZone';
 import { useFileUpload } from '../../hooks/useFileUpload';
@@ -18,32 +18,32 @@ const FileUpload: React.FC = () => {
   const onDropStep1 = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
-        addFileLogs(acceptedFiles, 1);
+        // Don't add logs yet - only upload files
         simulateUpload(acceptedFiles, setFile1);
       }
     },
-    [simulateUpload, setFile1, addFileLogs],
+    [simulateUpload, setFile1],
   );
 
   const onDropStep2 = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
-        addFileLogs(acceptedFiles, 2);
+        // Don't add logs yet - only upload files
         simulateUpload(acceptedFiles, setFile2);
       }
     },
-    [simulateUpload, setFile2, addFileLogs],
+    [simulateUpload, setFile2],
   );
 
   const onDropStep3 = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
+        // Don't add logs yet - only upload files
         const file = acceptedFiles[0];
-        addFileLogs([file], 3);
         simulateUpload([file], setFile3);
       }
     },
-    [simulateUpload, setFile3, addFileLogs],
+    [simulateUpload, setFile3],
   );
 
   const dropzone1 = useDropzone({
@@ -92,14 +92,14 @@ const FileUpload: React.FC = () => {
   const handleNext = () => {
     if (currentStep === 1 && file1 && file1.status === 'completed') {
       if (file1.files.length !== 4) {
-        toast.error('All 4 Files are required to proceed further');
+        showToast.error('All 4 Files are required to proceed further');
         return;
       } else {
         setCurrentStep(2);
       }
     } else if (currentStep === 2 && file2 && file2.status === 'completed') {
       if (file2.files.length !== 4) {
-        toast.error('All 4 Files are required to proceed further');
+        showToast.error('All 4 Files are required to proceed further');
         return;
       } else {
         setCurrentStep(3);
@@ -115,9 +115,20 @@ const FileUpload: React.FC = () => {
   };
 
   const handleComplete = () => {
+    // Add all files to logs only when all steps are completed
+    if (file1?.files) {
+      addFileLogs(file1.files, 1);
+    }
+    if (file2?.files) {
+      addFileLogs(file2.files, 2);
+    }
+    if (file3?.files) {
+      addFileLogs(file3.files, 3);
+    }
+
     // Handle completion logic here
     console.log('Files uploaded:', { file1, file2, file3 });
-    toast.success('Files uploaded successfully');
+    showToast.success('Files uploaded successfully');
     // You can add API call here
   };
 

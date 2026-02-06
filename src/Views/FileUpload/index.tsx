@@ -1,6 +1,6 @@
 import FileUpload from '../../Sections/FileUpload/FileUpload'
 import PageMeta from '../../components/common/PageMeta'
-import FileLogsGrid from './FileLogsGrid'
+import FileLogsGrid from '../../Sections/FileUpload/FileLogsGrid'
 
 const FileUploadView = () => {
   return (

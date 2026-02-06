@@ -5,6 +5,7 @@ import { MenuItem, Select, FormControl, InputLabel, SelectChangeEvent, Button } 
 import Badge from "../../components/ui/badge/Badge";
 import { exportToCsv } from "../../utils/exportToCsv";
 import { DataGridHeader } from "../../components/DataGrid/DataGridHeader";
+import { exportToPng } from "../../utils/exportToPng";
 
 // Warehouse types
 type Warehouse = "UK" | "DE" | "US" | "CA";
@@ -473,6 +474,9 @@ export default function StockPerformance() {
             </MenuItem>
           </Select>
           <Button variant="contained" onClick={() => exportToCsv(tableData, `Stock-Performance-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.csv`)}>Export to CSV</Button>
+          <Button variant="contained" onClick={() => exportToPng(tableData.map(row => ({
+            ...row,
+          })), `Stock-Performance-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.png`)}>Export to PNG</Button>
         </FormControl>
       </div>
 

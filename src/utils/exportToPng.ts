@@ -1,5 +1,10 @@
-export const exportToPng = (data: Array<Record<string, string | number | boolean>>, filename: string) => {
-  if (!data || data.length === 0) {
+/**
+ * Export data to PNG image file
+ * @param data - Array of objects to export
+ * @param filename - Name of the PNG file
+ */
+export const exportToPng = (data: unknown[], filename: string) => {
+  if (!Array.isArray(data) || data.length === 0) {
     throw new Error("No data to export");
   }
 
@@ -10,8 +15,8 @@ export const exportToPng = (data: Array<Record<string, string | number | boolean
   }
 
   // Configuration
-  const headers = Object.keys(data[0]);
-  const rows = data.map(item => Object.values(item));
+  const headers = Object.keys(data[0] as Record<string, unknown>);
+  const rows = data.map(item => Object.values(item as Record<string, unknown>));
   const padding = 10;
   const cellPadding = 8;
   const headerHeight = 40;

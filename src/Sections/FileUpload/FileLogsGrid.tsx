@@ -2,9 +2,11 @@ import { useMemo, useCallback } from 'react';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { useTheme } from '../../context/ThemeContext';
 import { DataGridHeader } from '../../components/DataGrid/DataGridHeader';
-import { IconButton } from '@mui/material';
+import { IconButton, Button } from '@mui/material';
 import { TrashBinIcon, DownloadIcon } from '../../icons';
 import { useFileUploadLogs } from '../../context/FileUploadContext';
+import { exportToCsv } from '../../utils/exportToCsv';
+import { exportToPng } from '../../utils/exportToPng';
 
 const FileLogsGrid = () => {  
   const { theme } = useTheme();
@@ -13,7 +15,6 @@ const FileLogsGrid = () => {
 
   const handleDelete = useCallback((id: number) => {
     removeFileLog(id);
-    console.log('File log removed:', id);
   }, [removeFileLog]);
 
   const handleDownload = useCallback((id: number) => {
@@ -28,7 +29,6 @@ const FileLogsGrid = () => {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      console.log('File downloaded:', log.fileName);
     }
   }, [fileLogs]);
 
@@ -111,25 +111,25 @@ const FileLogsGrid = () => {
           </div>
         ),
       },
-      {
-        field: 'stepNumber',
-        headerName: 'Step',
-        width: 100,
-        sortable: true,
-        filterable: true,
-        headerAlign: 'center',
-        align: 'center',
-        renderHeader: () => (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-            <span>Step</span>
-            <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-          </div>
-        ),
-      },
+      // {
+      //   field: 'stepNumber',
+      //   headerName: 'Step',
+      //   width: 100,
+      //   sortable: true,
+      //   filterable: true,
+      //   headerAlign: 'center',
+      //   align: 'center',
+      //   renderHeader: () => (
+      //     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+      //       <span>Step</span>
+      //       <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
+      //     </div>
+      //   ),
+      // },
       {
         field: 'status',
         headerName: 'Status',
-        width: 140,
+        width: 190,
         sortable: true,
         filterable: true,
         headerAlign: 'center',
@@ -198,7 +198,13 @@ const FileLogsGrid = () => {
   return (
     <div className="w-full max-w-full overflow-hidden mt-2">
       <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
-        <DataGridHeader title="File Upload Logs" />
+        <div className="flex items-center justify-between mb-4">
+          <DataGridHeader title="File Upload Logs" />
+          <div className="flex items-center gap-2">
+            <Button variant="contained" onClick={() => exportToCsv(fileLogs, `File-Upload-Logs-${new Date().toISOString().split('T')[0]}.csv`)}>Export to CSV</Button>
+            <Button variant="contained" onClick={() => exportToPng(fileLogs, `File-Upload-Logs-${new Date().toISOString().split('T')[0]}.png`)}>Export to PNG</Button>
+          </div>
+        </div>
 
         {/* DataGrid */}
         <DataGrid
