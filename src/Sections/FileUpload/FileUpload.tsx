@@ -121,6 +121,7 @@ const FileUpload: React.FC = () => {
     // You can add API call here
   };
 
+
   const renderStepIndicator = () => (
     <StepIndicator currentStep={currentStep} file1Status={file1?.status} file2Status={file2?.status} file3Status={file3?.status} />
   );
@@ -138,7 +139,7 @@ const FileUpload: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-2">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-           Linworks Files Upload
+            Linworks Files Upload
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Upload your files in three simple steps

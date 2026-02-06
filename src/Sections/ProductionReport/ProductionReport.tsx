@@ -2,7 +2,10 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Badge from "../../components/ui/badge/Badge";
 import { useTheme } from "../../context/ThemeContext";
 import { useState, useMemo } from "react";
-import { MenuItem, Select, FormControl, InputLabel, SelectChangeEvent } from "@mui/material";
+import { MenuItem, Select, FormControl, InputLabel, SelectChangeEvent, Button } from "@mui/material";
+import { exportToCsv } from "../../utils/exportToCsv";
+import { exportToPng } from "../../utils/exportToPng";
+import { DataGridHeader } from "../../components/DataGrid/DataGridHeader";
 
 // Warehouse types
 type Warehouse = "UK" | "DE" | "US" | "CA";
@@ -27,11 +30,90 @@ interface ProductionReportRow {
   oct: number;
   nov: number;
   dec: number;
-  container1: number;
-  container2: number;
-  container3: number;
-  container4?: number;
-  container5?: number;
+  // January containers and dispatch
+  janContainer1: number;
+  janContainer2: number;
+  janContainer3: number;
+  janContainer4?: number;
+  janContainer5?: number;
+  janTotalDispatch: number;
+  // February containers and dispatch
+  febContainer1: number;
+  febContainer2: number;
+  febContainer3: number;
+  febContainer4?: number;
+  febContainer5?: number;
+  febTotalDispatch: number;
+  // March containers and dispatch
+  marContainer1: number;
+  marContainer2: number;
+  marContainer3: number;
+  marContainer4?: number;
+  marContainer5?: number;
+  marTotalDispatch: number;
+  // April containers and dispatch
+  aprContainer1: number;
+  aprContainer2: number;
+  aprContainer3: number;
+  aprContainer4?: number;
+  aprContainer5?: number;
+  aprTotalDispatch: number;
+  // May containers and dispatch
+  mayContainer1: number;
+  mayContainer2: number;
+  mayContainer3: number;
+  mayContainer4?: number;
+  mayContainer5?: number;
+  mayTotalDispatch: number;
+  // June containers and dispatch
+  junContainer1: number;
+  junContainer2: number;
+  junContainer3: number;
+  junContainer4?: number;
+  junContainer5?: number;
+  junTotalDispatch: number;
+  // July containers and dispatch
+  julContainer1: number;
+  julContainer2: number;
+  julContainer3: number;
+  julContainer4?: number;
+  julContainer5?: number;
+  julTotalDispatch: number;
+  // August containers and dispatch
+  augContainer1: number;
+  augContainer2: number;
+  augContainer3: number;
+  augContainer4?: number;
+  augContainer5?: number;
+  augTotalDispatch: number;
+  // September containers and dispatch
+  sepContainer1: number;
+  sepContainer2: number;
+  sepContainer3: number;
+  sepContainer4?: number;
+  sepContainer5?: number;
+  sepTotalDispatch: number;
+  // October containers and dispatch
+  octContainer1: number;
+  octContainer2: number;
+  octContainer3: number;
+  octContainer4?: number;
+  octContainer5?: number;
+  octTotalDispatch: number;
+  // November containers and dispatch
+  novContainer1: number;
+  novContainer2: number;
+  novContainer3: number;
+  novContainer4?: number;
+  novContainer5?: number;
+  novTotalDispatch: number;
+  // December containers and dispatch
+  decContainer1: number;
+  decContainer2: number;
+  decContainer3: number;
+  decContainer4?: number;
+  decContainer5?: number;
+  decTotalDispatch: number;
   remWarehouse: number;
 }
 
@@ -55,7 +137,7 @@ const warehouseContainers: Record<Warehouse, string[]> = {
 const generateWarehouseData = (): ProductionReportRow[] => {
   const categories = ["Electronics", "Clothing", "Home & Garden", "Sports", "Toys", "Books", "Automotive", "Health"];
   const statuses: Array<"Active" | "Inactive" | "Pending"> = ["Active", "Inactive", "Pending"];
-  
+
   return Array(15).fill(0).map((_, index) => ({
     id: index + 1,
     itemRangeStatus: statuses[Math.floor(Math.random() * statuses.length)],
@@ -75,11 +157,90 @@ const generateWarehouseData = (): ProductionReportRow[] => {
     oct: Math.floor(Math.random() * 200),
     nov: Math.floor(Math.random() * 200),
     dec: Math.floor(Math.random() * 200),
-    container1: Math.floor(Math.random() * 100),
-    container2: Math.floor(Math.random() * 100),
-    container3: Math.floor(Math.random() * 100),
-    container4: Math.floor(Math.random() * 100),
-    container5: Math.floor(Math.random() * 100),
+    // January containers and dispatch
+    janContainer1: Math.floor(Math.random() * 100),
+    janContainer2: Math.floor(Math.random() * 100),
+    janContainer3: Math.floor(Math.random() * 100),
+    janContainer4: Math.floor(Math.random() * 100),
+    janContainer5: Math.floor(Math.random() * 100),
+    janTotalDispatch: Math.floor(Math.random() * 500) + 50,
+    // February containers and dispatch
+    febContainer1: Math.floor(Math.random() * 100),
+    febContainer2: Math.floor(Math.random() * 100),
+    febContainer3: Math.floor(Math.random() * 100),
+    febContainer4: Math.floor(Math.random() * 100),
+    febContainer5: Math.floor(Math.random() * 100),
+    febTotalDispatch: Math.floor(Math.random() * 500) + 50,
+    // March containers and dispatch
+    marContainer1: Math.floor(Math.random() * 100),
+    marContainer2: Math.floor(Math.random() * 100),
+    marContainer3: Math.floor(Math.random() * 100),
+    marContainer4: Math.floor(Math.random() * 100),
+    marContainer5: Math.floor(Math.random() * 100),
+    marTotalDispatch: Math.floor(Math.random() * 500) + 50,
+    // April containers and dispatch
+    aprContainer1: Math.floor(Math.random() * 100),
+    aprContainer2: Math.floor(Math.random() * 100),
+    aprContainer3: Math.floor(Math.random() * 100),
+    aprContainer4: Math.floor(Math.random() * 100),
+    aprContainer5: Math.floor(Math.random() * 100),
+    aprTotalDispatch: Math.floor(Math.random() * 500) + 50,
+    // May containers and dispatch
+    mayContainer1: Math.floor(Math.random() * 100),
+    mayContainer2: Math.floor(Math.random() * 100),
+    mayContainer3: Math.floor(Math.random() * 100),
+    mayContainer4: Math.floor(Math.random() * 100),
+    mayContainer5: Math.floor(Math.random() * 100),
+    mayTotalDispatch: Math.floor(Math.random() * 500) + 50,
+    // June containers and dispatch
+    junContainer1: Math.floor(Math.random() * 100),
+    junContainer2: Math.floor(Math.random() * 100),
+    junContainer3: Math.floor(Math.random() * 100),
+    junContainer4: Math.floor(Math.random() * 100),
+    junContainer5: Math.floor(Math.random() * 100),
+    junTotalDispatch: Math.floor(Math.random() * 500) + 50,
+    // July containers and dispatch
+    julContainer1: Math.floor(Math.random() * 100),
+    julContainer2: Math.floor(Math.random() * 100),
+    julContainer3: Math.floor(Math.random() * 100),
+    julContainer4: Math.floor(Math.random() * 100),
+    julContainer5: Math.floor(Math.random() * 100),
+    julTotalDispatch: Math.floor(Math.random() * 500) + 50,
+    // August containers and dispatch
+    augContainer1: Math.floor(Math.random() * 100),
+    augContainer2: Math.floor(Math.random() * 100),
+    augContainer3: Math.floor(Math.random() * 100),
+    augContainer4: Math.floor(Math.random() * 100),
+    augContainer5: Math.floor(Math.random() * 100),
+    augTotalDispatch: Math.floor(Math.random() * 500) + 50,
+    // September containers and dispatch
+    sepContainer1: Math.floor(Math.random() * 100),
+    sepContainer2: Math.floor(Math.random() * 100),
+    sepContainer3: Math.floor(Math.random() * 100),
+    sepContainer4: Math.floor(Math.random() * 100),
+    sepContainer5: Math.floor(Math.random() * 100),
+    sepTotalDispatch: Math.floor(Math.random() * 500) + 50,
+    // October containers and dispatch
+    octContainer1: Math.floor(Math.random() * 100),
+    octContainer2: Math.floor(Math.random() * 100),
+    octContainer3: Math.floor(Math.random() * 100),
+    octContainer4: Math.floor(Math.random() * 100),
+    octContainer5: Math.floor(Math.random() * 100),
+    octTotalDispatch: Math.floor(Math.random() * 500) + 50,
+    // November containers and dispatch
+    novContainer1: Math.floor(Math.random() * 100),
+    novContainer2: Math.floor(Math.random() * 100),
+    novContainer3: Math.floor(Math.random() * 100),
+    novContainer4: Math.floor(Math.random() * 100),
+    novContainer5: Math.floor(Math.random() * 100),
+    novTotalDispatch: Math.floor(Math.random() * 500) + 50,
+    // December containers and dispatch
+    decContainer1: Math.floor(Math.random() * 100),
+    decContainer2: Math.floor(Math.random() * 100),
+    decContainer3: Math.floor(Math.random() * 100),
+    decContainer4: Math.floor(Math.random() * 100),
+    decContainer5: Math.floor(Math.random() * 100),
+    decTotalDispatch: Math.floor(Math.random() * 500) + 50,
     remWarehouse: Math.floor(Math.random() * 300) + 20,
   }));
 };
@@ -126,7 +287,7 @@ export default function ProductionReport() {
             Active: "success",
             Inactive: "error",
             Pending: "warning",
-          } as const; 
+          } as const;
           return (
             <Badge size="sm" color={colorMap[status]}>
               {status}
@@ -167,65 +328,90 @@ export default function ProductionReport() {
       },
     ];
 
-    // Monthly columns
-    const months = [
-      { field: "jan", name: "Jan" },
-      { field: "feb", name: "Feb" },
-      { field: "mar", name: "Mar" },
-      { field: "apr", name: "Apr" },
-      { field: "may", name: "May" },
-      { field: "jun", name: "Jun" },
-      { field: "jul", name: "Jul" },
-      { field: "aug", name: "Aug" },
-      { field: "sep", name: "Sep" },
-      { field: "oct", name: "Oct" },
-      { field: "nov", name: "Nov" },
-      { field: "dec", name: "Dec" },
+    // Monthly data with containers
+    const monthsData = [
+      { monthCode: "jan", monthName: "January", prefix: "Jan" },
+      { monthCode: "feb", monthName: "February", prefix: "Feb" },
+      { monthCode: "mar", monthName: "March", prefix: "Mar" },
+      { monthCode: "apr", monthName: "April", prefix: "Apr" },
+      { monthCode: "may", monthName: "May", prefix: "May" },
+      { monthCode: "jun", monthName: "June", prefix: "Jun" },
+      { monthCode: "jul", monthName: "July", prefix: "Jul" },
+      { monthCode: "aug", monthName: "August", prefix: "Aug" },
+      { monthCode: "sep", monthName: "September", prefix: "Sep" },
+      { monthCode: "oct", monthName: "October", prefix: "Oct" },
+      { monthCode: "nov", monthName: "November", prefix: "Nov" },
+      { monthCode: "dec", monthName: "December", prefix: "Dec" },
     ];
 
-    const monthColumns: GridColDef[] = months.map((month) => ({
-      field: month.field,
-      headerName: `${selectedWarehouse} ${month.name}`,
-      width: 90,
-      sortable: true,
-      filterable: false,
-      headerAlign: "center" as const,
-      align: "center" as const,
-    }));
+    // Build month-based columns
+    const monthBasedColumns: GridColDef[] = [];
 
-    // Container columns (dynamic based on warehouse)
-    const containerColumns: GridColDef[] = containerNumbers.map((containerNum, index) => ({
-      field: `container${index + 1}`,
-      headerName: `${selectedWarehouse}CTN-${containerNum.slice(0, 8)}`,
-      width: 130,
-      sortable: true,
-      filterable: false,
-      headerAlign: "center" as const,
-      align: "center" as const,
-      renderHeader: () => (
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center',
-          lineHeight: 1.2,
-        }}>
-          <span style={{ 
-            fontWeight: 600, 
-            fontSize: '0.75rem',
-            color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' 
+    monthsData.forEach((month) => {
+      // Monthly column
+      monthBasedColumns.push({
+        field: month.monthCode,
+        headerName: `${selectedWarehouse} ${month.prefix}`,
+        width: 90,
+        sortable: true,
+        filterable: false,
+        headerAlign: "center" as const,
+        align: "center" as const,
+      });
+
+      // Container columns for this month (1-5)
+      for (let i = 1; i <= containerNumbers.length; i++) {
+        monthBasedColumns.push({
+          field: `${month.monthCode}Container${i}`,
+          headerName: `${month.prefix}-CTN${i}`,
+          width: 100,
+          sortable: true,
+          filterable: false,
+          headerAlign: "center" as const,
+          align: "center" as const,
+          renderHeader: () => (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              lineHeight: 1.2,
+              textAlign: 'center',
+            }}>
+              <span style={{
+                fontWeight: 600,
+                fontSize: '0.75rem',
+                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)'
+              }}>
+                {month.prefix}-CTN{i}
+              </span>
+            </div>
+          ),
+        });
+      }
+
+      // Total Dispatch column for this month
+      monthBasedColumns.push({
+        field: `${month.monthCode}TotalDispatch`,
+        headerName: `${month.prefix} Total Dispatch`,
+        width: 140,
+        sortable: true,
+        filterable: false,
+        headerAlign: "center" as const,
+        align: "center" as const,
+        renderCell: (params) => (
+          <span style={{
+            fontWeight: 600,
+            color: isDark ? '#34d399' : '#059669',
+            backgroundColor: isDark ? 'rgba(52, 211, 153, 0.1)' : 'rgba(5, 150, 105, 0.1)',
+            padding: '4px 8px',
+            borderRadius: '4px',
+            display: 'inline-block'
           }}>
-            {selectedWarehouse}CTN
+            {params.value}
           </span>
-          <span style={{ 
-            fontSize: '0.65rem', 
-            opacity: 0.8,
-            color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)' 
-          }}>
-            {containerNum.slice(0, 11)}
-          </span>
-        </div>
-      ),
-    }));
+        ),
+      });
+    });
 
     // Remaining warehouse column
     const remColumn: GridColDef = {
@@ -237,29 +423,33 @@ export default function ProductionReport() {
       headerAlign: "center",
       align: "center",
       renderCell: (params) => (
-        <span style={{ 
-          fontWeight: 600, 
-          color: isDark ? '#60a5fa' : '#2563eb' 
+        <span style={{
+          fontWeight: 600,
+          color: isDark ? '#60a5fa' : '#2563eb'
         }}>
           {params.value}
         </span>
       ),
     };
 
-    return [...baseColumns, ...monthColumns, ...containerColumns, remColumn];
+    return [...baseColumns, ...monthBasedColumns, remColumn];
   }, [selectedWarehouse, containerNumbers, currentYear, isDark]);
+
 
   return (
     <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
       {/* Header with title and warehouse selector */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-          Production Remaining Report
-        </h3>
-        
-        <FormControl 
-          size="small" 
-          sx={{ 
+        <DataGridHeader title="Production Remaining Report" />
+
+        <FormControl
+          size="small"
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 2,
             minWidth: 200,
             '& .MuiOutlinedInput-root': {
               backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'white',
@@ -294,6 +484,7 @@ export default function ProductionReport() {
             value={selectedWarehouse}
             label="Select Warehouse"
             onChange={handleWarehouseChange}
+            size="small"
           >
             <MenuItem value="UK">
               <div className="flex items-center gap-2">
@@ -320,6 +511,9 @@ export default function ProductionReport() {
               </div>
             </MenuItem>
           </Select>
+
+          <Button variant="contained" onClick={() => exportToCsv(tableData, `Production-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.csv`)}>Export to CSV</Button>
+          <Button variant="contained" onClick={() => exportToPng(tableData, `Production-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.png`)}>Export to PNG</Button>
         </FormControl>
       </div>
 

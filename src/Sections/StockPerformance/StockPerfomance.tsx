@@ -1,8 +1,10 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useTheme } from "../../context/ThemeContext";
 import { useState, useMemo } from "react";
-import { MenuItem, Select, FormControl, InputLabel, SelectChangeEvent } from "@mui/material";
+import { MenuItem, Select, FormControl, InputLabel, SelectChangeEvent, Button } from "@mui/material";
 import Badge from "../../components/ui/badge/Badge";
+import { exportToCsv } from "../../utils/exportToCsv";
+import { DataGridHeader } from "../../components/DataGrid/DataGridHeader";
 
 // Warehouse types
 type Warehouse = "UK" | "DE" | "US" | "CA";
@@ -78,7 +80,7 @@ const warehouseContainers: Record<Warehouse, { id: string; date: string }[]> = {
 // Generate sample data
 const generateWarehouseData = (): StockPerformanceRow[] => {
   const categories = ["Electronics", "Clothing", "Home & Garden", "Sports", "Toys", "Books", "Automotive", "Health", "Beauty", "Food"];
-  
+
   return Array(20).fill(0).map((_, index) => {
     const ctn1 = Math.floor(Math.random() * 50);
     const ctn2 = Math.floor(Math.random() * 50);
@@ -93,7 +95,7 @@ const generateWarehouseData = (): StockPerformanceRow[] => {
     const totalCtn = ctn1 + ctn2 + ctn3 + ctn4 + ctn5 + ctn6 + ctn7 + ctn8;
     const allStock = whStock + totalCtn + fbaStock;
     const daysCover = Math.floor(Math.random() * 90) + 10;
-    
+
     return {
       id: index + 1,
       itemNumber: `ITM-${String(10000 + index).padStart(6, "0")}`,
@@ -400,13 +402,16 @@ export default function StockPerformance() {
     <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
       {/* Header with title and warehouse selector */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-          Stock Performance Report
-        </h3>
-        
-        <FormControl 
-          size="small" 
-          sx={{ 
+        <DataGridHeader title="Stock Performance Report" />
+
+        <FormControl
+          size="small"
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 2,
             minWidth: 200,
             '& .MuiOutlinedInput-root': {
               backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'white',
@@ -467,6 +472,7 @@ export default function StockPerformance() {
               </div>
             </MenuItem>
           </Select>
+          <Button variant="contained" onClick={() => exportToCsv(tableData, `Stock-Performance-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.csv`)}>Export to CSV</Button>
         </FormControl>
       </div>
 

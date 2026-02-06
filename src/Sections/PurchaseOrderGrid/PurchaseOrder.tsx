@@ -2,7 +2,10 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Badge from "../../components/ui/badge/Badge";
 import { useTheme } from "../../context/ThemeContext";
 import { useState } from "react";
-import { IconButton, Select, MenuItem, TextField } from "@mui/material";
+import { IconButton, Select, MenuItem, TextField, Button } from "@mui/material";
+import { exportToCsv } from "../../utils/exportToCsv";
+import { exportToPng } from "../../utils/exportToPng";
+import { DataGridHeader } from "../../components/DataGrid/DataGridHeader";
 
 // Define the TypeScript interface for the table rows
 interface Container {
@@ -391,10 +394,16 @@ export default function PurchaseOrder() {
 
   return (
     <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
-      <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
-        Purchase Order Report
-      </h3>
+      <div className="flex items-center justify-between mb-4">
+        <DataGridHeader title="Purchase Order Report" />
 
+        <div className="flex items-center gap-2">
+          <Button variant="contained" onClick={() => exportToCsv(tableData, `Purchase-Order-Report-${new Date().toISOString().split('T')[0]}.csv`)}>Export to CSV</Button>
+          <Button variant="contained" onClick={() => exportToPng(tableData.map(row => ({
+            ...row,
+          })), `Purchase-Order-Report-${new Date().toISOString().split('T')[0]}.png`)}>Export to PNG</Button>
+        </div>
+      </div>
       <DataGrid
         rows={tableData}
         columns={columns}
@@ -405,67 +414,67 @@ export default function PurchaseOrder() {
           border: 'none',
           backgroundColor: 'transparent',
           width: '100%',
-            '& .MuiDataGrid-main': {
-              backgroundColor: 'transparent',
-            },
-            '& .MuiDataGrid-container--top [role=row]': {
-              backgroundColor: 'transparent',
-            },
-            '& .MuiDataGrid-virtualScroller': {
-              backgroundColor: 'transparent',
-            },
-            '& .MuiDataGrid-row': {
-              backgroundColor: 'transparent !important',
-            },
-            '& .MuiDataGrid-cell': {
-              borderColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
-              color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
-              backgroundColor: 'transparent',
-            },
-            '& .MuiDataGrid-columnHeaders': {
-              borderColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
-              backgroundColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
-            },
-            '& .MuiDataGrid-columnHeader': {
-              backgroundColor: 'transparent',
-            },
-            '& .MuiDataGrid-columnHeaderTitle': {
-              color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
-              fontWeight: 600,
-            },
-            '& .MuiDataGrid-footerContainer': {
-              borderColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
-              backgroundColor: 'transparent',
-            },
-            '& .MuiTablePagination-root': {
-              color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
-            },
-            '& .MuiIconButton-root': {
-              color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
-            },
-            '& .MuiDataGrid-row:hover': {
-              backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05) !important' : 'rgba(0, 0, 0, 0.04) !important',
-            },
-            '& .MuiDataGrid-selectedRowCount': {
-              color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
-            },
-            '& .MuiDataGrid-columnSeparator': {
-              color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgb(229 231 235)',
-            },
-            '& .MuiDataGrid-sortIcon': {
-              color: isDark ? '#000' : 'rgb(107 114 128)',
-            },
-            '& .MuiDataGrid-menuIconButton': {
-              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
-            },
-            '& .MuiDataGrid-iconButtonContainer': {
-              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
-            },
-            '& .MuiDataGrid-columnHeader .MuiIconButton-root': {
-              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
-            },
-          }}
-        />
+          '& .MuiDataGrid-main': {
+            backgroundColor: 'transparent',
+          },
+          '& .MuiDataGrid-container--top [role=row]': {
+            backgroundColor: 'transparent',
+          },
+          '& .MuiDataGrid-virtualScroller': {
+            backgroundColor: 'transparent',
+          },
+          '& .MuiDataGrid-row': {
+            backgroundColor: 'transparent !important',
+          },
+          '& .MuiDataGrid-cell': {
+            borderColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
+            color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
+            backgroundColor: 'transparent',
+          },
+          '& .MuiDataGrid-columnHeaders': {
+            borderColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
+            backgroundColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
+          },
+          '& .MuiDataGrid-columnHeader': {
+            backgroundColor: 'transparent',
+          },
+          '& .MuiDataGrid-columnHeaderTitle': {
+            color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
+            fontWeight: 600,
+          },
+          '& .MuiDataGrid-footerContainer': {
+            borderColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
+            backgroundColor: 'transparent',
+          },
+          '& .MuiTablePagination-root': {
+            color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
+          },
+          '& .MuiIconButton-root': {
+            color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
+          },
+          '& .MuiDataGrid-row:hover': {
+            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05) !important' : 'rgba(0, 0, 0, 0.04) !important',
+          },
+          '& .MuiDataGrid-selectedRowCount': {
+            color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
+          },
+          '& .MuiDataGrid-columnSeparator': {
+            color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgb(229 231 235)',
+          },
+          '& .MuiDataGrid-sortIcon': {
+            color: isDark ? '#000' : 'rgb(107 114 128)',
+          },
+          '& .MuiDataGrid-menuIconButton': {
+            color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
+          },
+          '& .MuiDataGrid-iconButtonContainer': {
+            color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
+          },
+          '& .MuiDataGrid-columnHeader .MuiIconButton-root': {
+            color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
+          },
+        }}
+      />
     </div>
   );
 }
