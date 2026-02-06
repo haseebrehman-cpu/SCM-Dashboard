@@ -38,8 +38,19 @@ export const FileUploadProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   const getCurrentUser = (): string => {
-    // This should be replaced with actual user info from your auth system
-    return localStorage.getItem('userEmail') || 'user@company.com';
+    // Use secure sessionStorage instead of localStorage for user data
+    // In production, this should come from a secure JWT token or API call
+    try {
+      const userEmail = sessionStorage.getItem('userEmail');
+      if (!userEmail) {
+        // Return a generic identifier if no user is logged in
+        const authToken = sessionStorage.getItem('auth_token');
+        return authToken ? 'authenticated_user' : 'guest_user';
+      }
+      return userEmail;
+    } catch {
+      return 'guest_user';
+    }
   };
 
   const addFileLogs = useCallback((files: File[], stepNumber: number) => {
