@@ -133,10 +133,10 @@ const FileUpload: React.FC = () => {
   ) => <UploadZone dropzone={dropzone} file={file} onRemove={onRemove} isDisabled={isDisabled} formatFileSize={formatFileSize} />;
 
   return (
-    <div className="flex items-center justify-center py-4 px-4">
+    <div className="flex items-center justify-center py-2 px-4">
       <div className="w-full max-w-4xl">
         {/* Header */}
-        <div className="text-center mb-4">
+        <div className="text-center mb-2">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
            Linworks Files Upload
           </h1>
@@ -149,11 +149,11 @@ const FileUpload: React.FC = () => {
         {renderStepIndicator()}
 
         {/* Main Content */}
-        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-3 md:p-4 border border-gray-200 dark:border-gray-700">
           {/* Step 1 Content */}
           {currentStep === 1 && (
-            <div className="space-y-3">
-              <div className="mb-3">
+            <div className="space-y-2">
+              <div className="mb-2">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                   Step 1: Upload Last 60 days (According to current date) Files
                 </h2>
@@ -164,7 +164,7 @@ const FileUpload: React.FC = () => {
               {renderDropzone(dropzone1, file1, handleRemoveFile1, isUploading || !!file1)}
 
               {file1 && file1.status === 'completed' && (
-                <div className="flex justify-end mt-3">
+                <div className="flex justify-end mt-2">
                   <Button
                     onClick={handleNext}
                     size="sm"
@@ -180,8 +180,8 @@ const FileUpload: React.FC = () => {
 
           {/* Step 2 Content */}
           {currentStep === 2 && (
-            <div className="space-y-3">
-              <div className="mb-3">
+            <div className="space-y-2">
+              <div className="mb-2">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                   Step 2: Upload Next 60 days (Of Last Year according to current date) Files
                 </h2>
@@ -191,7 +191,7 @@ const FileUpload: React.FC = () => {
               </div>
               {renderDropzone(dropzone2, file2, handleRemoveFile2, isUploading || !!file2 || !file1 || file1.status !== 'completed')}
 
-              <div className="flex justify-between mt-3">
+              <div className="flex justify-between mt-2">
                 <Button
                   onClick={handleBack}
                   size="sm"
@@ -213,8 +213,8 @@ const FileUpload: React.FC = () => {
             </div>
           )}
           {currentStep === 3 && (
-            <div className="space-y-3">
-              <div className="mb-3">
+            <div className="space-y-2">
+              <div className="mb-2">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                   Step 3: Upload Purchase Orders by Status and Date (status : open last 12 month file) Files
                 </h2>
@@ -224,7 +224,7 @@ const FileUpload: React.FC = () => {
               </div>
               {renderDropzone(dropzone3, file3, handleRemoveFile3, isUploading || !!file3 || !file2 || file2.status !== 'completed')}
 
-              <div className="flex justify-between mt-3">
+              <div className="flex justify-between mt-2">
                 <Button
                   onClick={handleBack}
                   size="sm"
@@ -249,7 +249,7 @@ const FileUpload: React.FC = () => {
 
         {/* Summary (when both files are uploaded) */}
         {file1 && file1.status === 'completed' && file2 && file2.status === 'completed' && file3 && file3.status === 'completed' && (
-          <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+          <div className="mt-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
             <div className="flex items-center gap-2">
               <CheckCircleIcon className="w-5 h-5 text-green-600 dark:text-green-400" />
               <div>
