@@ -39,7 +39,8 @@ const FileLogsGrid = () => {
       {
         field: 'fileName',
         headerName: 'File Name',
-        width: 200,
+        flex: 1.2,
+        minWidth: 180,
         sortable: true,
         filterable: true,
         headerAlign: 'center',
@@ -54,7 +55,8 @@ const FileLogsGrid = () => {
       {
         field: 'uploadedDate',
         headerName: 'Upload Date',
-        width: 180,
+        flex: 0.9,
+        minWidth: 140,
         sortable: true,
         filterable: true,
         headerAlign: 'center',
@@ -69,7 +71,8 @@ const FileLogsGrid = () => {
       {
         field: 'uploadedBy',
         headerName: 'Uploaded By',
-        width: 200,
+        flex: 0.9,
+        minWidth: 140,
         sortable: true,
         filterable: true,
         headerAlign: 'center',
@@ -84,7 +87,8 @@ const FileLogsGrid = () => {
       {
         field: 'fileSize',
         headerName: 'File Size',
-        width: 130,
+        flex: 0.8,
+        minWidth: 100,
         sortable: true,
         filterable: true,
         headerAlign: 'center',
@@ -98,8 +102,9 @@ const FileLogsGrid = () => {
       },
       {
         field: 'fileType',
-        headerName: 'File Type',
-        width: 120,
+        headerName: 'Type',
+        flex: 0.7,
+        minWidth: 70,
         sortable: true,
         filterable: true,
         headerAlign: 'center',
@@ -111,25 +116,27 @@ const FileLogsGrid = () => {
           </div>
         ),
       },
-      // {
-      //   field: 'stepNumber',
-      //   headerName: 'Step',
-      //   width: 100,
-      //   sortable: true,
-      //   filterable: true,
-      //   headerAlign: 'center',
-      //   align: 'center',
-      //   renderHeader: () => (
-      //     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-      //       <span>Step</span>
-      //       <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-      //     </div>
-      //   ),
-      // },
+      {
+        field: 'stepNumber',
+        headerName: 'Step',
+        flex: 0.6,
+        minWidth: 60,
+        sortable: true,
+        filterable: true,
+        headerAlign: 'center',
+        align: 'center',
+        renderHeader: () => (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+            <span>Step</span>
+            <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
+          </div>
+        ),
+      },
       {
         field: 'status',
         headerName: 'Status',
-        width: 190,
+        flex: 0.9,
+        minWidth: 130,
         sortable: true,
         filterable: true,
         headerAlign: 'center',
@@ -164,7 +171,10 @@ const FileLogsGrid = () => {
         field: 'actions',
         type: 'actions',
         headerName: 'Actions',
-        width: 120,
+        flex: 0.7,
+        minWidth: 100,
+        sortable: false,
+        filterable: false,
         headerAlign: 'center',
         align: 'center',
         getActions: (params) => [
@@ -197,7 +207,7 @@ const FileLogsGrid = () => {
 
   return (
     <div className="w-full max-w-full overflow-hidden mt-2">
-      <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
+      <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-x-auto">
         <div className="flex items-center justify-between mb-4">
           <DataGridHeader title="File Upload Logs" />
           <div className="flex items-center gap-2">
