@@ -3,6 +3,47 @@ import toast from 'react-hot-toast';
 import { UploadedFile } from '../components/FileUpload/types';
 
 /**
+ * Validation functions (outside component to avoid re-creation and dependency issues)
+ */
+const validateWarehouseCode = (files: File[]): boolean => {
+  const warehousePrefixes = ['UK-', 'US-', 'DE-', 'CA-'];
+  const invalidFiles = files.filter(
+    (file) => !warehousePrefixes.some((prefix) => file.name.toUpperCase().startsWith(prefix))
+  );
+
+  if (invalidFiles.length > 0) {
+    const invalidNames = invalidFiles.map((f) => f.name).join(', ');
+    const errorMsg = `File names must start with warehouse code (UK-, US-, DE-, CA-). Invalid: ${invalidNames}`;
+    toast.error(errorMsg);
+    return false;
+  }
+  return true;
+};
+
+const validateOpenOrderPrefix = (files: File[]): boolean => {
+  const invalidFiles = files.filter(
+    (file) => !file.name.toUpperCase().startsWith('OPEN ORDERS')
+  );
+
+  if (invalidFiles.length > 0) {
+    const invalidNames = invalidFiles.map((f) => f.name).join(', ');
+    const errorMsg = `File names must start with "Open Orders". Invalid: ${invalidNames}`;
+    toast.error(errorMsg);
+    return false;
+  }
+  return true;
+};
+
+const validateFilesByStep = (files: File[], step: 1 | 2 | 3): boolean => {
+  if (step === 1 || step === 2) {
+    return validateWarehouseCode(files);
+  } else if (step === 3) {
+    return validateOpenOrderPrefix(files);
+  }
+  return true;
+};
+
+/**
  * useFileUpload Hook
  * Single Responsibility: Handles file upload logic, validation, and state management
  */
@@ -20,24 +61,9 @@ export const useFileUpload = () => {
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
-  const validateWarehouseCode = (files: File[]): boolean => {
-    const warehousePrefixes = ['UK', 'US', 'DE', 'CA'];
-    const invalidFiles = files.filter(
-      (file) => !warehousePrefixes.some((prefix) => file.name.toUpperCase().startsWith(prefix))
-    );
-
-    if (invalidFiles.length > 0) {
-      const invalidNames = invalidFiles.map((f) => f.name).join(', ');
-      const errorMsg = `File names must start with warehouse code (UK, US, DE, CA). Invalid: ${invalidNames}`;
-      toast.error(errorMsg);
-      return false;
-    }
-    return true;
-  };
-
   const simulateUpload = useCallback(
-    (files: File[], setFileState: (file: UploadedFile | null) => void) => {
-      if (!validateWarehouseCode(files)) {
+    (files: File[], setFileState: (file: UploadedFile | null) => void, step: 1 | 2 | 3 = 1) => {
+      if (!validateFilesByStep(files, step)) {
         setIsUploading(false);
         return;
       }

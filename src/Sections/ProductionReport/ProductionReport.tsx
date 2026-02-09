@@ -283,104 +283,83 @@ export default function ProductionReport() {
         filterable: true,
         renderCell: (params) => {
           const status = params.value as "Active" | "Inactive" | "Pending";
-          const colorMap = {
-            Active: "success",
-            Inactive: "error",
-            Pending: "warning",
-          } as const;
-          return (
-            <Badge size="sm" color={colorMap[status]}>
-              {status}
-            </Badge>
-          );
+          const colorMap = { Active: "success", Inactive: "error", Pending: "warning" } as const;
+          return <Badge size="sm" color={colorMap[status]}>{status}</Badge>;
         },
       },
-      {
-        field: "categoryName",
-        headerName: "Category Name",
-        width: 140,
-        sortable: true,
-        filterable: true,
-      },
-      {
-        field: "itemNumber",
-        headerName: "Item Number",
-        width: 130,
-        sortable: true,
-        filterable: true,
-      },
-      {
-        field: "itemTitle",
-        headerName: "Item Title",
-        flex: 1,
-        minWidth: 200,
-        sortable: true,
-        filterable: true,
-      },
-      {
-        field: "warehouseRemYear",
-        headerName: `${selectedWarehouse}-Rem-${currentYear}`,
-        width: 130,
+      { field: "categoryName", headerName: "Category Name", width: 140, sortable: true, filterable: true },
+      { field: "itemNumber", headerName: "Item Number", width: 130, sortable: true, filterable: true },
+      { field: "itemTitle", headerName: "Item Title", flex: 1, minWidth: 200, sortable: true, filterable: true },
+    ];
+
+    const warehouse = selectedWarehouse; // e.g. "UK"
+
+    const monthsData = [
+      { monthCode: "jan", prefix: "Jan" },
+      { monthCode: "feb", prefix: "Feb" },
+      { monthCode: "mar", prefix: "Mar" },
+      { monthCode: "apr", prefix: "Apr" },
+      { monthCode: "may", prefix: "May" },
+      { monthCode: "jun", prefix: "Jun" },
+      { monthCode: "jul", prefix: "Jul" },
+      { monthCode: "aug", prefix: "Aug" },
+      { monthCode: "sep", prefix: "Sep" },
+      { monthCode: "oct", prefix: "Oct" },
+      { monthCode: "nov", prefix: "Nov" },
+      { monthCode: "dec", prefix: "Dec" },
+    ];
+
+    const dynamicColumns: GridColDef[] = [];
+
+    monthsData.forEach((month) => {
+      // 1. Remaining Opening for this month
+      dynamicColumns.push({
+        field: `${month.monthCode}Opening`,               // ← new field name
+        headerName: `${warehouse} ${month.prefix} ${currentYear} Remaining Opening`,
+        width: 220,
         sortable: true,
         filterable: false,
         headerAlign: "center",
         align: "center",
-      },
-    ];
-
-    // Monthly data with containers
-    const monthsData = [
-      { monthCode: "jan", monthName: "January", prefix: "Jan" },
-      { monthCode: "feb", monthName: "February", prefix: "Feb" },
-      { monthCode: "mar", monthName: "March", prefix: "Mar" },
-      { monthCode: "apr", monthName: "April", prefix: "Apr" },
-      { monthCode: "may", monthName: "May", prefix: "May" },
-      { monthCode: "jun", monthName: "June", prefix: "Jun" },
-      { monthCode: "jul", monthName: "July", prefix: "Jul" },
-      { monthCode: "aug", monthName: "August", prefix: "Aug" },
-      { monthCode: "sep", monthName: "September", prefix: "Sep" },
-      { monthCode: "oct", monthName: "October", prefix: "Oct" },
-      { monthCode: "nov", monthName: "November", prefix: "Nov" },
-      { monthCode: "dec", monthName: "December", prefix: "Dec" },
-    ];
-
-    // Build month-based columns
-    const monthBasedColumns: GridColDef[] = [];
-
-    monthsData.forEach((month) => {
-      // Monthly column
-      monthBasedColumns.push({
-        field: month.monthCode,
-        headerName: `${selectedWarehouse} ${month.prefix}`,
-        width: 90,
-        sortable: true,
-        filterable: false,
-        headerAlign: "center" as const,
-        align: "center" as const,
+        renderCell: (params) => (
+          <span style={{ fontWeight: 600, color: isDark ? '#fbbf24' : '#d97706' }}>
+            {params.value ?? '0'}
+          </span>
+        ),
       });
 
-      // Container columns for this month (1-5)
+      // 2. Forecasted Order
+      dynamicColumns.push({
+        field: `${month.monthCode}`,
+        headerName: `${warehouse} ${month.prefix} ${currentYear} Forecasted Order`,
+        width: 220,
+        sortable: true,
+        filterable: false,
+        headerAlign: "center",
+        align: "center",
+        renderCell: (params) => (
+          <span style={{ fontWeight: 600, color: isDark ? '#818cf8' : '#6366f1' }}>
+            {params.value ?? '-'}
+          </span>
+        ),
+      });
+
+      // 3. Containers (dynamic)
       for (let i = 1; i <= containerNumbers.length; i++) {
-        monthBasedColumns.push({
+        dynamicColumns.push({
           field: `${month.monthCode}Container${i}`,
           headerName: `${month.prefix}-CTN${i}`,
           width: 100,
           sortable: true,
           filterable: false,
-          headerAlign: "center" as const,
-          align: "center" as const,
+          headerAlign: "center",
+          align: "center",
           renderHeader: () => (
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              lineHeight: 1.2,
-              textAlign: 'center',
-            }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1.2 }}>
               <span style={{
                 fontWeight: 600,
                 fontSize: '0.75rem',
-                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)'
+                color: isDark ? 'rgba(255,255,255,0.9)' : 'rgb(31 41 55)'
               }}>
                 {month.prefix}-CTN{i}
               </span>
@@ -389,51 +368,94 @@ export default function ProductionReport() {
         });
       }
 
-      // Total Dispatch column for this month
-      monthBasedColumns.push({
+      // 4. Factory Total Dispatch
+      dynamicColumns.push({
         field: `${month.monthCode}TotalDispatch`,
-        headerName: `${month.prefix} Total Dispatch`,
-        width: 140,
+        headerName: `${warehouse} ${month.prefix} ${currentYear} Factory Total Dispatch`,
+        width: 220,
         sortable: true,
         filterable: false,
-        headerAlign: "center" as const,
-        align: "center" as const,
+        headerAlign: "center",
+        align: "center",
         renderCell: (params) => (
           <span style={{
             fontWeight: 600,
             color: isDark ? '#34d399' : '#059669',
-            backgroundColor: isDark ? 'rgba(52, 211, 153, 0.1)' : 'rgba(5, 150, 105, 0.1)',
+            backgroundColor: isDark ? 'rgba(52,211,153,0.1)' : 'rgba(5,150,105,0.1)',
             padding: '4px 8px',
             borderRadius: '4px',
             display: 'inline-block'
           }}>
-            {params.value}
+            {params.value ?? '-'}
           </span>
         ),
       });
+
+      // 5. Remaining after this month
+      dynamicColumns.push({
+        field: `${month.monthCode}warehouseRemYear`,
+        headerName: `${warehouse} ${month.prefix} ${currentYear} Remaining`,
+        width: 220,
+        sortable: true,
+        filterable: false,
+        headerAlign: "center",
+        align: "center",
+        renderCell: (params) => (
+          <span style={{ fontWeight: 600, color: isDark ? '#f87171' : '#ef4444' }}>
+            {params.value ?? '0'}
+          </span>
+        ),
+      });
+
+      // 6. Quarter-end remaining closed (after Apr, Aug, Dec)
+      if (['apr', 'aug', 'dec'].includes(month.monthCode)) {
+        const dateStr = month.monthCode === 'apr' ? '30-04' : '31-08';
+        const fullDate = month.monthCode === 'dec' ? '31-12' : dateStr;
+        dynamicColumns.push({
+          field: `closedRem${month.monthCode}`,
+          headerName: `REMAINING CLOSED ${fullDate}-${currentYear}`,
+          width: 240,
+          sortable: true,
+          filterable: false,
+          headerAlign: "center",
+          align: "center",
+          renderCell: (params) => (
+            <span style={{
+              fontWeight: 700,
+              color: isDark ? '#fb7185' : '#e11d48',
+              backgroundColor: isDark ? 'rgba(251,113,133,0.15)' : 'rgba(225,29,72,0.12)',
+              padding: '6px 12px',
+              borderRadius: '6px',
+            }}>
+              {params.value ?? '0'}
+            </span>
+          ),
+        });
+      }
     });
 
-    // Remaining warehouse column
-    const remColumn: GridColDef = {
-      field: "remWarehouse",
-      headerName: `Rem ${selectedWarehouse}`,
-      width: 110,
-      sortable: true,
-      filterable: false,
-      headerAlign: "center",
-      align: "center",
-      renderCell: (params) => (
-        <span style={{
-          fontWeight: 600,
-          color: isDark ? '#60a5fa' : '#2563eb'
-        }}>
-          {params.value}
-        </span>
-      ),
-    };
+    // Final overall remaining
+    // const finalRemColumn: GridColDef = {
+    //   field: "remWarehouse",
+    //   headerName: `Rem ${warehouse}`,
+    //   width: 110,
+    //   sortable: true,
+    //   filterable: false,
+    //   headerAlign: "center",
+    //   align: "center",
+    //   renderCell: (params) => (
+    //     <span style={{ fontWeight: 600, color: isDark ? '#60a5fa' : '#2563eb' }}>
+    //       {params.value ?? '0'}
+    //     </span>
+    //   ),
+    // };
 
-    return [...baseColumns, ...monthBasedColumns, remColumn];
-  }, [selectedWarehouse, containerNumbers, currentYear, isDark]);
+    return [
+      ...baseColumns,
+      ...dynamicColumns,
+      // finalRemColumn,
+    ];
+  }, [selectedWarehouse, containerNumbers?.length, currentYear, isDark]);
 
 
   return (

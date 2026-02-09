@@ -19,7 +19,7 @@ const FileUpload: React.FC = () => {
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
         // Don't add logs yet - only upload files
-        simulateUpload(acceptedFiles, setFile1);
+        simulateUpload(acceptedFiles, setFile1, 1);
       }
     },
     [simulateUpload, setFile1],
@@ -29,7 +29,7 @@ const FileUpload: React.FC = () => {
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
         // Don't add logs yet - only upload files
-        simulateUpload(acceptedFiles, setFile2);
+        simulateUpload(acceptedFiles, setFile2, 2);
       }
     },
     [simulateUpload, setFile2],
@@ -40,7 +40,7 @@ const FileUpload: React.FC = () => {
       if (acceptedFiles.length > 0) {
         // Don't add logs yet - only upload files
         const file = acceptedFiles[0];
-        simulateUpload([file], setFile3);
+        simulateUpload([file], setFile3, 3);
       }
     },
     [simulateUpload, setFile3],
