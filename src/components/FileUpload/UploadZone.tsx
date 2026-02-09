@@ -2,8 +2,14 @@ import React from 'react';
 import { CheckCircleIcon, FileIcon, TrashBinIcon } from '../../icons';
 import { UploadedFile } from './types';
 
+interface DropzoneRootProps {
+  getRootProps: () => Record<string, unknown>;
+  getInputProps: () => Record<string, unknown>;
+  isDragActive: boolean;
+}
+
 interface UploadZoneProps {
-  dropzone: any;
+  dropzone: DropzoneRootProps;
   file: UploadedFile | null;
   onRemove: () => void;
   isDisabled: boolean;
@@ -96,20 +102,18 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
   return (
     <div
       {...dropzone.getRootProps()}
-      className={`relative p-6 border-2 border-dashed rounded-2xl transition-all duration-300 cursor-pointer ${
-        dropzone.isDragActive
+      className={`relative p-6 border-2 border-dashed rounded-2xl transition-all duration-300 cursor-pointer ${dropzone.isDragActive
           ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/20 scale-105'
           : 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 hover:border-brand-400 hover:bg-gray-100 dark:hover:bg-gray-800'
-      } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
       <input {...dropzone.getInputProps()} />
       <div className="flex flex-col items-center justify-center text-center">
         <div
-          className={`mb-3 flex items-center justify-center w-16 h-16 rounded-full transition-all duration-300 ${
-            dropzone.isDragActive
+          className={`mb-3 flex items-center justify-center w-16 h-16 rounded-full transition-all duration-300 ${dropzone.isDragActive
               ? 'bg-brand-500 text-white scale-110'
               : 'bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
-          }`}
+            }`}
         >
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -126,7 +130,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
         <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 max-w-md">
           Drag and drop your file here, or click to browse
         </p>
-        <p className="text-xs text-gray-400 dark:text-gray-500">PDF, Excel (.xlsx, .xls), CSV</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500">Only Excel files are supported</p>
       </div>
     </div>
   );

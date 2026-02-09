@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import * as XLSX from 'xlsx';
 
 export interface FileLogEntry {
   id: number;
@@ -11,6 +12,7 @@ export interface FileLogEntry {
   fileType: string;
   stepNumber: number;
   file: File;
+  rowCount?: number;
 }
 
 interface FileUploadContextType {
@@ -53,53 +55,102 @@ export const FileUploadProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   };
 
-  const addFileLogs = useCallback((files: File[], stepNumber: number) => {
-    const newLogs = files.map((file, index) => ({
-      id: Date.now() + index,
-      fileName: file.name,
-      uploadedDate: new Date().toLocaleString('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true,
-      }),
-      uploadedBy: getCurrentUser(),
-      fileSize: formatFileSize(file.size),
-      fileSizeBytes: file.size,
-      status: 'processing' as const,
-      fileType: getFileExtension(file.name),
-      stepNumber,
-      file,
-    }));
-
-    setFileLogs((prevLogs) => {
-      // Check for duplicates and update status if already exists
-      const updatedLogs = [...prevLogs];
+  const getRowCountFromFile = async (file: File): Promise<number> => {
+    try {
+      const fileType = getFileExtension(file.name);
       
-      newLogs.forEach((newLog) => {
-        const existingIndex = updatedLogs.findIndex(
-          (log) => log.fileName === newLog.fileName && log.stepNumber === newLog.stepNumber
-        );
+      if (fileType === 'csv') {
+        // For CSV files, count the lines (excluding header)
+        const text = await file.text();
+        const lines = text.trim().split('\n');
+        return Math.max(0, lines.length - 1); // Subtract 1 for header row
+      } else if (fileType === 'xlsx' || fileType === 'xls') {
+        // For Excel files, use XLSX library to parse the file
+        const arrayBuffer = await file.arrayBuffer();
+        const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
         
-        if (existingIndex === -1) {
-          updatedLogs.push(newLog);
-        } else {
-          // Update status to completed after a delay
-          setTimeout(() => {
-            setFileLogs((logs) =>
-              logs.map((log) =>
-                log.id === newLog.id ? { ...log, status: 'completed' as const } : log
-              )
-            );
-          }, 2000);
+        // Get the first sheet
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        
+        // Get the range and calculate row count
+        // The !ref property contains the range like "A1:Z100"
+        if (worksheet['!ref']) {
+          const range = XLSX.utils.decode_range(worksheet['!ref']);
+          // Subtract 1 for header row
+          return Math.max(0, range.e.r); // e.r is the last row index (0-based)
         }
-      });
+        return 0;
+      }
+      return 0;
+    } catch (error) {
+      console.error('Error counting rows:', error);
+      return 0;
+    }
+  };
 
-      return updatedLogs;
-    });
+  const addFileLogs = useCallback((files: File[], stepNumber: number) => {
+    // Create initial logs with processing status
+    const createInitialLogs = async () => {
+      const timestamp = Date.now();
+      const randomSuffix = Math.random().toString(36).substr(2, 9);
+      
+      const newLogs = await Promise.all(
+        files.map(async (file, index) => {
+          const rowCount = await getRowCountFromFile(file);
+          return {
+            id: parseInt(`${timestamp}${index}${randomSuffix.charCodeAt(0)}`),
+            fileName: file.name,
+            uploadedDate: new Date().toLocaleString('en-US', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: true,
+            }),
+            uploadedBy: getCurrentUser(),
+            fileSize: formatFileSize(file.size),
+            fileSizeBytes: file.size,
+            status: 'processing' as const,
+            fileType: getFileExtension(file.name),
+            stepNumber,
+            file,
+            rowCount,
+          };
+        })
+      );
+
+      setFileLogs((prevLogs) => {
+        const updatedLogs = [...prevLogs];
+        
+        newLogs.forEach((newLog) => {
+          // Only add if the same file hasn't been added for this step
+          const existingIndex = updatedLogs.findIndex(
+            (log) => log.fileName === newLog.fileName && log.stepNumber === newLog.stepNumber
+          );
+          
+          if (existingIndex === -1) {
+            updatedLogs.push(newLog);
+          } else {
+            // Update status to completed after a delay
+            setTimeout(() => {
+              setFileLogs((logs) =>
+                logs.map((log) =>
+                  log.id === updatedLogs[existingIndex].id ? { ...log, status: 'completed' as const } : log
+                )
+              );
+            }, 2000);
+          }
+        });
+
+        return updatedLogs;
+      });
+    };
+
+    createInitialLogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const clearFileLogs = useCallback(() => {

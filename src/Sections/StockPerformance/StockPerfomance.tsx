@@ -219,7 +219,7 @@ export default function StockPerformance() {
       },
       {
         field: "linnWorksSales",
-        headerName: `LINN WORKS SALES JAN ${currentYear}-FEB`,
+        headerName: `LINN-Next 60 Days SALE from previous year`,
         width: 140,
         sortable: true,
         filterable: false,
@@ -227,9 +227,8 @@ export default function StockPerformance() {
         align: "center",
         renderHeader: () => (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1.2 }}>
-            <span style={{ fontWeight: 600, fontSize: '0.65rem', color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>LINN WORKS</span>
-            <span style={{ fontSize: '0.6rem', color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)' }}>SALES JAN {currentYear}</span>
-            <span style={{ fontSize: '0.6rem', color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)' }}>-FEB 20</span>
+            <span style={{ fontWeight: 600, fontSize: '0.65rem', color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>LINN-Next 60 Days SALE</span>
+            <span style={{ fontSize: '0.6rem', color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)' }}>from previous year</span>
           </div>
         ),
       },
@@ -314,7 +313,7 @@ export default function StockPerformance() {
       },
       {
         field: "maxDc",
-        headerName: "Max DC",
+        headerName: "Max Daily Consumption",
         width: 80,
         sortable: true,
         filterable: false,
@@ -323,7 +322,7 @@ export default function StockPerformance() {
       },
       {
         field: "totalCtn",
-        headerName: "TOTAL-CTN",
+        headerName: "Total CTN",
         width: 100,
         sortable: true,
         filterable: false,
@@ -347,12 +346,6 @@ export default function StockPerformance() {
         filterable: false,
         headerAlign: "center",
         align: "center",
-        renderHeader: () => (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1.2 }}>
-            <span style={{ fontWeight: 600, fontSize: '0.7rem', color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>Days Cover</span>
-            <span style={{ fontSize: '0.6rem', color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)' }}>Current Stock</span>
-          </div>
-        ),
       },
       {
         field: "dispatchDateCover",
@@ -473,10 +466,10 @@ export default function StockPerformance() {
               </div>
             </MenuItem>
           </Select>
-          <Button variant="contained" onClick={() => exportToCsv(tableData, `Stock-Performance-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.csv`)}>Export to CSV</Button>
+          <Button variant="contained" onClick={() => exportToCsv(tableData, `Stock-Performance-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.csv`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to CSV</Button>
           <Button variant="contained" onClick={() => exportToPng(tableData.map(row => ({
             ...row,
-          })), `Stock-Performance-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.png`)}>Export to PNG</Button>
+          })), `Stock-Performance-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.png`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to PNG</Button>
         </FormControl>
       </div>
 

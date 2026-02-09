@@ -2,10 +2,13 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Badge from "../../components/ui/badge/Badge";
 import { useTheme } from "../../context/ThemeContext";
 import { useState } from "react";
-import { IconButton, Select, MenuItem, TextField, Button } from "@mui/material";
+import { IconButton, Select, MenuItem, Button, createTheme, ThemeProvider } from "@mui/material";
 import { exportToCsv } from "../../utils/exportToCsv";
 import { exportToPng } from "../../utils/exportToPng";
 import { DataGridHeader } from "../../components/DataGrid/DataGridHeader";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 // Define the TypeScript interface for the table rows
 interface Container {
@@ -220,24 +223,60 @@ export default function PurchaseOrder() {
         if (isEditing && editedData) {
           return (
             <div style={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
-              <TextField
-                type="date"
-                value={editedData.arrivalDate}
-                onChange={(e) =>
-                  setEditedData({ ...editedData, arrivalDate: e.target.value })
-                }
-                size="small"
-                sx={{
-                  '& .MuiInputBase-root': {
-                    color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
-                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <ThemeProvider theme={createTheme({
+                  palette: {
+                    mode: isDark ? 'dark' : 'light',
+                    primary: {
+                      main: isDark ? '#ffffff' : '#1976d2',
+                    },
                   },
-                  '& .MuiInputBase-input': {
-                    padding: '4px 8px',
-                    fontSize: '0.875rem',
+                  components: {
+                    MuiOutlinedInput: {
+                      styleOverrides: {
+                        input: {
+                          color: isDark ? '#ffffff' : 'rgb(31 41 55)',
+                          '&::placeholder': {
+                            color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(31, 41, 55, 0.5)',
+                            opacity: 1,
+                          },
+                        },
+                        root: {
+                          color: isDark ? '#ffffff' : 'rgb(31 41 55)',
+                          backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+                          '& input': {
+                            color: isDark ? '#ffffff' : 'rgb(31 41 55)',
+                          },
+                        },
+                        notchedOutline: {
+                          borderColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)',
+                        },
+                      },
+                    },
                   },
-                }}
-              />
+                })}>
+                  <DatePicker
+                    format="MM/dd/yyyy"
+                    value={editedData.arrivalDate ? new Date(editedData.arrivalDate) : null}
+                    onChange={(newDate: Date | null) => {
+                      if (newDate) {
+                        const dateString = newDate.toISOString().split('T')[0];
+                        setEditedData({ ...editedData, arrivalDate: dateString });
+                      }
+                    }}
+                    slotProps={{
+                      textField: {
+                        size: "small",
+                        sx: {
+                          '& input': {
+                            color: isDark ? '#ffffff' : 'rgb(31 41 55)',
+                          },
+                        },
+                      },
+                    }}
+                  />
+                </ThemeProvider>
+              </LocalizationProvider>
             </div>
           );
         }
@@ -398,10 +437,10 @@ export default function PurchaseOrder() {
         <DataGridHeader title="Purchase Order Report" />
 
         <div className="flex items-center gap-2">
-          <Button variant="contained" onClick={() => exportToCsv(tableData, `Purchase-Order-Report-${new Date().toISOString().split('T')[0]}.csv`)}>Export to CSV</Button>
+          <Button variant="contained" onClick={() => exportToCsv(tableData, `Purchase-Order-Report-${new Date().toISOString().split('T')[0]}.csv`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to CSV</Button>
           <Button variant="contained" onClick={() => exportToPng(tableData.map(row => ({
             ...row,
-          })), `Purchase-Order-Report-${new Date().toISOString().split('T')[0]}.png`)}>Export to PNG</Button>
+          })), `Purchase-Order-Report-${new Date().toISOString().split('T')[0]}.png`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to PNG</Button>
         </div>
       </div>
       <DataGrid

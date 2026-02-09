@@ -6,8 +6,8 @@ const SummaryDashboardPage = () => {
   return (
     <>
       <PageMeta
-        title="Summary Dashboard | Linworks"
-        description="Summary Dashboard for Linworks"
+        title="Summary Dashboard | SCM Dashboard"
+        description="Summary Dashboard for SCM"
       />
       <div className="w-full max-w-full overflow-hidden">
         <SummaryDashboardView />

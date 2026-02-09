@@ -25,7 +25,7 @@ export const navItems: NavItem[] = [
   },
   {
     icon: <CalenderIcon />,
-    name: "Linworks Files Upload",
+    name: "Linnworks Files Upload",
     path: "/file-upload"
   },
   {

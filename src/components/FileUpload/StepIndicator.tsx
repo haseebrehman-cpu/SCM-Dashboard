@@ -24,7 +24,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
         {/* Step 1 */}
         <div className="flex items-center">
           <div
-            className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300 ${
+            className={`flex items-center justify-center w-20 h-12 rounded-full border-2 transition-all duration-300 ${
               currentStep >= 1
                 ? 'bg-brand-500 border-brand-500 text-white'
                 : 'bg-gray-100 border-gray-300 text-gray-400 dark:bg-gray-800 dark:border-gray-700'
@@ -33,7 +33,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
             {file1Status === 'completed' ? (
               <CheckCircleIcon className="w-6 h-6" />
             ) : (
-              <span className="text-sm font-semibold">1</span>
+              <span className="text-sm font-semibold">Step 1</span>
             )}
           </div>
           <div className={`ml-3 ${currentStep >= 1 ? 'text-gray-900 dark:text-white' : 'text-gray-400'}`}>
@@ -54,7 +54,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
         {/* Step 2 */}
         <div className="flex items-center">
           <div
-            className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300 ${
+            className={`flex items-center justify-center w-20 h-12 rounded-full border-2 transition-all duration-300 ${
               currentStep >= 2 && file1Status === 'completed'
                 ? 'bg-brand-500 border-brand-500 text-white'
                 : 'bg-gray-100 border-gray-300 text-gray-400 dark:bg-gray-800 dark:border-gray-700'
@@ -63,7 +63,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
             {file2Status === 'completed' ? (
               <CheckCircleIcon className="w-6 h-6" />
             ) : (
-              <span className="text-sm font-semibold">2</span>
+              <span className="text-sm font-semibold">Step 2</span>
             )}
           </div>
           <div
@@ -88,7 +88,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
         {/* Step 3 */}
         <div className="flex items-center">
           <div
-            className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300 ${
+            className={`flex items-center justify-center w-20 h-12 rounded-full border-2 transition-all duration-300 ${
               currentStep >= 3 && file2Status === 'completed'
                 ? 'bg-brand-500 border-brand-500 text-white'
                 : 'bg-gray-100 border-gray-300 text-gray-400 dark:bg-gray-800 dark:border-gray-700'
@@ -97,7 +97,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
             {file3Status === 'completed' ? (
               <CheckCircleIcon className="w-6 h-6" />
             ) : (
-              <span className="text-sm font-semibold">3</span>
+              <span className="text-sm font-semibold">Step 3</span>
             )}
           </div>
           <div

@@ -49,9 +49,9 @@ const FileUpload: React.FC = () => {
   const dropzone1 = useDropzone({
     onDrop: onDropStep1,
     accept: {
-      'application/pdf': ['.pdf'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
-      'application/vnd.ms-excel': ['.xls'],
+      // 'application/pdf': ['.pdf'],
+      // 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+      // 'application/vnd.ms-excel': ['.xls'],
       'text/csv': ['.csv'],
     },
     multiple: true,
@@ -62,9 +62,9 @@ const FileUpload: React.FC = () => {
   const dropzone2 = useDropzone({
     onDrop: onDropStep2,
     accept: {
-      'application/pdf': ['.pdf'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
-      'application/vnd.ms-excel': ['.xls'],
+      // 'application/pdf': ['.pdf'],
+      // 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+      // 'application/vnd.ms-excel': ['.xls'],
       'text/csv': ['.csv'],
     },
     multiple: true,
@@ -75,9 +75,9 @@ const FileUpload: React.FC = () => {
   const dropzone3 = useDropzone({
     onDrop: onDropStep3,
     accept: {
-      'application/pdf': ['.pdf'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
-      'application/vnd.ms-excel': ['.xls'],
+      // 'application/pdf': ['.pdf'],
+      // 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+      // 'application/vnd.ms-excel': ['.xls'],
       'text/csv': ['.csv'],
     },
     multiple: false, // Only one file allowed in step 3
@@ -115,7 +115,6 @@ const FileUpload: React.FC = () => {
   };
 
   const handleComplete = () => {
-    // Add all files to logs only when all steps are completed
     if (file1?.files) {
       addFileLogs(file1.files, 1);
     }
@@ -126,10 +125,13 @@ const FileUpload: React.FC = () => {
       addFileLogs(file3.files, 3);
     }
 
-    // Handle completion logic here
-    console.log('Files uploaded:', { file1, file2, file3 });
     showToast.success('Files uploaded successfully');
-    // You can add API call here
+
+    // Reset all uploads
+    setFile1(null);
+    setFile2(null); 
+    setFile3(null);
+    setCurrentStep(1);
   };
 
 
@@ -150,7 +152,7 @@ const FileUpload: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-2">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-            Linworks Files Upload
+            Linnworks Files Upload
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Upload your files in three simple steps

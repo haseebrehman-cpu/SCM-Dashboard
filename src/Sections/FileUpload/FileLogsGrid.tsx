@@ -8,7 +8,7 @@ import { useFileUploadLogs } from '../../context/FileUploadContext';
 import { exportToCsv } from '../../utils/exportToCsv';
 import { exportToPng } from '../../utils/exportToPng';
 
-const FileLogsGrid = () => {  
+const FileLogsGrid = () => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const { fileLogs, removeFileLog } = useFileUploadLogs();
@@ -36,173 +36,147 @@ const FileLogsGrid = () => {
     () => {
 
       return [
-      {
-        field: 'fileName',
-        headerName: 'File Name',
-        flex: 1.2,
-        minWidth: 180,
-        sortable: true,
-        filterable: true,
-        headerAlign: 'center',
-        align: 'left',
-        renderHeader: () => (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-            <span>File Name</span>
-            <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-          </div>
-        ),
-      },
-      {
-        field: 'uploadedDate',
-        headerName: 'Upload Date',
-        flex: 0.9,
-        minWidth: 140,
-        sortable: true,
-        filterable: true,
-        headerAlign: 'center',
-        align: 'center',
-        renderHeader: () => (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-            <span>Upload Date</span>
-            <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-          </div>
-        ),
-      },
-      {
-        field: 'uploadedBy',
-        headerName: 'Uploaded By',
-        flex: 0.9,
-        minWidth: 140,
-        sortable: true,
-        filterable: true,
-        headerAlign: 'center',
-        align: 'center',
-        renderHeader: () => (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-            <span>Uploaded By</span>
-            <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-          </div>
-        ),
-      },
-      {
-        field: 'fileSize',
-        headerName: 'File Size',
-        flex: 0.8,
-        minWidth: 100,
-        sortable: true,
-        filterable: true,
-        headerAlign: 'center',
-        align: 'center',
-        renderHeader: () => (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-            <span>File Size</span>
-            <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-          </div>
-        ),
-      },
-      {
-        field: 'fileType',
-        headerName: 'Type',
-        flex: 0.7,
-        minWidth: 70,
-        sortable: true,
-        filterable: true,
-        headerAlign: 'center',
-        align: 'center',
-        renderHeader: () => (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-            <span>Type</span>
-            <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-          </div>
-        ),
-      },
-      {
-        field: 'stepNumber',
-        headerName: 'Step',
-        flex: 0.6,
-        minWidth: 60,
-        sortable: true,
-        filterable: true,
-        headerAlign: 'center',
-        align: 'center',
-        renderHeader: () => (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-            <span>Step</span>
-            <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-          </div>
-        ),
-      },
-      {
-        field: 'status',
-        headerName: 'Status',
-        flex: 0.9,
-        minWidth: 130,
-        sortable: true,
-        filterable: true,
-        headerAlign: 'center',
-        align: 'center',
-        renderHeader: () => (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-            <span>Status</span>
-            <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-          </div>
-        ),
-        renderCell: (params) => {
-     
-          return (
-            <div
-              style={{
-                padding: '0 12px',
-                borderRadius: '6px',
-                backgroundColor: params.value === 'completed' ? (isDark ? '#10b981' : '#059669') : params.value === 'processing' ? (isDark ? '#f59e0b' : '#d97706') : (isDark ? '#ef4444' : '#dc2626'),
-                color: '#fff',
-                fontWeight: 500,
-                fontSize: '0.875rem',
-                textTransform: 'capitalize',
-                display: 'inline-block',
-              }}
-            >
-              {params.value}
+        {
+          field: 'fileName',
+          headerName: 'File Name',
+          flex: 1.2,
+          minWidth: 180,
+          sortable: true,
+          filterable: true,
+          headerAlign: 'center',
+          align: 'left',
+          renderHeader: () => (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+              <span>File Name</span>
+              <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
             </div>
-          );
+          ),
         },
-      },
-      {
-        field: 'actions',
-        type: 'actions',
-        headerName: 'Actions',
-        flex: 0.7,
-        minWidth: 100,
-        sortable: false,
-        filterable: false,
-        headerAlign: 'center',
-        align: 'center',
-        getActions: (params) => [
-          <GridActionsCellItem
-            key="download"
-            icon={
-              <IconButton size="small" title="Download">
-                <DownloadIcon className="w-4 h-4" />
-              </IconButton>
-            }
-            label="Download"
-            onClick={() => handleDownload(params.id as number)}
-          />,
-          <GridActionsCellItem
-            key="delete"
-            icon={
-              <IconButton size="small" title="Delete">
-                <TrashBinIcon className="w-4 h-4" />
-              </IconButton>
-            }
-            label="Delete"
-            onClick={() => handleDelete(params.id as number)}
-          />,
-        ],
-      },
-    ];
+        {
+          field: 'uploadedDate',
+          headerName: 'Upload Date',
+          flex: 0.9,
+          minWidth: 140,
+          sortable: true,
+          filterable: true,
+          headerAlign: 'center',
+          align: 'center',
+          renderHeader: () => (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+              <span>Upload Date</span>
+              <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
+            </div>
+          ),
+        },
+        {
+          field: 'uploadedBy',
+          headerName: 'Uploaded By',
+          flex: 0.9,
+          minWidth: 140,
+          sortable: true,
+          filterable: true,
+          headerAlign: 'center',
+          align: 'center',
+          renderHeader: () => (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+              <span>Uploaded By</span>
+              <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
+            </div>
+          ),
+        },
+        // {
+        //   field: 'fileSize',
+        //   headerName: 'File Size',
+        //   flex: 0.8,
+        //   minWidth: 100,
+        //   sortable: true,
+        //   filterable: true,
+        //   headerAlign: 'center',
+        //   align: 'center',
+        //   renderHeader: () => (
+        //     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+        //       <span>File Size</span>
+        //       <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
+        //     </div>
+        //   ),
+        // },
+        {
+          field: 'rowCount',
+          headerName: 'Row Count',
+          flex: 0.7,
+          minWidth: 100,
+          sortable: true,
+          filterable: true,
+          headerAlign: 'center',
+          align: 'center',
+          renderHeader: () => (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+              <span>Row Count</span>
+              <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
+            </div>
+          ),
+          renderCell: (params) => {
+            // Display the row count from the data
+            const rowCount = params.row.rowCount;
+            return <span style={{ fontWeight: 500 }}>{rowCount !== undefined && rowCount !== null ? rowCount : '-'}</span>;
+          },
+        },
+        {
+          field: 'stepNumber',
+          headerName: 'Step',
+          flex: 0.7,
+          minWidth: 80,
+          sortable: true,
+          filterable: true,
+          headerAlign: 'center',
+          align: 'center',
+          renderHeader: () => (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+              <span>Step</span>
+              <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
+            </div>
+          ),
+          renderCell: (params) => {
+            const stepNumber = params.value;
+            return <span>{`Step ${stepNumber}`}</span>;
+          },
+        },
+        {
+          field: 'actions',
+          type: 'actions',
+          headerName: 'Actions',
+          flex: 0.7,
+          minWidth: 100,
+          sortable: false,
+          filterable: false,
+          headerAlign: 'center',
+          align: 'center',
+          getActions: (params) => [
+            <GridActionsCellItem
+              key="download"
+              icon={
+                <IconButton size="small" title="Download">
+                  <DownloadIcon className="w-4 h-4" />
+                </IconButton>
+              }
+              label="Download"
+              onClick={() => handleDownload(params.id as number)}
+            />,
+            <GridActionsCellItem
+              key="delete"
+              icon={
+                <IconButton size="small" title="Delete">
+                  <TrashBinIcon className="w-4 h-4" />
+                </IconButton>
+              }
+              label="Delete"
+              onClick={() => handleDelete(params.id as number)}
+            />,
+          ],
+        },
+      ];
     },
-    [isDark, handleDelete, handleDownload]
+    [handleDelete, handleDownload]
   );
 
   return (
@@ -211,8 +185,8 @@ const FileLogsGrid = () => {
         <div className="flex items-center justify-between mb-4">
           <DataGridHeader title="File Upload Logs" />
           <div className="flex items-center gap-2">
-            <Button variant="contained" onClick={() => exportToCsv(fileLogs, `File-Upload-Logs-${new Date().toISOString().split('T')[0]}.csv`)}>Export to CSV</Button>
-            <Button variant="contained" onClick={() => exportToPng(fileLogs, `File-Upload-Logs-${new Date().toISOString().split('T')[0]}.png`)}>Export to PNG</Button>
+            <Button variant="contained" onClick={() => exportToCsv(fileLogs, `File-Upload-Logs-${new Date().toISOString().split('T')[0]}.csv`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to CSV</Button>
+            <Button variant="contained" onClick={() => exportToPng(fileLogs, `File-Upload-Logs-${new Date().toISOString().split('T')[0]}.png`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to PNG</Button>
           </div>
         </div>
 
