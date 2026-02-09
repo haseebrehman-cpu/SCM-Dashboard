@@ -6,14 +6,14 @@ import { UploadedFile } from '../components/FileUpload/types';
  * Validation functions (outside component to avoid re-creation and dependency issues)
  */
 const validateWarehouseCode = (files: File[]): boolean => {
-  const warehousePrefixes = ['UK-', 'US-', 'DE-', 'CA-'];
+  const warehousePrefixes = ['UK_', 'US_', 'DE_', 'CA_'];
   const invalidFiles = files.filter(
     (file) => !warehousePrefixes.some((prefix) => file.name.toUpperCase().startsWith(prefix))
   );
 
   if (invalidFiles.length > 0) {
     const invalidNames = invalidFiles.map((f) => f.name).join(', ');
-    const errorMsg = `File names must start with warehouse code (UK-, US-, DE-, CA-). Invalid: ${invalidNames}`;
+    const errorMsg = `File names must start with warehouse code (UK_, US_, DE_, CA_). Invalid: ${invalidNames}`;
     toast.error(errorMsg);
     return false;
   }
