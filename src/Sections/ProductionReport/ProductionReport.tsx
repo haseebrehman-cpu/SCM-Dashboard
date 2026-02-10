@@ -4,7 +4,6 @@ import { useTheme } from "../../context/ThemeContext";
 import { useState, useMemo } from "react";
 import { MenuItem, Select, FormControl, InputLabel, SelectChangeEvent, Button } from "@mui/material";
 import { exportToCsv } from "../../utils/exportToCsv";
-import { exportToPng } from "../../utils/exportToPng";
 import { DataGridHeader } from "../../components/DataGrid/DataGridHeader";
 
 // Warehouse types
@@ -284,7 +283,7 @@ export default function ProductionReport() {
         renderCell: (params) => {
           const status = params.value as "Active" | "Inactive" | "Pending";
           const colorMap = { Active: "success", Inactive: "error", Pending: "warning" } as const;
-          return <Badge size="sm" color={colorMap[status]}>{status}</Badge>;
+          return <Badge size="sm" color={colorMap[status]}>Retail</Badge>;
         },
       },
       { field: "categoryName", headerName: "Category Name", width: 140, sortable: true, filterable: true },
@@ -292,29 +291,48 @@ export default function ProductionReport() {
       { field: "itemTitle", headerName: "Item Title", flex: 1, minWidth: 200, sortable: true, filterable: true },
     ];
 
-    const warehouse = selectedWarehouse; // e.g. "UK"
+    const warehouse = selectedWarehouse;
 
     const monthsData = [
-      { monthCode: "jan", prefix: "Jan" },
-      { monthCode: "feb", prefix: "Feb" },
-      { monthCode: "mar", prefix: "Mar" },
-      { monthCode: "apr", prefix: "Apr" },
-      { monthCode: "may", prefix: "May" },
-      { monthCode: "jun", prefix: "Jun" },
-      { monthCode: "jul", prefix: "Jul" },
-      { monthCode: "aug", prefix: "Aug" },
-      { monthCode: "sep", prefix: "Sep" },
-      { monthCode: "oct", prefix: "Oct" },
-      { monthCode: "nov", prefix: "Nov" },
-      { monthCode: "dec", prefix: "Dec" },
+      { monthCode: "January", prefix: "Jan" },
+      { monthCode: "February", prefix: "Feb" },
+      { monthCode: "March", prefix: "Mar" },
+      { monthCode: "April", prefix: "Apr" },
+      { monthCode: "May", prefix: "May" },
+      { monthCode: "June", prefix: "Jun" },
+      { monthCode: "July", prefix: "Jul" },
+      { monthCode: "August", prefix: "Aug" },
+      { monthCode: "September", prefix: "Sep" },
+      { monthCode: "October", prefix: "Oct" },
+      { monthCode: "November", prefix: "Nov" },
+      { monthCode: "December", prefix: "Dec" },
     ];
+
+    // ────────────────────────────────────────────────
+    // Determine which months to show
+    // ────────────────────────────────────────────────
+    const now = new Date();
+    const currentMonthNumber = now.getMonth() + 1;
+
+    let monthsToShow: typeof monthsData = [];
+
+    if (currentMonthNumber <= 4) {
+      // Jan–Apr → only Q1
+      monthsToShow = monthsData.slice(0, 4);
+    } else if (currentMonthNumber <= 8) {
+      // May–Aug → Q1 + Q2
+      monthsToShow = monthsData.slice(0, 8);
+    } else {
+      // Sep–Dec → full year
+      monthsToShow = monthsData;
+    }
 
     const dynamicColumns: GridColDef[] = [];
 
-    monthsData.forEach((month) => {
-      // 1. Remaining Opening for this month
+    monthsToShow.forEach((month) => {
+      // 1. Remaining Opening
       dynamicColumns.push({
-        field: `${month.monthCode}Opening`,               // ← new field name
+        field: `${month.monthCode}Opening`,
         headerName: `${warehouse} ${month.prefix} ${currentYear} Remaining Opening`,
         width: 220,
         sortable: true,
@@ -344,7 +362,7 @@ export default function ProductionReport() {
         ),
       });
 
-      // 3. Containers (dynamic)
+      // 3. Containers
       for (let i = 1; i <= containerNumbers.length; i++) {
         dynamicColumns.push({
           field: `${month.monthCode}Container${i}`,
@@ -407,13 +425,57 @@ export default function ProductionReport() {
         ),
       });
 
-      // 6. Quarter-end remaining closed (after Apr, Aug, Dec)
-      if (['apr', 'aug', 'dec'].includes(month.monthCode)) {
-        const dateStr = month.monthCode === 'apr' ? '30-04' : '31-08';
-        const fullDate = month.monthCode === 'dec' ? '31-12' : dateStr;
+      // 6. Quarter-end "Remaining Closed" — only show for completed quarters
+      if (month.monthCode === "April" && currentMonthNumber < 4) {
         dynamicColumns.push({
-          field: `closedRem${month.monthCode}`,
-          headerName: `REMAINING CLOSED ${fullDate}-${currentYear}`,
+          field: `closedRemApril`,
+          headerName: `REMAINING CLOSED 30-04-${currentYear}`,
+          width: 240,
+          sortable: true,
+          filterable: false,
+          headerAlign: "center",
+          align: "center",
+          renderCell: (params) => (
+            <span style={{
+              fontWeight: 700,
+              color: isDark ? '#fb7185' : '#e11d48',
+              backgroundColor: isDark ? 'rgba(251,113,133,0.15)' : 'rgba(225,29,72,0.12)',
+              padding: '6px 12px',
+              borderRadius: '6px',
+            }}>
+              {params.value ?? '0'}
+            </span>
+          ),
+        });
+      }
+
+      if (month.monthCode === "August" && currentMonthNumber < 8) {
+        dynamicColumns.push({
+          field: `closedRemAugust`,
+          headerName: `REMAINING CLOSED 31-08-${currentYear}`,
+          width: 240,
+          sortable: true,
+          filterable: false,
+          headerAlign: "center",
+          align: "center",
+          renderCell: (params) => (
+            <span style={{
+              fontWeight: 700,
+              color: isDark ? '#fb7185' : '#e11d48',
+              backgroundColor: isDark ? 'rgba(251,113,133,0.15)' : 'rgba(225,29,72,0.12)',
+              padding: '6px 12px',
+              borderRadius: '6px',
+            }}>
+              {params.value ?? '0'}
+            </span>
+          ),
+        });
+      }
+
+      if (month.monthCode === "December" && currentMonthNumber <= 12) {
+        dynamicColumns.push({
+          field: `closedRemDecember`,
+          headerName: `REMAINING CLOSED 31-12-${currentYear}`,
           width: 240,
           sortable: true,
           filterable: false,
@@ -434,29 +496,11 @@ export default function ProductionReport() {
       }
     });
 
-    // Final overall remaining
-    // const finalRemColumn: GridColDef = {
-    //   field: "remWarehouse",
-    //   headerName: `Rem ${warehouse}`,
-    //   width: 110,
-    //   sortable: true,
-    //   filterable: false,
-    //   headerAlign: "center",
-    //   align: "center",
-    //   renderCell: (params) => (
-    //     <span style={{ fontWeight: 600, color: isDark ? '#60a5fa' : '#2563eb' }}>
-    //       {params.value ?? '0'}
-    //     </span>
-    //   ),
-    // };
-
     return [
       ...baseColumns,
       ...dynamicColumns,
-      // finalRemColumn,
     ];
-  }, [selectedWarehouse, containerNumbers?.length, currentYear, isDark]);
-
+  }, [selectedWarehouse, containerNumbers?.length, isDark, currentYear]);
 
   return (
     <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
@@ -535,9 +579,6 @@ export default function ProductionReport() {
           </Select>
 
           <Button variant="contained" onClick={() => exportToCsv(tableData, `Production-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.csv`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to CSV</Button>
-          <Button variant="contained" onClick={() => exportToPng(tableData.map(row => ({
-            ...row,
-          })), `Production-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.png`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to PNG</Button>
         </FormControl>
       </div>
 

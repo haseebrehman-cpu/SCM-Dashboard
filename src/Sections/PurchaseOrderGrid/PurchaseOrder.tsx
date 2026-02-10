@@ -4,7 +4,6 @@ import { useTheme } from "../../context/ThemeContext";
 import { useState } from "react";
 import { IconButton, Select, MenuItem, Button, createTheme, ThemeProvider } from "@mui/material";
 import { exportToCsv } from "../../utils/exportToCsv";
-import { exportToPng } from "../../utils/exportToPng";
 import { DataGridHeader } from "../../components/DataGrid/DataGridHeader";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -14,6 +13,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 interface Container {
   id: number;
   containerName: string;
+  referenceContainer: string;
   containerNumber: string;
   containerRegion: string;
   departureDate: string;
@@ -26,6 +26,7 @@ const rows: Container[] = [
   {
     id: 1,
     containerName: "Container Alpha",
+    referenceContainer: "Ref 1",
     containerNumber: "CSNU1234567",
     containerRegion: "North America",
     departureDate: "2026-01-15",
@@ -35,6 +36,7 @@ const rows: Container[] = [
   {
     id: 2,
     containerName: "Container Beta",
+    referenceContainer: "Ref 2",
     containerNumber: "MSCU9876543",
     containerRegion: "Europe",
     departureDate: "2026-01-20",
@@ -44,6 +46,7 @@ const rows: Container[] = [
   {
     id: 3,
     containerName: "Container Gamma",
+    referenceContainer: "Ref 3",
     containerNumber: "HLCU5551234",
     containerRegion: "Asia Pacific",
     departureDate: "2026-01-18",
@@ -53,6 +56,7 @@ const rows: Container[] = [
   {
     id: 4,
     containerName: "Container Delta",
+    referenceContainer: "Ref 4",
     containerNumber: "TCLU7778889",
     containerRegion: "Middle East",
     departureDate: "2026-01-25",
@@ -62,6 +66,7 @@ const rows: Container[] = [
   {
     id: 5,
     containerName: "Container Epsilon",
+    referenceContainer: "Ref 5",
     containerNumber: "OOLU3334445",
     containerRegion: "South America",
     departureDate: "2026-01-10",
@@ -71,6 +76,7 @@ const rows: Container[] = [
   {
     id: 6,
     containerName: "Container Epsilon",
+    referenceContainer: "Ref 6",
     containerNumber: "OOLU3334445",
     containerRegion: "South America",
     departureDate: "2026-01-10",
@@ -80,6 +86,7 @@ const rows: Container[] = [
   {
     id: 7,
     containerName: "Container Epsilon",
+    referenceContainer: "Ref 7",
     containerNumber: "OOLU3334445",
     containerRegion: "South America",
     departureDate: "2026-01-10",
@@ -89,6 +96,7 @@ const rows: Container[] = [
   {
     id: 8,
     containerName: "Container Epsilon",
+    referenceContainer: "Ref 8",
     containerNumber: "OOLU3334445",
     containerRegion: "South America",
     departureDate: "2026-01-10",
@@ -98,6 +106,7 @@ const rows: Container[] = [
   {
     id: 9,
     containerName: "Container Epsilon",
+    referenceContainer: "Ref 9",
     containerNumber: "OOLU3334445",
     containerRegion: "South America",
     departureDate: "2026-01-10",
@@ -107,6 +116,7 @@ const rows: Container[] = [
   {
     id: 10,
     containerName: "Container Epsilon",
+    referenceContainer: "Ref 10",
     containerNumber: "OOLU3334445",
     containerRegion: "South America",
     departureDate: "2026-01-10",
@@ -116,6 +126,7 @@ const rows: Container[] = [
   {
     id: 11,
     containerName: "Container Epsilon",
+    referenceContainer: "Ref 11",
     containerNumber: "OOLU3334445",
     containerRegion: "South America",
     departureDate: "2026-01-10",
@@ -172,7 +183,15 @@ export default function PurchaseOrder() {
   const columns: GridColDef[] = [
     {
       field: "containerName",
-      headerName: "Container Name",
+      headerName: "Container",
+      flex: 1,
+      minWidth: 180,
+      sortable: true,
+      filterable: true,
+    },
+    {
+      field: "referenceContainer",
+      headerName: "Reference Container",
       flex: 1,
       minWidth: 180,
       sortable: true,
@@ -438,9 +457,6 @@ export default function PurchaseOrder() {
 
         <div className="flex items-center gap-2">
           <Button variant="contained" onClick={() => exportToCsv(tableData, `Purchase-Order-Report-${new Date().toISOString().split('T')[0]}.csv`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to CSV</Button>
-          <Button variant="contained" onClick={() => exportToPng(tableData.map(row => ({
-            ...row,
-          })), `Purchase-Order-Report-${new Date().toISOString().split('T')[0]}.png`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to PNG</Button>
         </div>
       </div>
       <DataGrid

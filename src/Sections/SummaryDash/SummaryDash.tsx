@@ -8,7 +8,6 @@ import { DataGridHeader } from "../../components/DataGrid/DataGridHeader";
 import React from "react";
 import { exportToCsv } from "../../utils/exportToCsv";
 import { Button } from "@mui/material";
-import { exportToPng } from "../../utils/exportToPng";
 
 /**
  * Summary Dashboard Grid Component
@@ -107,7 +106,6 @@ const SummaryDashGrid: React.FC = React.memo(() => {
         <DataGridHeader title="Summary Dashboard Report" />
         <div className="flex items-center gap-2">
           <Button variant="contained" onClick={() => exportToCsv(rows, `Summary-Dashboard-Report-${new Date().toISOString().split('T')[0]}.csv`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to CSV</Button>
-          <Button variant="contained" onClick={() => exportToPng(rows, `Summary-Dashboard-Report-${new Date().toISOString().split('T')[0]}.png`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to PNG</Button>
         </div>
       </div>
 

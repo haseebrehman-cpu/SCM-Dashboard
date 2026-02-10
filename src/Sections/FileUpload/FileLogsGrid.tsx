@@ -6,7 +6,6 @@ import { IconButton, Button } from '@mui/material';
 import { TrashBinIcon, DownloadIcon } from '../../icons';
 import { useFileUploadLogs } from '../../context/FileUploadContext';
 import { exportToCsv } from '../../utils/exportToCsv';
-import { exportToPng } from '../../utils/exportToPng';
 
 const FileLogsGrid = () => {
   const { theme } = useTheme();
@@ -186,7 +185,6 @@ const FileLogsGrid = () => {
           <DataGridHeader title="File Upload Logs" />
           <div className="flex items-center gap-2">
             <Button variant="contained" onClick={() => exportToCsv(fileLogs, `File-Upload-Logs-${new Date().toISOString().split('T')[0]}.csv`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to CSV</Button>
-            <Button variant="contained" onClick={() => exportToPng(fileLogs, `File-Upload-Logs-${new Date().toISOString().split('T')[0]}.png`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to PNG</Button>
           </div>
         </div>
 
