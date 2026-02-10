@@ -49,7 +49,6 @@ export default function StockPerformance() {
           selectedWarehouse={selectedWarehouse}
           isDark={isDark}
           onWarehouseChange={handleWarehouseChange}
-          onUploadClick={() => { }} // No upload functionality for this report
           onExportClick={handleExport}
         />
       </div>
