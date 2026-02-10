@@ -1,7 +1,7 @@
 import StockPerformanceView from '../../Views/StockPerformance'
 import PageMeta from '../../components/common/PageMeta'
 
-const StockPerfomanceReport = () => {
+const StockPerformanceReport = () => {
   return (
     <div className="w-full max-w-full overflow-hidden">
       <PageMeta
@@ -13,4 +13,4 @@ const StockPerfomanceReport = () => {
   )
 }
 
-export default StockPerfomanceReport
+export default StockPerformanceReport

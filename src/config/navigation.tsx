@@ -41,7 +41,7 @@ export const navItems: NavItem[] = [
   {
     icon: <UserCircleIcon />,
     name: "Stock Performance Report",
-    path: "/stock-perfomance-report",
+    path: "/stock-performance-report",
   },
   {
     name: "Summary Dashboard",

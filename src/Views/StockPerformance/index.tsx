@@ -1,4 +1,4 @@
-import StockPerformance from '../../Sections/StockPerformance/StockPerfomance'
+import StockPerformance from '../../Sections/StockPerformance/StockPerformance'
 
 const StockPerformanceView = () => {
   return (

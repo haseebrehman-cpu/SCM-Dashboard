@@ -13,7 +13,7 @@ const AppLayout = lazy(() => import("./layout/AppLayout"));
 const Home = lazy(() => import("./pages/Dashboard/Home"));
 const PurchaseOrderPage = lazy(() => import("./pages/Dashboard/PurchaseOrder"));
 const ProductionRemainingReportPage = lazy(() => import("./pages/Dashboard/ProductionRemainingReport"));
-const StockPerfomanceReportPage = lazy(() => import("./pages/Dashboard/StockPerfomanceReport"));
+const StockPerformanceReportPage = lazy(() => import("./pages/Dashboard/StockPerformanceReport"));
 const FileUploadPage = lazy(() => import("./pages/Dashboard/FileUploadPage"));
 const SummaryDashboardPage = lazy(() => import("./pages/Dashboard/SummaryDashboard"));
 
@@ -31,7 +31,7 @@ export default function App() {
                 <Route path="/purchase-order" element={<PurchaseOrderPage />} />
                 <Route path="/file-upload" element={<FileUploadPage />} />
                 <Route path="/production-remaining-report" element={<ProductionRemainingReportPage />} />
-                <Route path="/stock-perfomance-report" element={<StockPerfomanceReportPage />} />
+                <Route path="/stock-performance-report" element={<StockPerformanceReportPage />} />
                 <Route path="/summary-dashboard" element={<SummaryDashboardPage />} />
                 <Route path="/profile" element={<UserProfiles />} />
               </Route>
