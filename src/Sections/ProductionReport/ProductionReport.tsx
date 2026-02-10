@@ -333,21 +333,23 @@ export default function ProductionReport() {
     const dynamicColumns: GridColDef[] = [];
 
     monthsToShow.forEach((month) => {
-      // 1. Remaining Opening
-      dynamicColumns.push({
-        field: `${month.monthCode}Opening`,
-        headerName: `${warehouse} ${month.prefix} ${currentYear} Remaining Opening`,
-        width: 220,
-        sortable: true,
-        filterable: false,
-        headerAlign: "center",
-        align: "center",
-        renderCell: (params) => (
-          <span style={{ fontWeight: 600, color: isDark ? '#fbbf24' : '#d97706' }}>
-            {params.value ?? '0'}
-          </span>
-        ),
-      });
+      // 1. Remaining Opening - Only for January
+      if (month.monthCode === "January") {
+        dynamicColumns.push({
+          field: `${month.monthCode}Opening`,
+          headerName: `${warehouse} ${month.prefix} ${currentYear} Remaining Opening`,
+          width: 220,
+          sortable: true,
+          filterable: false,
+          headerAlign: "center",
+          align: "center",
+          renderCell: (params) => (
+            <span style={{ fontWeight: 600, color: isDark ? '#fbbf24' : '#d97706' }}>
+              {params.value ?? '0'}
+            </span>
+          ),
+        });
+      }
 
       // 2. Forecasted Order
       dynamicColumns.push({
@@ -505,6 +507,24 @@ export default function ProductionReport() {
     ];
   }, [selectedWarehouse, containerNumbers?.length, isDark, currentYear]);
 
+  const handleExport = () => {
+    if (!tableData || tableData.length === 0) {
+      return;
+    }
+
+    const csvData = tableData.map((row) => {
+      const csvRow: Record<string, string | number> = {};
+      columns.forEach((col) => {
+        const rawValue = row[col.field as keyof ProductionReportRow];
+        // Ensure strictly no undefined/null values in CSV
+        csvRow[col.headerName || col.field] = rawValue === undefined || rawValue === null ? '' : (rawValue as string | number);
+      });
+      return csvRow;
+    });
+
+    exportToCsv(csvData, `Production-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.csv`);
+  };
+
   return (
     <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
       {/* Header with title and warehouse selector */}
@@ -582,7 +602,7 @@ export default function ProductionReport() {
           </Select>
 
           <Button variant="contained" sx={{ borderRadius: '20px', fontSize: '12px' }} onClick={() => setIsDialogOpen(true)}>Upload File</Button>
-          <Button variant="contained" onClick={() => exportToCsv(tableData, `Production-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.csv`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to CSV</Button>
+          <Button variant="contained" onClick={handleExport} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to CSV</Button>
         </FormControl>
       </div>
 
