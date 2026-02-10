@@ -8,7 +8,7 @@ interface ProductionReportHeaderProps {
   selectedWarehouse: Warehouse;
   isDark: boolean;
   onWarehouseChange: (event: SelectChangeEvent<Warehouse>) => void;
-  onUploadClick: () => void;
+  onUploadClick ?: () => void;
   onExportClick: () => void;
 }
 
@@ -16,6 +16,7 @@ export const ProductionReportHeader: React.FC<ProductionReportHeaderProps> = ({
   selectedWarehouse,
   isDark,
   onWarehouseChange,
+  onUploadClick,
   onExportClick,
 }) => {
   return (
@@ -40,6 +41,13 @@ export const ProductionReportHeader: React.FC<ProductionReportHeaderProps> = ({
         ))}
       </Select>
 
+      <Button
+        variant="contained"
+        sx={{ borderRadius: '20px', fontSize: '12px' }}
+        onClick={onUploadClick}
+      >
+        Upload File
+      </Button>
       <Button
         variant="contained"
         onClick={onExportClick}
