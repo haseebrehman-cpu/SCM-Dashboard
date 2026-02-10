@@ -18,17 +18,19 @@ export const getDataGridStyles = (isDark: boolean) => ({
     borderColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
     color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
     backgroundColor: 'transparent',
+    fontSize: '12px'
   },
   '& .MuiDataGrid-columnHeaders': {
     borderColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
     backgroundColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
+    color: isDark ? "#fff" : '#000',
   },
   '& .MuiDataGrid-columnHeader': {
     backgroundColor: 'transparent',
   },
   '& .MuiDataGrid-columnHeaderTitle': {
     color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
-    fontWeight: 600,
+    fontSize: '12px'
   },
   '& .MuiDataGrid-footerContainer': {
     borderColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',

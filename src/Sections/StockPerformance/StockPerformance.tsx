@@ -2,7 +2,6 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useTheme } from "../../context/ThemeContext";
 import { useState, useMemo } from "react";
 import { SelectChangeEvent } from "@mui/material";
-import Badge from "../../components/ui/badge/Badge";
 import { exportToCsv } from "../../utils/exportToCsv";
 import { DataGridHeader } from "../../components/DataGrid/DataGridHeader";
 import { Warehouse } from './types';
@@ -53,16 +52,6 @@ export default function StockPerformance() {
           onUploadClick={() => { }} // No upload functionality for this report
           onExportClick={handleExport}
         />
-      </div>
-
-      <div className="mb-4 flex items-center gap-2">
-        <span className="text-sm text-gray-500 dark:text-gray-400">Showing data for:</span>
-        <Badge size="md" color="primary">
-          {selectedWarehouse} Warehouse
-        </Badge>
-        <span className="text-sm text-gray-500 dark:text-gray-400">
-          • {containers.length} Containers
-        </span>
       </div>
 
       <DataGrid

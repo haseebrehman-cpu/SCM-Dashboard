@@ -1,215 +1,40 @@
-import { useMemo, useCallback } from 'react';
-import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
+import { useMemo } from 'react';
+import { DataGrid } from '@mui/x-data-grid';
 import { useTheme } from '../../context/ThemeContext';
 import { DataGridHeader } from '../../components/DataGrid/DataGridHeader';
-import { IconButton, Button } from '@mui/material';
-import { TrashBinIcon } from '../../icons';
-import { useFileUploadLogs } from '../../context/FileUploadContext';
+import { Button } from '@mui/material';
 import { exportToCsv } from '../../utils/exportToCsv';
+import { getDataGridStyles } from '../ProductionReport/styles';
+import { generateFileLogColumns } from './logColumns';
+import { useFileLogActions } from './useFileLogActions';
+import React from 'react';
 
-const FileLogsGrid = () => {
+/**
+ * FileLogsGrid Component
+ * Displays a history of file uploads with bulk-deletion by date functionality.
+ * Refactored to follow SRP by separating logic into custom hooks and column generators.
+ */
+const FileLogsGrid: React.FC = React.memo(() => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  const { fileLogs, removeFileLogs } = useFileUploadLogs();
 
-  const handleDelete = useCallback((id: number) => {
-    const logToDelete = fileLogs.find(log => log.id === id);
-    if (!logToDelete) return;
+  const {
+    fileLogs,
+    handleDelete,
+    deleteButtonIds
+  } = useFileLogActions();
 
-    // Find all logs with the same uploadedDate
-    const logsToDelete = fileLogs.filter(log => log.uploadedDate === logToDelete.uploadedDate);
-    const idsToDelete = logsToDelete.map(log => log.id);
-
-    if (idsToDelete.length > 0) {
-      if (window.confirm(`Are you sure you want to delete ${idsToDelete.length} files uploaded on ${logToDelete.uploadedDate}?`)) {
-        removeFileLogs(idsToDelete);
-      }
-    }
-  }, [fileLogs, removeFileLogs]);
-
-  // const handleDownload = useCallback((id: number) => {
-  //   const log = fileLogs.find(l => l.id === id);
-  //   if (log) {
-  //     // Create download link for the file
-  //     const url = URL.createObjectURL(log.file);
-  //     const link = document.createElement('a');
-  //     link.href = url;
-  //     link.download = log.fileName;
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     document.body.removeChild(link);
-  //     URL.revokeObjectURL(url);
-  //   }
-  // }, [fileLogs]);
-
-  const deleteButtonIds = useMemo(() => {
-    const ids = new Set<number>();
-    const datesWithButton = new Set<string>();
-
-    fileLogs.forEach((log) => {
-      if (log.stepNumber === 1 && !datesWithButton.has(log.uploadedDate)) {
-        ids.add(log.id);
-        datesWithButton.add(log.uploadedDate);
-      }
-    });
-
-    return ids;
-  }, [fileLogs]);
-
-  const columns: GridColDef[] = useMemo(
-    () => {
-
-      return [
-        {
-          field: 'fileName',
-          headerName: 'File Name',
-          flex: 1.2,
-          minWidth: 180,
-          sortable: true,
-          filterable: true,
-          headerAlign: 'center',
-          align: 'left',
-          renderHeader: () => (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-              <span>File Name</span>
-              <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-            </div>
-          ),
-        },
-        {
-          field: 'uploadedDate',
-          headerName: 'Upload Date',
-          flex: 0.9,
-          minWidth: 140,
-          sortable: true,
-          filterable: true,
-          headerAlign: 'center',
-          align: 'center',
-          renderHeader: () => (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-              <span>Upload Date</span>
-              <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-            </div>
-          ),
-        },
-        {
-          field: 'uploadedBy',
-          headerName: 'Uploaded By',
-          flex: 0.9,
-          minWidth: 140,
-          sortable: true,
-          filterable: true,
-          headerAlign: 'center',
-          align: 'center',
-          renderHeader: () => (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-              <span>Uploaded By</span>
-              <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-            </div>
-          ),
-        },
-        // {
-        //   field: 'fileSize',
-        //   headerName: 'File Size',
-        //   flex: 0.8,
-        //   minWidth: 100,
-        //   sortable: true,
-        //   filterable: true,
-        //   headerAlign: 'center',
-        //   align: 'center',
-        //   renderHeader: () => (
-        //     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-        //       <span>File Size</span>
-        //       <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-        //     </div>
-        //   ),
-        // },
-        {
-          field: 'rowCount',
-          headerName: 'Row Count',
-          flex: 0.7,
-          minWidth: 100,
-          sortable: true,
-          filterable: true,
-          headerAlign: 'center',
-          align: 'center',
-          renderHeader: () => (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-              <span>Row Count</span>
-              <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-            </div>
-          ),
-          renderCell: (params) => {
-            // Display the row count from the data
-            const rowCount = params.row.rowCount;
-            return <span style={{ fontWeight: 500 }}>{rowCount !== undefined && rowCount !== null ? rowCount : '-'}</span>;
-          },
-        },
-        {
-          field: 'stepNumber',
-          headerName: 'Step',
-          flex: 0.7,
-          minWidth: 80,
-          sortable: true,
-          filterable: true,
-          headerAlign: 'center',
-          align: 'center',
-          renderHeader: () => (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-              <span>Step</span>
-              <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-            </div>
-          ),
-          renderCell: (params) => {
-            const stepNumber = params.value;
-            return <span>{`Step ${stepNumber}`}</span>;
-          },
-        },
-        {
-          field: 'actions',
-          type: 'actions',
-          headerName: 'Actions',
-          flex: 0.7,
-          minWidth: 100,
-          sortable: false,
-          filterable: false,
-          headerAlign: 'center',
-          align: 'center',
-          colspan: 9,
-          getActions: (params) => {
-            // Only show delete button for the first Step 1 file of each date group
-            if (!deleteButtonIds.has(params.id as number)) {
-              return [];
-            }
-
-            return [
-              // <GridActionsCellItem
-              //   key="download"
-              //   icon={
-              //     <IconButton size="small" title="Download">
-              //       <DownloadIcon className="w-4 h-4" />
-              //     </IconButton>
-              //   }
-              //   label="Download"
-              //   onClick={() => handleDownload(params.id as number)}
-              // />,
-              <GridActionsCellItem
-                key="delete"
-                icon={
-                  <IconButton size="small" title="Delete" aria-colspan={9}>
-                    <TrashBinIcon className="w-4 h-4" />
-                  </IconButton>
-                }
-                label="Delete"
-                onClick={() => handleDelete(params.id as number)}
-              />,
-            ];
-          },
-        },
-      ];
-    },
+  const columns = useMemo(
+    () => generateFileLogColumns({ handleDelete, deleteButtonIds }),
     [handleDelete, deleteButtonIds]
   );
+
+  const handleExport = () => {
+    exportToCsv(
+      fileLogs,
+      `File-Upload-Logs-${new Date().toISOString().split('T')[0]}.csv`
+    );
+  };
 
   return (
     <div className="w-full max-w-full overflow-hidden mt-2">
@@ -217,11 +42,16 @@ const FileLogsGrid = () => {
         <div className="flex items-center justify-between mb-4">
           <DataGridHeader title="File Upload Logs" />
           <div className="flex items-center gap-2">
-            <Button variant="contained" onClick={() => exportToCsv(fileLogs, `File-Upload-Logs-${new Date().toISOString().split('T')[0]}.csv`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to CSV</Button>
+            <Button
+              variant="contained"
+              onClick={handleExport}
+              sx={{ borderRadius: '20px', fontSize: '12px' }}
+            >
+              Export to CSV
+            </Button>
           </div>
         </div>
 
-        {/* DataGrid */}
         <DataGrid
           rows={fileLogs}
           columns={columns}
@@ -233,79 +63,13 @@ const FileLogsGrid = () => {
           }}
           autoHeight
           disableRowSelectionOnClick
-          sx={{
-            border: 'none',
-            backgroundColor: 'transparent',
-            width: '100%',
-            '& .MuiDataGrid-main': {
-              backgroundColor: 'transparent',
-            },
-            '& .MuiDataGrid-container--top [role=row]': {
-              backgroundColor: 'transparent',
-            },
-            '& .MuiDataGrid-virtualScroller': {
-              backgroundColor: 'transparent',
-            },
-            '& .MuiDataGrid-row': {
-              backgroundColor: 'transparent !important',
-            },
-            '& .MuiDataGrid-cell': {
-              borderColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
-              color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
-              backgroundColor: 'transparent',
-              '& .MuiDataGrid-cellContent': {
-                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
-              },
-            },
-            '& .MuiDataGrid-columnHeaders': {
-              borderColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
-              backgroundColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
-              color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
-            },
-            '& .MuiDataGrid-columnHeader': {
-              backgroundColor: 'transparent',
-              fontWeight: 600,
-            },
-            '& .MuiDataGrid-columnHeaderTitle': {
-              color: isDark ? 'rgb(255, 255, 255)' : 'rgb(31 41 55)',
-              fontWeight: 600,
-            },
-            '& .MuiDataGrid-footerContainer': {
-              borderColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
-              backgroundColor: 'transparent',
-            },
-            '& .MuiTablePagination-root': {
-              color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
-            },
-            '& .MuiIconButton-root': {
-              color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
-            },
-            '& .MuiDataGrid-row:hover': {
-              backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05) !important' : 'rgba(0, 0, 0, 0.04) !important',
-            },
-            '& .MuiDataGrid-selectedRowCount': {
-              color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
-            },
-            '& .MuiDataGrid-columnSeparator': {
-              color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgb(229 231 235)',
-            },
-            '& .MuiDataGrid-sortIcon': {
-              color: isDark ? '#000' : 'rgb(107 114 128)',
-            },
-            '& .MuiDataGrid-menuIconButton': {
-              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
-            },
-            '& .MuiDataGrid-iconButtonContainer': {
-              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
-            },
-            '& .MuiDataGrid-columnHeader .MuiIconButton-root': {
-              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
-            },
-          }}
+          sx={getDataGridStyles(isDark)}
         />
       </div>
     </div>
   );
-};
+});
+
+FileLogsGrid.displayName = 'FileLogsGrid';
 
 export default FileLogsGrid;

@@ -9,3 +9,4 @@ const StockPerformanceView = () => {
 }
 
 export default StockPerformanceView
+
