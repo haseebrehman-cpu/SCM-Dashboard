@@ -5,6 +5,7 @@ import { useState, useMemo } from "react";
 import { MenuItem, Select, FormControl, InputLabel, SelectChangeEvent, Button } from "@mui/material";
 import { exportToCsv } from "../../utils/exportToCsv";
 import { DataGridHeader } from "../../components/DataGrid/DataGridHeader";
+import { FileUploadDialog } from "./FileUploadDialog";
 
 // Warehouse types
 type Warehouse = "UK" | "DE" | "US" | "CA";
@@ -259,6 +260,8 @@ export default function ProductionReport() {
   const isDark = theme === "dark";
   const currentYear = new Date().getFullYear();
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   // Warehouse selection state
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>("UK");
 
@@ -509,7 +512,6 @@ export default function ProductionReport() {
         <DataGridHeader title="Production Remaining Report" />
 
         <FormControl
-          size="small"
           sx={{
             display: 'flex',
             flexDirection: 'row',
@@ -551,6 +553,7 @@ export default function ProductionReport() {
             label="Select Warehouse"
             onChange={handleWarehouseChange}
             size="small"
+            sx={{ fontSize: '10px' }}
           >
             <MenuItem value="UK">
               <div className="flex items-center gap-2">
@@ -578,13 +581,15 @@ export default function ProductionReport() {
             </MenuItem>
           </Select>
 
-          <Button variant="contained" sx={{ borderRadius: '20px', fontSize: '12px' }}>Upload File</Button>
+          <Button variant="contained" sx={{ borderRadius: '20px', fontSize: '12px' }} onClick={() => setIsDialogOpen(true)}>Upload File</Button>
           <Button variant="contained" onClick={() => exportToCsv(tableData, `Production-Report-${selectedWarehouse}-${new Date().toISOString().split('T')[0]}.csv`)} sx={{ borderRadius: '20px', fontSize: '12px' }}>Export to CSV</Button>
         </FormControl>
       </div>
 
+      {isDialogOpen && <FileUploadDialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} />}
+
       {/* Warehouse indicator badge */}
-      <div className="mb-4 flex items-center gap-2">
+      {/* <div className="mb-4 flex items-center gap-2">
         <span className="text-sm text-gray-500 dark:text-gray-400">Showing data for:</span>
         <Badge size="md" color="primary">
           {selectedWarehouse} Warehouse
@@ -592,7 +597,7 @@ export default function ProductionReport() {
         <span className="text-sm text-gray-500 dark:text-gray-400">
           • {containerNumbers.length} Containers
         </span>
-      </div>
+      </div> */}
 
       {/* DataGrid */}
       <DataGrid

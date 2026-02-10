@@ -3,32 +3,57 @@ import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { useTheme } from '../../context/ThemeContext';
 import { DataGridHeader } from '../../components/DataGrid/DataGridHeader';
 import { IconButton, Button } from '@mui/material';
-import { TrashBinIcon, DownloadIcon } from '../../icons';
+import { TrashBinIcon } from '../../icons';
 import { useFileUploadLogs } from '../../context/FileUploadContext';
 import { exportToCsv } from '../../utils/exportToCsv';
 
 const FileLogsGrid = () => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  const { fileLogs, removeFileLog } = useFileUploadLogs();
+  const { fileLogs, removeFileLogs } = useFileUploadLogs();
 
   const handleDelete = useCallback((id: number) => {
-    removeFileLog(id);
-  }, [removeFileLog]);
+    const logToDelete = fileLogs.find(log => log.id === id);
+    if (!logToDelete) return;
 
-  const handleDownload = useCallback((id: number) => {
-    const log = fileLogs.find(l => l.id === id);
-    if (log) {
-      // Create download link for the file
-      const url = URL.createObjectURL(log.file);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = log.fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+    // Find all logs with the same uploadedDate
+    const logsToDelete = fileLogs.filter(log => log.uploadedDate === logToDelete.uploadedDate);
+    const idsToDelete = logsToDelete.map(log => log.id);
+
+    if (idsToDelete.length > 0) {
+      if (window.confirm(`Are you sure you want to delete ${idsToDelete.length} files uploaded on ${logToDelete.uploadedDate}?`)) {
+        removeFileLogs(idsToDelete);
+      }
     }
+  }, [fileLogs, removeFileLogs]);
+
+  // const handleDownload = useCallback((id: number) => {
+  //   const log = fileLogs.find(l => l.id === id);
+  //   if (log) {
+  //     // Create download link for the file
+  //     const url = URL.createObjectURL(log.file);
+  //     const link = document.createElement('a');
+  //     link.href = url;
+  //     link.download = log.fileName;
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //     URL.revokeObjectURL(url);
+  //   }
+  // }, [fileLogs]);
+
+  const deleteButtonIds = useMemo(() => {
+    const ids = new Set<number>();
+    const datesWithButton = new Set<string>();
+
+    fileLogs.forEach((log) => {
+      if (log.stepNumber === 1 && !datesWithButton.has(log.uploadedDate)) {
+        ids.add(log.id);
+        datesWithButton.add(log.uploadedDate);
+      }
+    });
+
+    return ids;
   }, [fileLogs]);
 
   const columns: GridColDef[] = useMemo(
@@ -150,32 +175,40 @@ const FileLogsGrid = () => {
           filterable: false,
           headerAlign: 'center',
           align: 'center',
-          getActions: (params) => [
-            <GridActionsCellItem
-              key="download"
-              icon={
-                <IconButton size="small" title="Download">
-                  <DownloadIcon className="w-4 h-4" />
-                </IconButton>
-              }
-              label="Download"
-              onClick={() => handleDownload(params.id as number)}
-            />,
-            <GridActionsCellItem
-              key="delete"
-              icon={
-                <IconButton size="small" title="Delete">
-                  <TrashBinIcon className="w-4 h-4" />
-                </IconButton>
-              }
-              label="Delete"
-              onClick={() => handleDelete(params.id as number)}
-            />,
-          ],
+          colspan: 9,
+          getActions: (params) => {
+            // Only show delete button for the first Step 1 file of each date group
+            if (!deleteButtonIds.has(params.id as number)) {
+              return [];
+            }
+
+            return [
+              // <GridActionsCellItem
+              //   key="download"
+              //   icon={
+              //     <IconButton size="small" title="Download">
+              //       <DownloadIcon className="w-4 h-4" />
+              //     </IconButton>
+              //   }
+              //   label="Download"
+              //   onClick={() => handleDownload(params.id as number)}
+              // />,
+              <GridActionsCellItem
+                key="delete"
+                icon={
+                  <IconButton size="small" title="Delete" aria-colspan={9}>
+                    <TrashBinIcon className="w-4 h-4" />
+                  </IconButton>
+                }
+                label="Delete"
+                onClick={() => handleDelete(params.id as number)}
+              />,
+            ];
+          },
         },
       ];
     },
-    [handleDelete, handleDownload]
+    [handleDelete, deleteButtonIds]
   );
 
   return (

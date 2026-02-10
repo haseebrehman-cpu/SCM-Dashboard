@@ -130,7 +130,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
         <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 max-w-md">
           Drag and drop your file here, or click to browse
         </p>
-        <p className="text-xs text-gray-400 dark:text-gray-500">Only Excel files are supported</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500">Only CSV files are supported</p>
       </div>
     </div>
   );

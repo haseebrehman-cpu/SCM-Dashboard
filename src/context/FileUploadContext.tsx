@@ -20,6 +20,7 @@ interface FileUploadContextType {
   addFileLogs: (files: File[], stepNumber: number) => void;
   clearFileLogs: () => void;
   removeFileLog: (id: number) => void;
+  removeFileLogs: (ids: number[]) => void;
 }
 
 const FileUploadContext = createContext<FileUploadContextType | undefined>(undefined);
@@ -58,7 +59,7 @@ export const FileUploadProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const getRowCountFromFile = async (file: File): Promise<number> => {
     try {
       const fileType = getFileExtension(file.name);
-      
+
       if (fileType === 'csv') {
         // For CSV files, count the lines (excluding header)
         const text = await file.text();
@@ -68,11 +69,11 @@ export const FileUploadProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         // For Excel files, use XLSX library to parse the file
         const arrayBuffer = await file.arrayBuffer();
         const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
-        
+
         // Get the first sheet
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        
+
         // Get the range and calculate row count
         // The !ref property contains the range like "A1:Z100"
         if (worksheet['!ref']) {
@@ -94,7 +95,7 @@ export const FileUploadProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const createInitialLogs = async () => {
       const timestamp = Date.now();
       const randomSuffix = Math.random().toString(36).substr(2, 9);
-      
+
       const newLogs = await Promise.all(
         files.map(async (file, index) => {
           const rowCount = await getRowCountFromFile(file);
@@ -124,13 +125,13 @@ export const FileUploadProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
       setFileLogs((prevLogs) => {
         const updatedLogs = [...prevLogs];
-        
+
         newLogs.forEach((newLog) => {
           // Only add if the same file hasn't been added for this step
           const existingIndex = updatedLogs.findIndex(
             (log) => log.fileName === newLog.fileName && log.stepNumber === newLog.stepNumber
           );
-          
+
           if (existingIndex === -1) {
             updatedLogs.push(newLog);
           } else {
@@ -161,11 +162,16 @@ export const FileUploadProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setFileLogs((prevLogs) => prevLogs.filter((log) => log.id !== id));
   }, []);
 
+  const removeFileLogs = useCallback((ids: number[]) => {
+    setFileLogs((prevLogs) => prevLogs.filter((log) => !ids.includes(log.id)));
+  }, []);
+
   const value: FileUploadContextType = {
     fileLogs,
     addFileLogs,
     clearFileLogs,
     removeFileLog,
+    removeFileLogs,
   };
 
   return (
