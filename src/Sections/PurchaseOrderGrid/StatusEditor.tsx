@@ -1,6 +1,6 @@
 import React from 'react';
 import { Select, MenuItem } from "@mui/material";
-import { DeliveryStatus } from './types';
+import { DeliveryStatus } from '../../types/purchaseOrder';
 
 interface StatusEditorProps {
   value: DeliveryStatus;

@@ -10,6 +10,7 @@ import { getDataGridStyles } from '../../styles/productionReportStyles';
 import { ProductionReportHeader } from '../ProductionReport/ProductionReportHeader';
 import ArchieveDialog from "../SummaryDash/ArchieveDialog";
 import { DataGridPro } from "@mui/x-data-grid-pro";
+import { FileUploadDialog } from "../ProductionReport/FileUploadDialog";
 
 export default function StockPerformance() {
   const { theme } = useTheme();
@@ -17,6 +18,7 @@ export default function StockPerformance() {
 
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>("UK");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
 
   const handleWarehouseChange = (event: SelectChangeEvent<Warehouse>) => {
     setSelectedWarehouse(event.target.value as Warehouse);
@@ -56,6 +58,7 @@ export default function StockPerformance() {
           isShowUpload={true}
           isArchieved={true}
           onArchieveCLick={() => setIsDialogOpen(true)}
+          onUploadClick={() => setIsUploadDialogOpen(true)}
         />
       </div>
 
@@ -64,6 +67,13 @@ export default function StockPerformance() {
           onClose={() => setIsDialogOpen(false)} />
       </>}
 
+
+      {isUploadDialogOpen && (
+        <FileUploadDialog
+          isOpen={isUploadDialogOpen}
+          onClose={() => setIsUploadDialogOpen(false)}
+        />
+      )}
       <DataGridPro
         rows={tableData}
         columns={columns}
