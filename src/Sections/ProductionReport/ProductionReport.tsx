@@ -1,4 +1,4 @@
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGridPro } from "@mui/x-data-grid-pro";
 import { useTheme } from "../../context/ThemeContext";
 import { useState, useMemo } from "react";
 import { SelectChangeEvent } from "@mui/material";
@@ -52,6 +52,8 @@ export default function ProductionReport() {
           onWarehouseChange={handleWarehouseChange}
           onUploadClick={() => setIsDialogOpen(true)}
           onExportClick={handleExport}
+          isSelectWarehouse={true}
+          isShowUpload={true}
         />
       </div>
 
@@ -62,11 +64,12 @@ export default function ProductionReport() {
         />
       )}
 
-      <DataGrid
+      <DataGridPro
         rows={tableData}
         columns={columns}
         initialState={{ pagination: { paginationModel: PAGINATION_MODEL } }}
-        pageSizeOptions={[5, 10, 15, 25]}
+        pageSizeOptions={[100, 500, 1000, 1500]}
+        pagination
         autoHeight
         disableRowSelectionOnClick
         sx={getDataGridStyles(isDark)}

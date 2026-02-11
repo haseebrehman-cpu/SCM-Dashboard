@@ -1,4 +1,3 @@
-import { DataGrid } from "@mui/x-data-grid";
 import { useTheme } from "../../context/ThemeContext";
 import { useState, useMemo } from "react";
 import { SelectChangeEvent } from "@mui/material";
@@ -9,12 +8,15 @@ import { warehouseData, warehouseContainers, PAGINATION_MODEL } from './mockData
 import { generateStockPerformanceColumns } from './columnGenerator';
 import { getDataGridStyles } from '../ProductionReport/styles';
 import { ProductionReportHeader } from '../ProductionReport/ProductionReportHeader';
+import ArchieveDialog from "../SummaryDash/ArchieveDialog";
+import { DataGridPro } from "@mui/x-data-grid-pro";
 
 export default function StockPerformance() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>("UK");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleWarehouseChange = (event: SelectChangeEvent<Warehouse>) => {
     setSelectedWarehouse(event.target.value as Warehouse);
@@ -50,15 +52,25 @@ export default function StockPerformance() {
           isDark={isDark}
           onWarehouseChange={handleWarehouseChange}
           onExportClick={handleExport}
+          isSelectWarehouse={true}
+          isShowUpload={true}
+          isArchieved={true}
+          onArchieveCLick={() => setIsDialogOpen(true)}
         />
       </div>
 
-      <DataGrid
+      {isDialogOpen && <>
+        <ArchieveDialog isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)} />
+      </>}
+
+      <DataGridPro
         rows={tableData}
         columns={columns}
         initialState={{ pagination: { paginationModel: PAGINATION_MODEL } }}
-        pageSizeOptions={[5, 10, 15, 25]}
+        pageSizeOptions={[100, 500, 1000, 1500]}
         autoHeight
+        pagination
         disableRowSelectionOnClick
         sx={getDataGridStyles(isDark)}
       />

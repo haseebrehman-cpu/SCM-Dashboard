@@ -17,10 +17,10 @@ interface ColumnGeneratorParams {
 
 const renderDateHeader = (title: string, isDark: boolean) => (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-    <span style={{ fontWeight: 600, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>
+    <span style={{ fontWeight: 500, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)', fontSize: '0.7rem' }}>
       {title}
     </span>
-    <span style={{ fontSize: '0.7rem', opacity: 0.7, fontWeight: 400, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>
+    <span style={{ fontSize: '0.5rem', opacity: 0.7, fontWeight: 400, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>
       (YYYY-MM-DD)
     </span>
   </div>
@@ -37,7 +37,7 @@ export const generatePurchaseOrderColumns = ({
 }: ColumnGeneratorParams): GridColDef[] => [
     {
       field: "containerName",
-      headerName: "Container",
+      headerName: "Container Name",
       flex: 1,
       minWidth: 180,
       sortable: true,
@@ -96,7 +96,7 @@ export const generatePurchaseOrderColumns = ({
     {
       field: "deliveryStatus",
       headerName: "Delivery Status",
-      width: 180,
+      width: 120,
       sortable: true,
       filterable: true,
       renderCell: (params) => {
@@ -118,6 +118,13 @@ export const generatePurchaseOrderColumns = ({
           </Badge>
         );
       },
+    },
+    {
+      field: "editedBy",
+      headerName: "Edited By",
+      width: 180,
+      sortable: true,
+      filterable: true,
     },
     {
       field: "actions",

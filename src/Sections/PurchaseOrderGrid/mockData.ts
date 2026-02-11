@@ -113,4 +113,4 @@ export const mockContainers: Container[] = [
   },
 ];
 
-export const PAGINATION_MODEL = { page: 0, pageSize: 10 };
+export const PAGINATION_MODEL = { page: 0, pageSize: 100 };

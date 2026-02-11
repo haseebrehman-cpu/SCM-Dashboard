@@ -5,7 +5,7 @@ import Button from "../ui/button/Button";
 
 export default function UserAddressCard() {
   const [address, setAddress] = useState({
-    street: "123 Main Street",
+    street: "155 Service Rd N, I-9/3 I 9/3 I-9, Islamabad,",
     city: "Islamabad",
     state: "Islamabad Capital Territory",
     zipCode: "44000",

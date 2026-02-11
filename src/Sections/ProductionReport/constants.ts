@@ -15,7 +15,7 @@ export const MONTHS_DATA: MonthData[] = [
   { monthCode: "December", prefix: "Dec" },
 ];
 
-export const PAGINATION_MODEL = { page: 0, pageSize: 10 };
+export const PAGINATION_MODEL = { page: 0, pageSize: 500 };
 
 export const WAREHOUSE_OPTIONS = [
   { value: "UK", label: "UK - United Kingdom", flag: "🇬🇧" },

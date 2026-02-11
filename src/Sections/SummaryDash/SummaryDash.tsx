@@ -1,4 +1,3 @@
-import { DataGrid } from "@mui/x-data-grid";
 import { useTheme } from "../../context/ThemeContext";
 import { useState, useMemo } from "react";
 import { SummaryDashboardRow } from "../../config/summaryDashboard";
@@ -7,10 +6,12 @@ import { createSummaryDashboardColumns } from "../../utils/dataGridColumns";
 import { DataGridHeader } from "../../components/DataGrid/DataGridHeader";
 import React from "react";
 import { exportToCsv } from "../../utils/exportToCsv";
-import { Button } from "@mui/material";
 import { useSummaryEdit } from './useSummaryEdit';
 import { PAGINATION_CONFIG, DEFAULT_ROW_COUNT } from './constants';
 import { getDataGridStyles } from '../ProductionReport/styles';
+import { ProductionReportHeader } from "../ProductionReport/ProductionReportHeader";
+import ArchieveDialog from "./ArchieveDialog";
+import { DataGridPro } from "@mui/x-data-grid-pro";
 
 /**
  * Summary Dashboard Grid Component
@@ -20,6 +21,8 @@ const SummaryDashGrid: React.FC = React.memo(() => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [rows, setRows] = useState<SummaryDashboardRow[]>(() => generateSummaryDashboardData(DEFAULT_ROW_COUNT));
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
 
   const {
     editingRowId,
@@ -54,18 +57,23 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
       <div className="flex items-center justify-between mb-4">
         <DataGridHeader title="Summary Dashboard Report" />
-        <div className="flex items-center gap-2">
-          <Button
-            variant="contained"
-            onClick={handleExport}
-            sx={{ borderRadius: '20px', fontSize: '12px' }}
-          >
-            Export to CSV
-          </Button>
-        </div>
+
+        <ProductionReportHeader
+          isDark={isDark}
+          onExportClick={handleExport}
+          isArchieved={true}
+          isSelectWarehouse={false}
+          isShowUpload={false}
+          onArchieveCLick={() => setIsDialogOpen(true)}
+        />
       </div>
 
-      <DataGrid
+      {isDialogOpen && <>
+        <ArchieveDialog isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)} />
+      </>}
+
+      <DataGridPro
         rows={rows}
         columns={columns}
         pageSizeOptions={PAGINATION_CONFIG.pageSizeOptions}
@@ -74,6 +82,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
             paginationModel: { pageSize: PAGINATION_CONFIG.defaultPageSize },
           },
         }}
+        pagination
         autoHeight
         disableRowSelectionOnClick
         sx={getDataGridStyles(isDark)}
