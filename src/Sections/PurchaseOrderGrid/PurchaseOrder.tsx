@@ -34,7 +34,7 @@ export default function PurchaseOrder() {
         editedData,
         isEditing,
         startEdit,
-        saveEdit,
+        saveEdit: () => saveEdit("haseeb.rehman@igate.com.pk"),
         cancelEdit,
         updateEditedData,
       }),

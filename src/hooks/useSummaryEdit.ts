@@ -46,7 +46,7 @@ export const useSummaryEdit = (
                 status: editValues.status,
                 reason: editValues.reason,
                 factoryComments: editValues.factoryComments,
-                editedBy: "user@gmail.com"
+                editedBy: "haseeb.rehman@igate.com.pk"
               }
             : row
         )

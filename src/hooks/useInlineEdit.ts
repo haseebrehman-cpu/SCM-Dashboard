@@ -6,7 +6,7 @@ interface UseInlineEditReturn {
   editedData: EditableFields | null;
   isEditing: (rowId: number) => boolean;
   startEdit: (row: Container) => void;
-  saveEdit: () => void;
+  saveEdit: (userEmail?: string) => void;
   cancelEdit: () => void;
   updateEditedData: (updates: Partial<EditableFields>) => void;
 }
@@ -24,14 +24,15 @@ export const useInlineEdit = (
     setEditedData({
       arrivalDate: row.arrivalDate,
       deliveryStatus: row.deliveryStatus,
+      editedBy: row.editedBy,
     });
   }, []);
 
-  const saveEdit = useCallback(() => {
+  const saveEdit = useCallback((userEmail?: string) => {
     if (editingRowId !== null && editedData) {
       setTableData((prevData) =>
         prevData.map((row) =>
-          row.id === editingRowId ? { ...row, ...editedData } : row
+          row.id === editingRowId ? { ...row, ...editedData, editedBy: userEmail || row.editedBy } : row
         )
       );
       setEditingRowId(null);

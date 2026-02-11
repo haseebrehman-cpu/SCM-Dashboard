@@ -17,6 +17,7 @@ export interface SummaryDashboardRow {
   status: string;
   reason: string;
   factoryComments: string;
+  editedBy?: string;
 }
 
 export const STATUS_OPTIONS = [

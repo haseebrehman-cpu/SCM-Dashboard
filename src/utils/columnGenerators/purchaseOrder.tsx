@@ -10,7 +10,7 @@ interface ColumnGeneratorParams {
   editedData: EditableFields | null;
   isEditing: (rowId: number) => boolean;
   startEdit: (row: Container) => void;
-  saveEdit: () => void;
+  saveEdit: (userEmail?: string) => void;
   cancelEdit: () => void;
   updateEditedData: (updates: Partial<EditableFields>) => void;
 }
@@ -96,7 +96,7 @@ export const generatePurchaseOrderColumns = ({
     {
       field: "deliveryStatus",
       headerName: "Delivery Status",
-      width: 120,
+      width: 150,
       sortable: true,
       filterable: true,
       renderCell: (params) => {

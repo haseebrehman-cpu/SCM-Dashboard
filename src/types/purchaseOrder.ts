@@ -9,9 +9,11 @@ export interface Container {
   departureDate: string;
   arrivalDate: string;
   deliveryStatus: DeliveryStatus;
+  editedBy?: string;
 }
 
 export interface EditableFields {
   arrivalDate: string;
   deliveryStatus: DeliveryStatus;
+  editedBy?: string;
 }
