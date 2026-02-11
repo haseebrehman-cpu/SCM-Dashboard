@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGridPro } from '@mui/x-data-grid-pro';
 import { useTheme } from '../../context/ThemeContext';
 import { DataGridHeader } from '../../components/DataGrid/DataGridHeader';
 import { Button } from '@mui/material';
@@ -52,7 +52,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
           </div>
         </div>
 
-        <DataGrid
+        <DataGridPro
           rows={fileLogs}
           columns={columns}
           pageSizeOptions={[10, 25, 50, 100]}
@@ -61,6 +61,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
               paginationModel: { pageSize: 10 },
             },
           }}
+          pagination
           autoHeight
           disableRowSelectionOnClick
           sx={getDataGridStyles(isDark)}

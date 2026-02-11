@@ -3,4 +3,4 @@ export const PAGINATION_CONFIG = {
   defaultPageSize: 500,
 };
 
-export const DEFAULT_ROW_COUNT = 1500;
+export const DEFAULT_ROW_COUNT = 200;
