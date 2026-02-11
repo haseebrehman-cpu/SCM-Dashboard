@@ -1,4 +1,4 @@
-import { MonthData } from './types';
+import { MonthData } from '../types/productionReport';
 
 export const MONTHS_DATA: MonthData[] = [
   { monthCode: "January", prefix: "Jan" },

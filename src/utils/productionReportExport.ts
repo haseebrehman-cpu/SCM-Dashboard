@@ -1,6 +1,6 @@
 import { GridColDef } from "@mui/x-data-grid";
-import { ProductionReportRow, Warehouse } from './types';
-import { exportToCsv } from "../../utils/exportToCsv";
+import { ProductionReportRow, Warehouse } from '../types/productionReport';
+import { exportToCsv } from "./exportToCsv";
 
 /**
  * Exports production report data to CSV format

@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
-import { showToast } from '../../utils/toastNotification';
-import { UploadedFile } from '../../components/FileUpload/types';
-import { useFileUploadLogs } from '../../context/FileUploadContext';
-import { REQUIRED_FILES_COUNT, StepNumber } from './constants';
+import { showToast } from '../utils/toastNotification';
+import { UploadedFile } from '../components/FileUpload/types';
+import { useFileUploadLogs } from '../context/FileUploadContext';
+import { REQUIRED_FILES_COUNT, StepNumber } from '../constants/fileUpload';
 
 interface UseMultiStepUploadReturn {
   currentStep: StepNumber;

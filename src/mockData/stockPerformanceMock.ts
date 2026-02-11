@@ -1,4 +1,4 @@
-import { Warehouse, ContainerInfo, StockPerformanceRow } from './types';
+import { Warehouse, ContainerInfo, StockPerformanceRow } from '../types/stockPerformance';
 
 export const warehouseContainers: Record<Warehouse, ContainerInfo[]> = {
   UK: [

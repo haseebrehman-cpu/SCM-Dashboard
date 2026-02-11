@@ -4,12 +4,12 @@ import { useState, useMemo } from "react";
 import { SelectChangeEvent } from "@mui/material";
 import { DataGridHeader } from "../../components/DataGrid/DataGridHeader";
 import { FileUploadDialog } from "./FileUploadDialog";
-import { Warehouse } from './types';
-import { warehouseData, warehouseContainers } from './mockData';
-import { PAGINATION_MODEL } from './constants';
-import { generateProductionColumns } from './columnGenerator';
-import { getDataGridStyles } from './styles';
-import { exportProductionReport } from './exportUtils';
+import { Warehouse } from '../../types/productionReport';
+import { warehouseData, warehouseContainers } from '../../mockData/productionReportMock';
+import { PAGINATION_MODEL } from '../../constants/productionReport';
+import { generateProductionColumns } from '../../utils/columnGenerators/productionReport';
+import { getDataGridStyles } from '../../styles/productionReportStyles';
+import { exportProductionReport } from '../../utils/productionReportExport';
 import { ProductionReportHeader } from './ProductionReportHeader';
 
 export default function ProductionReport() {

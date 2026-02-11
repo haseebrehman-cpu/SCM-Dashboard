@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from 'react';
-import { useFileUploadLogs } from '../../context/FileUploadContext';
+import { useFileUploadLogs } from '../context/FileUploadContext';
 
 export const useFileLogActions = () => {
   const { fileLogs, removeFileLogs } = useFileUploadLogs();

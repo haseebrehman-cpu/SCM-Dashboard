@@ -1,4 +1,4 @@
-import { Warehouse, ProductionReportRow } from './types';
+import { Warehouse, ProductionReportRow } from '../types/productionReport';
 
 // Generate random container numbers
 const generateContainerNumber = (): string => {

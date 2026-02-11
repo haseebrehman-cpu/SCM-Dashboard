@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Container, EditableFields } from './types';
+import { Container, EditableFields } from '../types/purchaseOrder';
 
 interface UseInlineEditReturn {
   editingRowId: number | null;

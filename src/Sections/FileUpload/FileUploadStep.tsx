@@ -4,7 +4,7 @@ import { ArrowRightIcon, CheckCircleIcon } from '../../icons';
 import Button from '../../components/ui/button/Button';
 import { UploadZone } from '../../components/FileUpload/UploadZone';
 import { UploadedFile } from '../../components/FileUpload/types';
-import { FILE_ACCEPT_TYPES, StepNumber, STEP_CONFIG } from './constants';
+import { FILE_ACCEPT_TYPES, StepNumber, STEP_CONFIG } from '../../constants/fileUpload';
 
 interface FileUploadStepProps {
   stepNumber: StepNumber;

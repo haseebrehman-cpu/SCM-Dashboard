@@ -3,7 +3,7 @@ import { CheckCircleIcon } from '../../icons';
 import { StepIndicator } from '../../components/FileUpload/StepIndicator';
 import { useFileUpload } from '../../hooks/useFileUpload';
 import { FileUploadStep } from './FileUploadStep';
-import { useMultiStepUpload } from './useMultiStepUpload';
+import { useMultiStepUpload } from '../../hooks/useMultiStepUpload';
 
 const FileUpload: React.FC = () => {
   const {

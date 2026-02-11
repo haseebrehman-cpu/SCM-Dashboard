@@ -1,8 +1,8 @@
 import React from 'react';
 import { MenuItem, Select, FormControl, InputLabel, SelectChangeEvent, Button } from "@mui/material";
-import { Warehouse } from './types';
-import { WAREHOUSE_OPTIONS } from './constants';
-import { getFormControlStyles } from './styles';
+import { Warehouse } from '../../types/productionReport';
+import { WAREHOUSE_OPTIONS } from '../../constants/productionReport';
+import { getFormControlStyles } from '../../styles/productionReportStyles';
 import IosShare from '@mui/icons-material/IosShare';
 import { DownloadIcon, ListIcon } from '../../icons';
 
@@ -59,7 +59,7 @@ export const ProductionReportHeader: React.FC<ProductionReportHeaderProps> = ({
             variant="contained"
             sx={{ borderRadius: '20px', fontSize: '12px' }}
             onClick={onUploadClick}
-            startIcon={<IosShare sx={{width :'16px'}}/>}
+            startIcon={<IosShare sx={{ width: '16px' }} />}
           >
             Upload File
           </Button>
@@ -68,12 +68,12 @@ export const ProductionReportHeader: React.FC<ProductionReportHeaderProps> = ({
           variant="contained"
           onClick={onExportClick}
           sx={{ borderRadius: '20px', fontSize: '12px' }}
-          startIcon={<DownloadIcon style={{width :'16px'}}/>}
+          startIcon={<DownloadIcon style={{ width: '16px' }} />}
         >
           Export to CSV
         </Button>
         {isArchieved &&
-          <Button variant='contained' sx={{ borderRadius: '20px', fontSize: '12px' }} size='small' onClick={onArchieveCLick} startIcon={<ListIcon style={{width :'16px'}}/>}>View Archieved Reports</Button>
+          <Button variant='contained' sx={{ borderRadius: '20px', fontSize: '12px' }} size='small' onClick={onArchieveCLick} startIcon={<ListIcon style={{ width: '16px' }} />}>View Archieved Reports</Button>
         }
       </FormControl>
     </>

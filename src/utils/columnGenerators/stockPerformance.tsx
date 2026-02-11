@@ -1,5 +1,5 @@
 import { GridColDef } from "@mui/x-data-grid";
-import { ContainerInfo, Warehouse } from './types';
+import { ContainerInfo, Warehouse } from '../../types/stockPerformance';
 
 interface ColumnGeneratorParams {
   selectedWarehouse: Warehouse;
@@ -83,10 +83,10 @@ const generateSalesColumns = (isDark: boolean): GridColDef[] => [
     renderHeader: () => (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1.2 }}>
         <span style={{ fontWeight: 600, fontSize: '0.65rem', color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>
-          Linn-Next 
+          Linn-Next
         </span>
         <span style={{ fontSize: '0.6rem', color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)' }}>
-        60 Days sale from previous year
+          60 Days sale from previous year
         </span>
       </div>
     ),

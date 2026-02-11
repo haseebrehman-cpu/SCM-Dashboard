@@ -1,9 +1,9 @@
 import { GridColDef } from "@mui/x-data-grid";
 import Badge from "../../components/ui/badge/Badge";
-import { Container, EditableFields, DeliveryStatus } from './types';
-import { DateEditor } from './DateEditor';
-import { StatusEditor } from './StatusEditor';
-import { ActionButtons } from './ActionButtons';
+import { Container, EditableFields, DeliveryStatus } from '../../types/purchaseOrder';
+import { DateEditor } from '../../Sections/PurchaseOrderGrid/DateEditor';
+import { StatusEditor } from '../../Sections/PurchaseOrderGrid/StatusEditor';
+import { ActionButtons } from '../../Sections/PurchaseOrderGrid/ActionButtons';
 
 interface ColumnGeneratorParams {
   isDark: boolean;

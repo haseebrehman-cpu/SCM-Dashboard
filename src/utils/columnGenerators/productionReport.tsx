@@ -1,7 +1,7 @@
 import { GridColDef } from "@mui/x-data-grid";
 import Badge from "../../components/ui/badge/Badge";
-import { Warehouse, MonthData } from './types';
-import { MONTHS_DATA } from './constants';
+import { Warehouse, MonthData } from '../../types/productionReport';
+import { MONTHS_DATA } from '../../constants/productionReport';
 
 interface ColumnGeneratorParams {
   selectedWarehouse: Warehouse;

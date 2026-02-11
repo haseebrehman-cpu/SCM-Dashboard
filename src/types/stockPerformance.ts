@@ -1,4 +1,6 @@
-export type Warehouse = "UK" | "DE" | "US" | "CA";
+import { Warehouse } from './common';
+
+export type { Warehouse };
 
 export interface ContainerInfo {
   id: string;

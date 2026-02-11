@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { SummaryDashboardRow } from '../../config/summaryDashboard';
+import { SummaryDashboardRow } from '../config/summaryDashboard';
 
 interface EditValues {
   status: string;

@@ -4,9 +4,9 @@ import { useTheme } from '../../context/ThemeContext';
 import { DataGridHeader } from '../../components/DataGrid/DataGridHeader';
 import { Button } from '@mui/material';
 import { exportToCsv } from '../../utils/exportToCsv';
-import { getDataGridStyles } from '../ProductionReport/styles';
-import { generateFileLogColumns } from './logColumns';
-import { useFileLogActions } from './useFileLogActions';
+import { getDataGridStyles } from '../../styles/productionReportStyles';
+import { generateFileLogColumns } from '../../utils/columnGenerators/fileUploadLogs';
+import { useFileLogActions } from '../../hooks/useFileLogActions';
 import React from 'react';
 
 /**

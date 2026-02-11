@@ -1,5 +1,6 @@
-// Warehouse types
-export type Warehouse = "UK" | "DE" | "US" | "CA";
+import { Warehouse } from './common';
+
+export type { Warehouse };
 
 // Define the TypeScript interface for the table rows
 export interface ProductionReportRow {
