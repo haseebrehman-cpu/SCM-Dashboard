@@ -1,4 +1,4 @@
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../hooks/useTheme";
 import { useState, useMemo } from "react";
 import { SummaryDashboardRow } from "../../config/summaryDashboard";
 import { generateSummaryDashboardData } from "../../utils/dataGenerators";

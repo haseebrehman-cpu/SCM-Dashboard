@@ -1,5 +1,5 @@
 import { DataGridPro } from "@mui/x-data-grid-pro";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../hooks/useTheme";
 import { useState, useMemo } from "react";
 import { SelectChangeEvent } from "@mui/material";
 import { DataGridHeader } from "../../components/DataGrid/DataGridHeader";

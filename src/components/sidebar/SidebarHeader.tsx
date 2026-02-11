@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../hooks/useTheme";
 import React from "react";
 
 interface SidebarHeaderProps {

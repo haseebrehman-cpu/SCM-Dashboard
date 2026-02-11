@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  BoxIcon,
   CalenderIcon,
   GridIcon,
   ListIcon,
@@ -10,7 +11,13 @@ export type NavItem = {
   name: string;
   icon: React.ReactNode;
   path?: string;
-  subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
+  subItems?: {
+    name: string;
+    path: string;
+    icon?: React.ReactNode;
+    pro?: boolean;
+    new?: boolean;
+  }[];
 };
 
 /**
@@ -47,5 +54,27 @@ export const navItems: NavItem[] = [
     name: "Summary Dashboard",
     icon: <ListIcon />,
     path: "/summary-dashboard",
-  }
+  },
+  {
+    name: "Container Detail Data",
+    icon: <BoxIcon />,
+    subItems: [
+      {
+        name: "Submenu 1",
+        icon: <BoxIcon />,
+        path: "/container-detail-report",
+      },
+      {
+        name: "Submenu 2",
+        icon: <BoxIcon />,
+        path: "/container-detail-report",
+      },
+      {
+        name: "Submenu 3",
+        icon: <BoxIcon />,
+        path: "/container-detail-report",
+      },
+    ],
+  },
+
 ];

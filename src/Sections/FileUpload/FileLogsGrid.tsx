@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { DataGridPro } from '@mui/x-data-grid-pro';
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme } from '../../hooks/useTheme';
 import { DataGridHeader } from '../../components/DataGrid/DataGridHeader';
 import { Button } from '@mui/material';
 import { exportToCsv } from '../../utils/exportToCsv';

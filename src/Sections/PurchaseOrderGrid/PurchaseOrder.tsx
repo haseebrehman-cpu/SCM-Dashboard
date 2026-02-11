@@ -1,4 +1,4 @@
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../hooks/useTheme";
 import { useState, useMemo } from "react";
 import { exportToCsv } from "../../utils/exportToCsv";
 import { DataGridHeader } from "../../components/DataGrid/DataGridHeader";

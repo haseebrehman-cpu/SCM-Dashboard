@@ -3,11 +3,13 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { createTheme, ThemeProvider } from "@mui/material";
+import { format, parseISO } from 'date-fns';
 
 interface DateEditorProps {
   value: string;
   onChange: (date: string) => void;
   isDark: boolean;
+  max?: string;
 }
 
 const getDatePickerTheme = (isDark: boolean) => createTheme({
@@ -42,21 +44,27 @@ const getDatePickerTheme = (isDark: boolean) => createTheme({
   },
 });
 
-export const DateEditor: React.FC<DateEditorProps> = ({ value, onChange, isDark }) => {
+export const DateEditor: React.FC<DateEditorProps> = ({ value, onChange, isDark, max }) => {
   return (
     <div style={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <ThemeProvider theme={getDatePickerTheme(isDark)}>
           <DatePicker
             format="MM/dd/yyyy"
-            value={value ? new Date(value) : null}
+            value={value ? parseISO(value) : null}
+            maxDate={max ? parseISO(max) : undefined}
             onChange={(newDate: Date | null) => {
               if (newDate) {
-                const dateString = newDate.toISOString().split('T')[0];
+                const dateString = format(newDate, 'yyyy-MM-dd');
                 onChange(dateString);
               }
             }}
             slotProps={{
+              popper: {
+                sx: {
+                  zIndex: 999999,
+                },
+              },
               textField: {
                 size: "small",
                 sx: {

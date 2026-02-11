@@ -1,4 +1,3 @@
-import { useTheme } from "../../context/ThemeContext";
 import { useState, useMemo } from "react";
 import { SelectChangeEvent } from "@mui/material";
 import { exportToCsv } from "../../utils/exportToCsv";
@@ -11,6 +10,7 @@ import { ProductionReportHeader } from '../ProductionReport/ProductionReportHead
 import ArchieveDialog from "../SummaryDash/ArchieveDialog";
 import { DataGridPro } from "@mui/x-data-grid-pro";
 import { FileUploadDialog } from "../ProductionReport/FileUploadDialog";
+import { useTheme } from "../../hooks/useTheme";
 
 export default function StockPerformance() {
   const { theme } = useTheme();

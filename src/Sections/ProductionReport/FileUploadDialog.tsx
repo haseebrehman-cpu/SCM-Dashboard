@@ -4,9 +4,9 @@ import { Modal } from '../../components/ui/modal';
 import Button from '../../components/ui/button/Button';
 import { UploadZone } from '../../components/FileUpload/UploadZone';
 import { UploadedFile } from '../../components/FileUpload/types';
-import { showToast } from '../../utils/toastNotification';
 import { CheckCircleIcon } from '../../icons';
 import IosShareIcon from '@mui/icons-material/IosShare';
+import toast from 'react-hot-toast';
 interface FileUploadDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -29,7 +29,8 @@ export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({ isOpen, onCl
     (files: File[]) => {
       setIsUploading(true);
       const previews = files.map((file) => URL.createObjectURL(file));
-      // showToast.success('File upload started...');
+      toast.success('File upload started...');
+    
 
       let progress = 0;
       const interval = setInterval(() => {
@@ -44,7 +45,7 @@ export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({ isOpen, onCl
         if (progress >= 100) {
           clearInterval(interval);
           setIsUploading(false);
-          showToast.success('File uploaded successfully');
+          toast.success('File uploaded successfully');
         }
       }, 150);
     },

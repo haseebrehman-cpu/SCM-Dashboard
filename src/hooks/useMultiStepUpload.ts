@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
-import { showToast } from '../utils/toastNotification';
 import { UploadedFile } from '../components/FileUpload/types';
-import { useFileUploadLogs } from '../context/FileUploadContext';
 import { REQUIRED_FILES_COUNT, StepNumber } from '../constants/fileUpload';
+import toast from 'react-hot-toast';
+import { useFileUploadLogs } from './useFileUploadLogs';
 
 interface UseMultiStepUploadReturn {
   currentStep: StepNumber;
@@ -25,7 +25,7 @@ export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
     if (!file || !file.files) return false;
     
     if (file.files.length !== REQUIRED_FILES_COUNT) {
-      showToast.error(`All ${REQUIRED_FILES_COUNT} Files are required to proceed further`);
+      toast.error(`All ${REQUIRED_FILES_COUNT} Files are required to proceed further`);
       return false;
     }
     
@@ -74,7 +74,7 @@ export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
       addFileLogs(file3.files, 3);
     }
 
-    showToast.success('Files uploaded successfully');
+    toast.success('Files uploaded successfully');
 
     // Reset all state
     resetCallback();
