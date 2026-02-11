@@ -64,7 +64,7 @@ export default function StockPerformance() {
 
       {isDialogOpen && <>
         <ArchieveDialog isOpen={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)} />
+          onClose={() => setIsDialogOpen(false)} /> 
       </>}
 
 

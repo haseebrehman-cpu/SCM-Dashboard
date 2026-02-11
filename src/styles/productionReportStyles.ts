@@ -24,6 +24,7 @@ export const getDataGridStyles = (isDark: boolean) => ({
     borderColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
     backgroundColor: isDark ? 'rgb(31 41 55)' : 'rgb(229 231 235)',
     color: isDark ? "#fff" : '#000',
+    fontSize: '12px'
   },
   '& .MuiDataGrid-columnHeader': {
     backgroundColor: 'transparent',
@@ -40,7 +41,7 @@ export const getDataGridStyles = (isDark: boolean) => ({
     color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
   },
   '& .MuiIconButton-root': {
-    color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)',
+    color: 'gray',
   },
   '& .MuiDataGrid-row:hover': {
     backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05) !important' : 'rgba(0, 0, 0, 0.04) !important',
@@ -64,7 +65,7 @@ export const getDataGridStyles = (isDark: boolean) => ({
     color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
   },
   /* Specific target for MUI X License Watermark */
-  '& .MuiDataGrid-main + div, & div[style*="z-index: 100000"], & div[style*="z-index: 100000;"]': {
+  '& div[style*="z-index: 100000"], & div[style*="z-index: 100000;"]': {
     display: 'none !important',
     visibility: 'hidden !important',
     opacity: '0 !important',

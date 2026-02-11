@@ -13,7 +13,7 @@ export const StatusEditor: React.FC<StatusEditorProps> = ({ value, onChange, isD
     <div style={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
       <Select
         value={value}
-        onChange={(e) => onChange(e.target.value as DeliveryStatus)}
+        onChange={(e) => onChange(e.target.value as DeliveryStatus  )}
         size="small"
         sx={{
           minWidth: 120,

@@ -49,13 +49,13 @@ export const createSummaryDashboardColumns = (
     },
     {
       field: "categoryName",
-      headerName: "Category Nam",
-      width: 130,
+      headerName: "Category Name",
+      width: 140,
       sortable: true,
       filterable: true,
       headerAlign: "center",
       align: "center",
-      renderHeader: () => renderHeader("Category Nam"),
+      renderHeader: () => renderHeader("Category Name"),
     },
     {
       field: "wh",

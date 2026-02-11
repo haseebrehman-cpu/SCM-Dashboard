@@ -164,7 +164,7 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
   {
     field: "maxDc",
     headerName: "Max Daily Consumption",
-    width: 80,
+    width: 180,
     sortable: true,
     filterable: false,
     headerAlign: "center",
@@ -191,7 +191,7 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
   {
     field: "daysCoverCurrentStock",
     headerName: "Days Cover - Current Stock",
-    width: 130,
+    width: 180,
     sortable: true,
     filterable: false,
     headerAlign: "center",
