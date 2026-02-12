@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import * as XLSX from 'xlsx';
+
 import { FileUploadContext, type FileLogEntry, type FileUploadContextType } from './fileUploadContextValue';
 
 export const FileUploadProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -40,6 +40,7 @@ export const FileUploadProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         return Math.max(0, lines.length - 1);
       } else if (fileType === 'xlsx' || fileType === 'xls') {
         const arrayBuffer = await file.arrayBuffer();
+        const XLSX = await import('xlsx');
         const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];

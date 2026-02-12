@@ -15,4 +15,16 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router'],
+          'vendor-mui': ['@mui/material', '@mui/icons-material', '@mui/x-data-grid-pro'],
+          'vendor-utils': ['xlsx', 'date-fns', 'swiper'],
+        },
+      },
+    },
+  },
 });

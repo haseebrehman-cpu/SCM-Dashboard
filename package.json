@@ -23,14 +23,11 @@
     "@mui/x-data-grid": "^8.27.0",
     "@mui/x-data-grid-pro": "^8.27.0",
     "@mui/x-date-pickers": "^8.27.0",
-    "@react-jvectormap/core": "^1.0.4",
-    "@react-jvectormap/world": "^1.1.2",
-    "apexcharts": "^4.1.0",
+
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "flatpickr": "^4.6.13",
     "react": "^19.0.0",
-    "react-apexcharts": "^1.7.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.0.0",
@@ -62,14 +59,7 @@
   "overrides": {
     "react-helmet-async": {
       "react": "^16.8.0 || ^17 || ^18 || ^19"
-    },
-    "@react-jvectormap/core": {
-      "react": "^16.8.0 || ^17 || ^18 || ^19",
-      "react-dom": "^16.8.0 || ^17 || ^18 || ^19"
-    },
-    "@react-jvectormap/world": {
-      "react": "^16.8.0 || ^17 || ^18 || ^19",
-      "react-dom": "^16.8.0 || ^17 || ^18 || ^19"
     }
+
   }
 }
