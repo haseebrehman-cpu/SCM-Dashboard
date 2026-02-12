@@ -62,7 +62,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
             },
           }}
           pagination
-          autoHeight
+          rowBufferPx={100}
           disableRowSelectionOnClick
           sx={getDataGridStyles(isDark)}
         />

@@ -1,5 +1,5 @@
 import { useTheme } from "../../hooks/useTheme";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { SummaryDashboardRow } from "../../config/summaryDashboard";
 import { generateSummaryDashboardData } from "../../utils/dataGenerators";
 import { createSummaryDashboardColumns } from "../../utils/dataGridColumns";
@@ -53,6 +53,8 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     exportToCsv(rows, `Summary-Dashboard-Report-${new Date().toISOString().split('T')[0]}.csv`);
   };
 
+
+  console.log("***rows", rows);
   return (
     <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
       <div className="flex items-center justify-between mb-4">
@@ -83,7 +85,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           },
         }}
         pagination
-        autoHeight
+        rowBufferPx={100}
         disableRowSelectionOnClick
         sx={getDataGridStyles(isDark)}
       />

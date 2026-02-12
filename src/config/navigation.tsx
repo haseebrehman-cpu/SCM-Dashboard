@@ -2,6 +2,7 @@ import React from "react";
 import {
   BoxIcon,
   CalenderIcon,
+  DollarLineIcon,
   GridIcon,
   ListIcon,
   UserCircleIcon,
@@ -56,23 +57,23 @@ export const navItems: NavItem[] = [
     path: "/summary-dashboard",
   },
   {
-    name: "Container Detail Data",
+    name: "Container Detail Report",
     icon: <BoxIcon />,
     subItems: [
       {
-        name: "Submenu 1",
-        icon: <BoxIcon />,
-        path: "/container-detail-report",
+        name: "Stock Report",
+        icon: <DollarLineIcon />,
+        path: "/stock-report",
       },
       {
-        name: "Submenu 2",
+        name: "WH Container Report",
         icon: <BoxIcon />,
-        path: "/container-detail-report",
+        path: "/wh-container-report",
       },
       {
-        name: "Submenu 3",
+        name: "Combined Report",
         icon: <BoxIcon />,
-        path: "/container-detail-report",
+        path: "/combined-report",
       },
     ],
   },

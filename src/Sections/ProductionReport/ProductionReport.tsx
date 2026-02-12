@@ -70,9 +70,9 @@ export default function ProductionReport() {
         initialState={{ pagination: { paginationModel: PAGINATION_MODEL } }}
         pageSizeOptions={[100, 500, 1000, 1500]}
         pagination
-        autoHeight
         disableRowSelectionOnClick
         sx={getDataGridStyles(isDark)}
+        rowBufferPx={100}
       />
     </div>
   );

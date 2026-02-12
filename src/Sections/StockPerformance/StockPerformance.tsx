@@ -79,9 +79,9 @@ export default function StockPerformance() {
         columns={columns}
         initialState={{ pagination: { paginationModel: PAGINATION_MODEL } }}
         pageSizeOptions={[100, 500, 1000, 1500]}
-        autoHeight
         pagination
         disableRowSelectionOnClick
+        rowBufferPx={100}
         sx={getDataGridStyles(isDark)}
       />
     </div>

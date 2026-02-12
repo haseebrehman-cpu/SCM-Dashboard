@@ -16,7 +16,9 @@ const ProductionRemainingReportPage = lazy(() => import("./pages/Dashboard/Produ
 const StockPerformanceReportPage = lazy(() => import("./pages/Dashboard/StockPerformanceReport"));
 const FileUploadPage = lazy(() => import("./pages/Dashboard/FileUploadPage"));
 const SummaryDashboardPage = lazy(() => import("./pages/Dashboard/SummaryDashboard"));
-const ContainerDetailReport = lazy(() => import("./pages/Dashboard/ContainerDetailReport"));
+const StockReport = lazy(() => import("./pages/Dashboard/StockReport"));
+const WHContainerReport = lazy(() => import("./pages/Dashboard/WHContainerReport"));
+const CombinedReport = lazy(() => import("./pages/Dashboard/CombinedReport"));
 
 export default function App() {
   return (
@@ -35,7 +37,9 @@ export default function App() {
                 <Route path="/stock-performance-report" element={<StockPerformanceReportPage />} />
                 <Route path="/summary-dashboard" element={<SummaryDashboardPage />} />
                 <Route path="/profile" element={<UserProfiles />} />
-                <Route path="/container-detail-report" element={<ContainerDetailReport />} />
+                <Route path="/stock-report" element={<StockReport />} />
+                <Route path="/wh-container-report" element={<WHContainerReport />} />
+                <Route path="/combined-report" element={<CombinedReport />} />
               </Route>
 
               {/* Auth Layout */}

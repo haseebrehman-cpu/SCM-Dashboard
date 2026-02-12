@@ -76,7 +76,7 @@ export default function PurchaseOrder() {
         columns={columns}
         initialState={{ pagination: { paginationModel: PAGINATION_MODEL } }}
         pageSizeOptions={[100, 500, 1000]}
-        autoHeight
+        rowBufferPx={100}
         pagination
         sx={getDataGridStyles(isDark)}
       />
