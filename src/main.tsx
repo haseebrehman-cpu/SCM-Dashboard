@@ -8,20 +8,31 @@ import App from "./App.tsx";
 import { AppWrapper } from "./components/common/PageMeta.tsx";
 import { ThemeProvider } from "./context/ThemeContext.tsx";
 import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
-import { muiTheme } from "./theme/muiTheme";
+import { getMuiTheme } from "./theme/muiTheme";
 import { ErrorBoundary } from "./components/common/ErrorBoundary.tsx";
+import { useTheme } from "./hooks/useTheme";
+
+const MuiThemeWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { theme } = useTheme();
+  return (
+    <MuiThemeProvider theme={getMuiTheme(theme)}>
+      {children}
+    </MuiThemeProvider>
+  );
+};
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ErrorBoundary>
       <ThemeProvider>
-        <MuiThemeProvider theme={muiTheme}>
+        <MuiThemeWrapper>
           <AppWrapper>
             <Toaster position="bottom-right" />
             <App />
           </AppWrapper>
-        </MuiThemeProvider>
+        </MuiThemeWrapper>
       </ThemeProvider>
     </ErrorBoundary>
   </StrictMode>,
 );
+

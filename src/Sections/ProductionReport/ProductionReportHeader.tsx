@@ -4,7 +4,7 @@ import { Warehouse } from '../../types/productionReport';
 import { WAREHOUSE_OPTIONS } from '../../constants/productionReport';
 import { getFormControlStyles } from '../../styles/productionReportStyles';
 import IosShare from '@mui/icons-material/IosShare';
-import { DownloadIcon, ListIcon } from '../../icons';
+import { ListIcon } from '../../icons';
 
 interface ProductionReportHeaderProps {
   selectedWarehouse?: Warehouse;
@@ -14,7 +14,6 @@ interface ProductionReportHeaderProps {
   isShowUpload?: boolean;
   onWarehouseChange?: (event: SelectChangeEvent<Warehouse>) => void;
   onUploadClick?: () => void;
-  onExportClick: () => void;
   onArchieveCLick?: () => void;
 }
 
@@ -23,7 +22,6 @@ export const ProductionReportHeader: React.FC<ProductionReportHeaderProps> = ({
   isDark,
   onWarehouseChange,
   onUploadClick,
-  onExportClick,
   isArchieved,
   isSelectWarehouse,
   isShowUpload,
@@ -64,14 +62,6 @@ export const ProductionReportHeader: React.FC<ProductionReportHeaderProps> = ({
             Upload File
           </Button>
         }
-        <Button
-          variant="contained"
-          onClick={onExportClick}
-          sx={{ borderRadius: '20px', fontSize: '12px' }}
-          startIcon={<DownloadIcon style={{ width: '16px' }} />}
-        >
-          Export to CSV
-        </Button>
         {isArchieved &&
           <Button variant='contained' sx={{ borderRadius: '20px', fontSize: '12px' }} size='small' onClick={onArchieveCLick} startIcon={<ListIcon style={{ width: '16px' }} />}>View Archieved Reports</Button>
         }
