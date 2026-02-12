@@ -1,5 +1,5 @@
 import { useTheme } from "../../hooks/useTheme";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { SummaryDashboardRow } from "../../config/summaryDashboard";
 import { generateSummaryDashboardData } from "../../utils/dataGenerators";
 import { createSummaryDashboardColumns } from "../../utils/dataGridColumns";
