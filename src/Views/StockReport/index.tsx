@@ -3,6 +3,7 @@ import { Box, Paper, SelectChangeEvent, Typography } from '@mui/material';
 import StockFilters from '../../Sections/StockReport/StockFilters'
 import StockReportCharts from '../../Sections/StockReport/StockReportCharts'
 import StockReportKpi from '../../Sections/StockReport/StockReportKpi'
+import StockReportGrid from '../../Sections/StockReport/StockReportGrid';
 
 const filtersArray = [
   {
@@ -57,6 +58,7 @@ const StockReportView = () => {
       </Paper>
       <StockReportKpi />
       <StockReportCharts />
+      <StockReportGrid />
     </Box>
   )
 }

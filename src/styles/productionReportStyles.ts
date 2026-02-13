@@ -2,7 +2,7 @@ export const getDataGridStyles = (isDark: boolean) => ({
   border: 'none',
   backgroundColor: 'transparent',
   width: '100%',
-  height: '80vh',
+  height: '70vh',
   '& .MuiDataGrid-main': {
     backgroundColor: 'transparent',
   },
