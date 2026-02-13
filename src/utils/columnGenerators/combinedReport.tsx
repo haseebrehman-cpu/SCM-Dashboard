@@ -199,7 +199,7 @@ export const generateCombinedReportColumns = ({ isDark }: ColumnConfig): GridCol
     containerColumns.push({
       field: columnKey,
       headerName: columnKey,
-      width: 220,
+      width: 250,
       type: 'number',
       headerAlign: 'right',
       align: 'right',
@@ -228,7 +228,7 @@ export const generateCombinedReportColumns = ({ isDark }: ColumnConfig): GridCol
     containerColumns.push({
       field: columnKey,
       headerName: columnKey,
-      width: 200,
+      width: 260,
       type: 'number',
       headerAlign: 'right',
       align: 'right',
@@ -257,7 +257,7 @@ export const generateCombinedReportColumns = ({ isDark }: ColumnConfig): GridCol
     containerColumns.push({
       field: columnKey,
       headerName: columnKey,
-      width: 200,
+      width: 260,
       type: 'number',
       headerAlign: 'right',
       align: 'right',
@@ -286,7 +286,7 @@ export const generateCombinedReportColumns = ({ isDark }: ColumnConfig): GridCol
     containerColumns.push({
       field: columnKey,
       headerName: columnKey,
-      width: 200,
+      width: 260,
       type: 'number',
       headerAlign: 'right',
       align: 'right',
@@ -314,7 +314,7 @@ export const generateCombinedReportColumns = ({ isDark }: ColumnConfig): GridCol
     {
       field: 'CA_Containers_Overall_Qty',
       headerName: 'CA Containers Overall Qty',
-      width: 200,
+      width: 250,
       type: 'number',
       headerAlign: 'right',
       align: 'right',
@@ -328,7 +328,7 @@ export const generateCombinedReportColumns = ({ isDark }: ColumnConfig): GridCol
     {
       field: 'CA_Containers_Intransit_Qty',
       headerName: 'CA Containers Intransit Qty',
-      width: 200,
+      width: 250,
       type: 'number',
       headerAlign: 'right',
       align: 'right',
@@ -342,7 +342,7 @@ export const generateCombinedReportColumns = ({ isDark }: ColumnConfig): GridCol
     {
       field: 'DE_Containers_Overall_Qty',
       headerName: 'DE Containers Overall Qty',
-      width: 200,
+      width: 250,
       type: 'number',
       headerAlign: 'right',
       align: 'right',
@@ -356,7 +356,7 @@ export const generateCombinedReportColumns = ({ isDark }: ColumnConfig): GridCol
     {
       field: 'DE_Containers_Intransit_Qty',
       headerName: 'DE Containers Intransit Qty',
-      width: 200,
+      width: 250,
       type: 'number',
       headerAlign: 'right',
       align: 'right',
@@ -370,7 +370,7 @@ export const generateCombinedReportColumns = ({ isDark }: ColumnConfig): GridCol
     {
       field: 'US_Containers_Overall_Qty',
       headerName: 'US Containers Overall Qty',
-      width: 200,
+      width: 250,
       type: 'number',
       headerAlign: 'right',
       align: 'right',
@@ -384,7 +384,7 @@ export const generateCombinedReportColumns = ({ isDark }: ColumnConfig): GridCol
     {
       field: 'US_Containers_Intransit_Qty',
       headerName: 'US Containers Intransit Qty',
-      width: 200,
+      width: 250,
       type: 'number',
       headerAlign: 'right',
       align: 'right',
@@ -398,7 +398,7 @@ export const generateCombinedReportColumns = ({ isDark }: ColumnConfig): GridCol
     {
       field: 'UK_Containers_Overall_Qty',
       headerName: 'UK Containers Overall Qty',
-      width: 200,
+      width: 250,
       type: 'number',
       headerAlign: 'right',
       align: 'right',
@@ -412,7 +412,7 @@ export const generateCombinedReportColumns = ({ isDark }: ColumnConfig): GridCol
     {
       field: 'UK_Containers_Intransit_Qty',
       headerName: 'UK Containers Intransit Qty',
-      width: 200,
+      width: 250,
       type: 'number',
       headerAlign: 'right',
       align: 'right',

@@ -70,7 +70,7 @@ export const createSummaryDashboardColumns = (
     {
       field: "fbaWhCoverDay",
       headerName: "FBA+WH Cover Day",
-      width: 140,
+      width: 160,
       sortable: true,
       filterable: true,
       headerAlign: "center",
@@ -101,7 +101,7 @@ export const createSummaryDashboardColumns = (
     {
       field: "dispatchCoverDay",
       headerName: "Dispatch Cover Day",
-      width: 150,
+      width: 160,
       sortable: true,
       filterable: true,
       headerAlign: "center",

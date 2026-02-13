@@ -35,7 +35,7 @@ const generateBaseColumns = (): GridColDef[] => [
   {
     field: "itemRangeStatus",
     headerName: "Item Range Status",
-    width: 140,
+    width: 150,
     sortable: true,
     filterable: true,
     renderCell: (params) => {
@@ -67,7 +67,7 @@ const generateMonthColumns = (
     columns.push({
       field: `${month.monthCode}Opening`,
       headerName: `${warehouse} ${month.prefix} ${currentYear} Remaining Opening`,
-      width: 220,
+      width: 250,
       sortable: true,
       filterable: false,
       headerAlign: "center",
@@ -84,7 +84,7 @@ const generateMonthColumns = (
   columns.push({
     field: `${month.monthCode}`,
     headerName: `${warehouse} ${month.prefix} ${currentYear} Forecasted Order`,
-    width: 220,
+    width: 250,
     sortable: true,
     filterable: false,
     headerAlign: "center",
@@ -124,7 +124,7 @@ const generateMonthColumns = (
   columns.push({
     field: `${month.monthCode}TotalDispatch`,
     headerName: `${warehouse} ${month.prefix} ${currentYear} Factory Total Dispatch`,
-    width: 220,
+    width: 270,
     sortable: true,
     filterable: false,
     headerAlign: "center",

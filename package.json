@@ -26,6 +26,8 @@
     "@mui/x-date-pickers": "^8.27.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "echarts": "^6.0.0",
+    "echarts-for-react": "^3.0.6",
     "flatpickr": "^4.6.13",
     "react": "^19.0.0",
     "react-dnd": "^16.0.1",
