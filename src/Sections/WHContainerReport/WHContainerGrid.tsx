@@ -1,5 +1,5 @@
 import { DataGridPremium } from "@mui/x-data-grid-premium"
-import { STOCK_REPORT_DATA, PAGINATION_MODEL } from "../../mockData/whContainerReportMock"
+import { STOCK_REPORT_DATA, PAGINATION_MODEL } from "../../mockData/WHContainerReportMock"
 import { getDataGridStyles } from "../../styles/productionReportStyles"
 import { useTheme } from "../../hooks/useTheme";
 import { generateStockReportColumns } from "../../utils/columnGenerators/WHContainerReport";
