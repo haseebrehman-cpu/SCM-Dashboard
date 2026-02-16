@@ -1,6 +1,6 @@
 import { WHContainerReportRow } from "../types/whContainerReport";
 
-export const STOCK_REPORT_DATA: WHContainerReportRow[] = [
+export const CONTAINER_REPORT_DATA: WHContainerReportRow[] = [
   {
     id: 1,
     Data_From: "12/14/2025",

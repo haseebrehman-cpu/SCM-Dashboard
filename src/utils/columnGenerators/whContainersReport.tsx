@@ -1,6 +1,6 @@
 import { GridColDef } from "@mui/x-data-grid";
 
-export const generateStockReportColumns = (): GridColDef[] => [
+export const generateWarehouseReportColumns = (): GridColDef[] => [
   {
     field: "Data_From",
     headerName: "Data_From",
