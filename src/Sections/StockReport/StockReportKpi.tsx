@@ -35,7 +35,7 @@ const kpiCards = [
     icon: "📉",
     bgColor: "bg-red-50",
     textColor: "text-red-600",
-    des: "Count where Available is 0"
+    des: "Total count for abundant items"
   },
 ];
 

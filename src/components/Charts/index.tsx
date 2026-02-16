@@ -10,7 +10,7 @@ export interface EChartProps {
   renderer?: 'canvas' | 'svg';
   className?: string;
   onEvents?: {
-    [eventName: string]: (params: any) => void;
+    [eventName: string]: (params: unknown) => void;
   };
 }
 

@@ -63,6 +63,15 @@ export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
     file3: UploadedFile | null,
     resetCallback: () => void
   ) => {
+    // Prepare the JSON payload for API integration
+    const payload = {
+      last_60_days: file1?.files.map(f => f.name) || [],
+      next_60_days_previous_year: file2?.files.map(f => f.name) || [],
+      open_orders: file3?.files.map(f => f.name) || []
+    };
+
+    console.log('Final API Payload:', payload);
+
     // Add logs for all uploaded files
     if (file1?.files) {
       addFileLogs(file1.files, 1);
