@@ -1,4 +1,5 @@
-import { WHContainerReportRow } from "../types/WHContainerReport";
+import { WHContainerReportRow } from "../types/whContainerReport";
+
 export const STOCK_REPORT_DATA: WHContainerReportRow[] = [
   {
     id: 1,
