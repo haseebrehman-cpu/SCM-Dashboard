@@ -29,7 +29,7 @@ const AbandonedItemsChart: React.FC<ChartBaseProps> = React.memo(({ isDark, colo
         return `<div class="font-semibold mb-1">${params.name}</div>
                  <div class="flex items-center gap-2">
                    <span class="w-2 h-2 rounded-full" style="background-color:${params.color}"></span>
-                   <span class="text-sm">Quantity:</span>
+                   <span class="text-sm">WH Stock:</span>
                    <span class="text-sm">${params.value.toLocaleString()}</span>
                    <span class="text-xs text-gray-500">(${params.percent}%)</span>
                  </div>`;

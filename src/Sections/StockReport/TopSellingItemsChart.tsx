@@ -12,7 +12,7 @@ const TopSellingItemsChart: React.FC<ChartBaseProps> = React.memo(({ isDark, col
   const option: EChartsOption = React.useMemo(() => ({
     title: {
       text: 'Top 20 Best-Selling Items',
-      subtext: 'Ranked by total sales volume',
+      subtext: 'Ranked by total sales volume (last 60 days)',
       left: 'left',
       textStyle: { color: isDark ? '#f3f4f6' : '#111827', fontSize: 18, fontWeight: 700 },
       subtextStyle: { color: isDark ? '#9ca3af' : '#6b7280', fontSize: 10 }

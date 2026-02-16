@@ -17,7 +17,7 @@ const kpiCards = [
     icon: "📊",
     bgColor: "bg-green-50",
     textColor: "text-green-600",
-    des: "Overall Sold Quantity"
+    des: "Sold Quantity (Last 60 days)"
   },
   {
     metric: "Total Warehouse Stock",  //How many total items do we have?

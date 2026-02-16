@@ -21,7 +21,7 @@ const InventoryAnalysisChart: React.FC<ChartBaseProps> = React.memo(({ isDark, c
           color: colors.palette[index % colors.palette.length],
           borderRadius: index === warehouses.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0],
         },
-        tooltip: { valueFormatter: (value: unknown) => `${String(value)} (Sold)` }
+        tooltip: { valueFormatter: (value: unknown) => `${String(value)} (Last 6 days sold qty)` }
       });
       // Stack 2: Available
       series.push({
@@ -34,13 +34,13 @@ const InventoryAnalysisChart: React.FC<ChartBaseProps> = React.memo(({ isDark, c
           opacity: 0.5,
           borderRadius: index === warehouses.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0],
         },
-        tooltip: { valueFormatter: (value: unknown) => `${String(value)} (Available)` }
+        tooltip: { valueFormatter: (value: unknown) => `${String(value)} (Available current day)` }
       });
     });
 
     return {
       title: {
-        text: 'Inventory & Sales Analysis',
+        text: 'Inventory WH Stock & Last 60 Days Sales Analysis',
         subtext: 'Comparison by Warehouse per Category',
         left: 'left',
         textStyle: { color: isDark ? '#f3f4f6' : '#111827', fontSize: 18, fontWeight: 700 },
