@@ -1,4 +1,4 @@
-import KpiCards from './KpiCards'
+import KpiCards from '../../components/common/KpiCards'
 
 const kpiCards = [
   {

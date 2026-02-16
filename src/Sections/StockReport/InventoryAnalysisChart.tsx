@@ -8,7 +8,7 @@ const InventoryAnalysisChart: React.FC<ChartBaseProps> = React.memo(({ isDark, c
   const categories = warehouseStockData.map(item => item.category);
 
   const option: EChartsOption = React.useMemo(() => {
-    const warehouses = ['UK', 'US', 'CA', 'DE', 'AU'];
+    const warehouses = ['UK', 'US', 'CA', 'DE'];
     const series: BarSeriesOption[] = [];
     warehouses.forEach((wh, index) => {
       // Stack 1: Sold  
