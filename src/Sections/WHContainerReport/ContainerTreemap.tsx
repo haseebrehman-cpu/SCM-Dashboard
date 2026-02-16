@@ -143,12 +143,6 @@ const ContainerTreemap: React.FC<ChartBaseProps> = React.memo(({ isDark, commonT
             title: 'Save',
             iconStyle: { borderColor: isDark ? '#9ca3af' : '#6b7280' }
           },
-          dataView: {
-            title: 'Data',
-            readOnly: false,
-            lang: ['Data View', 'Close', 'Update'],
-            iconStyle: { borderColor: isDark ? '#9ca3af' : '#6b7280' }
-          },
           restore: {
             title: 'Restore',
             iconStyle: { borderColor: isDark ? '#9ca3af' : '#6b7280' }

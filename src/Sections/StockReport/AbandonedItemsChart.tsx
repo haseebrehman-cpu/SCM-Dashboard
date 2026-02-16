@@ -49,7 +49,6 @@ const AbandonedItemsChart: React.FC<ChartBaseProps> = React.memo(({ isDark, colo
       show: true,
       feature: {
         saveAsImage: { show: true, title: 'Save' },
-        dataView: { show: true, readOnly: false, title: 'Data' },
       },
       iconStyle: { borderColor: isDark ? '#9ca3af' : '#6b7280' }
     },

@@ -30,7 +30,6 @@ const TopSellingItemsChart: React.FC<ChartBaseProps> = React.memo(({ isDark, col
       right: 0,
       feature: {
         saveAsImage: { title: 'Save' },
-        dataView: { title: 'View Data' },
         magicType: { type: ['line', 'bar'], title: { line: 'Line', bar: 'Bar' } },
         restore: { title: 'Restore' }
       },

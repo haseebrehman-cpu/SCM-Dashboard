@@ -18,7 +18,7 @@ export const warehouseContainers: Record<Warehouse, string[]> = {
 
 // Generate sample data for each warehouse
 const generateWarehouseData = (): ProductionReportRow[] => {
-  const categories = ["Electronics", "Clothing", "Home & Garden", "Sports", "Toys", "Books", "Automotive", "Health"];
+  const categories = ["GLOVES", "BUNDLES", "YOGA STUFF", "UNFILLED PUNCH BAGS SETS", "TUFTING DUVET COVER SET", "T-SHIRTS", "SIMPLE DUVET COVER SET", "SHIN INSTEPS"];
   const statuses: Array<"Active" | "Inactive" | "Pending"> = ["Active", "Inactive", "Pending"];
 
   return Array(15).fill(0).map((_, index) => ({

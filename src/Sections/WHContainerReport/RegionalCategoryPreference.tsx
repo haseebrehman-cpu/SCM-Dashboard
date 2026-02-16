@@ -44,12 +44,6 @@ const RegionalCategoryPreference: React.FC<ChartBaseProps> = React.memo(({ isDar
             title: 'Save',
             iconStyle: { borderColor: isDark ? '#9ca3af' : '#6b7280' }
           },
-          dataView: {
-            title: 'Data',
-            readOnly: false,
-            lang: ['Data View', 'Close', 'Update'],
-            iconStyle: { borderColor: isDark ? '#9ca3af' : '#6b7280' }
-          },
           dataZoom: {
             title: { zoom: 'Zoom', back: 'Reset' },
             iconStyle: { borderColor: isDark ? '#9ca3af' : '#6b7280' }

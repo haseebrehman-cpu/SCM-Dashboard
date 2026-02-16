@@ -37,7 +37,7 @@ export const warehouseContainers: Record<Warehouse, ContainerInfo[]> = {
 };
 
 const generateWarehouseData = (): StockPerformanceRow[] => {
-  const categories = ["Electronics", "Clothing", "Home & Garden", "Sports", "Toys", "Books", "Automotive", "Health", "Beauty", "Food"];
+  const categories = ["GLOVES", "BUNDLES", "YOGA STUFF", "UNFILLED PUNCH BAGS SETS", "TUFTING DUVET COVER SET", "T-SHIRTS", "SIMPLE DUVET COVER SET", "SHIN INSTEPS"];
 
   return Array(20).fill(0).map((_, index) => {
     const ctn1 = Math.floor(Math.random() * 50);

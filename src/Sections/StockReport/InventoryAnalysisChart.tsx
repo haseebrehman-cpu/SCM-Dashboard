@@ -57,7 +57,6 @@ const InventoryAnalysisChart: React.FC<ChartBaseProps> = React.memo(({ isDark, c
         right: 0,
         feature: {
           saveAsImage: { title: 'Save' },
-          dataView: { title: 'View Data' },
           magicType: { type: ['stack'], title: { stack: 'Stack' } }
         },
         iconStyle: { borderColor: isDark ? '#9ca3af' : '#6b7280' }

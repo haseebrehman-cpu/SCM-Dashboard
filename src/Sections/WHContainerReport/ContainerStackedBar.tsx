@@ -53,14 +53,8 @@ const ContainerStackedBar: React.FC<ChartBaseProps> = React.memo(({ isDark, colo
             title: 'Save',
             iconStyle: { borderColor: isDark ? '#9ca3af' : '#6b7280' }
           },
-          dataView: {
-            title: 'Data',
-            readOnly: false,
-            lang: ['Data View', 'Close', 'Update'],
-            iconStyle: { borderColor: isDark ? '#9ca3af' : '#6b7280' }
-          },
           magicType: {
-            type: ['line', 'bar', 'stack'],
+            type: ['line', 'bar'],
             title: { line: 'Line', bar: 'Bar', stack: 'Stack' },
             iconStyle: { borderColor: isDark ? '#9ca3af' : '#6b7280' }
           },
