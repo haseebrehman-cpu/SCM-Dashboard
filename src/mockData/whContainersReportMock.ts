@@ -66,6 +66,6 @@ export const CONTAINER_REPORT_DATA: WHContainerReportRow[] = [
     CurrentDate: "2026-02-16",
     LeftDays: 4,
   },
-];
+]
 
 export const PAGINATION_MODEL = { page: 0, pageSize: 100 };

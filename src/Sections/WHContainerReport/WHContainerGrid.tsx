@@ -2,7 +2,7 @@ import { DataGridPremium } from "@mui/x-data-grid-premium"
 import { getDataGridStyles } from "../../styles/productionReportStyles"
 import { useTheme } from "../../hooks/useTheme";
 import { generateWarehouseColumns } from "../../utils/columnGenerators/whContainerReport";
-import { CONTAINER_REPORT_DATA, PAGINATION_MODEL } from "../../mockData/whContainerReportMock";
+import { CONTAINER_REPORT_DATA, PAGINATION_MODEL } from "../../mockData/whContainersReportMock";
 
 const WHContainerGrid = () => {
   const { theme } = useTheme();
