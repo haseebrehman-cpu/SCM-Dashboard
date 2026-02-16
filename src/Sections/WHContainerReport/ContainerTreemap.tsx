@@ -20,7 +20,7 @@ interface TreemapFormatterParams {
   }[];
 }
 
-const ContainerTreemap: React.FC<ChartBaseProps> = React.memo(({ isDark, colors, commonTooltip }) => {
+const ContainerTreemap: React.FC<ChartBaseProps> = React.memo(({ isDark, commonTooltip }) => {
   const option: EChartsOption = React.useMemo(() => {
     // Group data by Container Number
     const groupedData = containerLoadData.reduce((acc, curr) => {
