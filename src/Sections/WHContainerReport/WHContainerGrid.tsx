@@ -2,13 +2,13 @@ import { DataGridPremium } from "@mui/x-data-grid-premium"
 import { PAGINATION_MODEL, CONTAINER_REPORT_DATA } from "../../mockData/whContainerReportMock"
 import { getDataGridStyles } from "../../styles/productionReportStyles"
 import { useTheme } from "../../hooks/useTheme";
-import { generateWarehouseReportColumns } from "../../utils/columnGenerators/whContainerReport";
+import { generateWarehouseColumns } from "../../utils/columnGenerators/whContainerReport";
 
 const WHContainerGrid = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
-  const columns = generateWarehouseReportColumns();
+  const columns = generateWarehouseColumns();
 
   return (
     <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">

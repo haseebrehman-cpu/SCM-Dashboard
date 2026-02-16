@@ -1,6 +1,6 @@
 import { GridColDef } from "@mui/x-data-grid";
 
-export const generateWarehouseReportColumns = (): GridColDef[] => [
+export const generateWarehouseColumns = (): GridColDef[] => [
   {
     field: "Data_From",
     headerName: "Data_From",
@@ -81,4 +81,4 @@ export const generateWarehouseReportColumns = (): GridColDef[] => [
     headerAlign: "center",
     align: "center",
   },
-];
+]
