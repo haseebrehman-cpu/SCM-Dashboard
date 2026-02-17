@@ -15,16 +15,16 @@ const ArchieveDialog: React.FC<ArchieveDialogProps> = ({ isOpen, onClose }) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
-  const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
+  // const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
 
   const handleClose = () => {
     onClose();
   };
 
   const handleSubmit = () => {
-    console.log('Viewing archived report for:', startDate, "to", endDate);
+    console.log('Viewing archived report for:', startDate);
     // Add logic here to load archived data based on startDate
-    if (startDate !== null && startDate !== ''&& endDate !== null && endDate !== "") {
+    if (startDate !== null && startDate !== '') {
       toast.success('Archieved Filter Applied Successfully');
     }
     onClose();
@@ -47,7 +47,7 @@ const ArchieveDialog: React.FC<ArchieveDialogProps> = ({ isOpen, onClose }) => {
                 htmlFor="archive-date"
                 className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 text-left'
               >
-                Start Date
+                Select Archive Date
               </label>
               <DateEditor
                 value={startDate}
@@ -55,7 +55,7 @@ const ArchieveDialog: React.FC<ArchieveDialogProps> = ({ isOpen, onClose }) => {
                 isDark={isDark}
                 max={format(new Date(), 'yyyy-MM-dd')}
               />
-              <label
+              {/* <label
                 htmlFor="archive-date"
                 className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 text-left'
               >
@@ -66,7 +66,7 @@ const ArchieveDialog: React.FC<ArchieveDialogProps> = ({ isOpen, onClose }) => {
                 onChange={setEndDate}
                 isDark={isDark}
                 max={format(new Date(), 'yyyy-MM-dd')}
-              />
+              /> */}
             </div>
           </div>
         </div>
