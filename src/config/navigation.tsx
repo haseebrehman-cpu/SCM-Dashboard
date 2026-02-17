@@ -42,21 +42,6 @@ export const navItems: NavItem[] = [
     path: "/purchase-order"
   },
   {
-    icon: <CalenderIcon />,
-    name: "Production Remaining Report",
-    path: "/production-remaining-report",
-  },
-  {
-    icon: <UserCircleIcon />,
-    name: "Stock Performance Report",
-    path: "/stock-performance-report",
-  },
-  {
-    name: "Summary Dashboard",
-    icon: <ListIcon />,
-    path: "/summary-dashboard",
-  },
-  {
     name: "Container Detail Report",
     icon: <BoxIcon />,
     subItems: [
@@ -77,5 +62,21 @@ export const navItems: NavItem[] = [
       },
     ],
   },
+  {
+    icon: <CalenderIcon />,
+    name: "Production Remaining Report",
+    path: "/production-remaining-report",
+  },
+  {
+    icon: <UserCircleIcon />,
+    name: "Stock Performance Report",
+    path: "/stock-performance-report",
+  },
+  {
+    name: "Summary Dashboard",
+    icon: <ListIcon />,
+    path: "/summary-dashboard",
+  },
+
 
 ];
