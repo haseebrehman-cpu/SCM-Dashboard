@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Paper, SelectChangeEvent, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import StockFilters from '../../Sections/StockReport/StockFilters'
 import StockReportCharts from '../../Sections/StockReport/StockReportCharts'
 import StockReportKpi from '../../Sections/StockReport/StockReportKpi'
@@ -30,13 +30,10 @@ const StockReportView = () => {
     itemNumber: ['YM-TPE-DC-MJ']
   });
 
-  const handleChange = (id: string) => (event: SelectChangeEvent<string[]>) => {
-    const {
-      target: { value },
-    } = event;
+  const handleChange = (id: string) => (value: string[]) => {
     setFilters(prev => ({
       ...prev,
-      [id]: typeof value === 'string' ? value.split(',') : value,
+      [id]: value,
     }));
   };
 

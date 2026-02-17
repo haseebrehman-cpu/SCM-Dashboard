@@ -30,14 +30,16 @@ export const FileUploadProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   };
 
-  const getRowCountFromFile = async (file: File): Promise<number> => {
+  const getFileMetadata = async (file: File): Promise<{ rowCount: number; columnCount: number }> => {
     try {
       const fileType = getFileExtension(file.name);
 
       if (fileType === 'csv') {
         const text = await file.text();
         const lines = text.trim().split('\n');
-        return Math.max(0, lines.length - 1);
+        const rowCount = Math.max(0, lines.length - 1);
+        const columnCount = lines.length > 0 ? lines[0].split(',').length : 0;
+        return { rowCount, columnCount };
       } else if (fileType === 'xlsx' || fileType === 'xls') {
         const arrayBuffer = await file.arrayBuffer();
         const XLSX = await import('xlsx');
@@ -47,14 +49,16 @@ export const FileUploadProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
         if (worksheet['!ref']) {
           const range = XLSX.utils.decode_range(worksheet['!ref']);
-          return Math.max(0, range.e.r);
+          const rowCount = Math.max(0, range.e.r);
+          const columnCount = range.e.c + 1;
+          return { rowCount, columnCount };
         }
-        return 0;
+        return { rowCount: 0, columnCount: 0 };
       }
-      return 0;
+      return { rowCount: 0, columnCount: 0 };
     } catch (error) {
-      console.error('Error counting rows:', error);
-      return 0;
+      console.error('Error analyzing file:', error);
+      return { rowCount: 0, columnCount: 0 };
     }
   };
 
@@ -65,10 +69,11 @@ export const FileUploadProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
       const newLogs = await Promise.all(
         files.map(async (file, index) => {
-          const rowCount = await getRowCountFromFile(file);
+          const { rowCount, columnCount } = await getFileMetadata(file);
           return {
             id: parseInt(`${timestamp}${index}${randomSuffix.charCodeAt(0)}`),
             fileName: file.name,
+            warehouse: '', // Add default warehouse value; update as needed
             uploadedDate: new Date().toLocaleString('en-US', {
               year: 'numeric',
               month: '2-digit',
@@ -86,6 +91,7 @@ export const FileUploadProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             stepNumber,
             file,
             rowCount,
+            columnCount,
           };
         })
       );

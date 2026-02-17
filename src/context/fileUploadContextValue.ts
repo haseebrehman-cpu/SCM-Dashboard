@@ -3,6 +3,7 @@ import { createContext } from 'react';
 export interface FileLogEntry {
   id: number;
   fileName: string;
+  warehouse: string;
   uploadedDate: string;
   uploadedBy: string;
   fileSize: string;
@@ -12,6 +13,7 @@ export interface FileLogEntry {
   stepNumber: number;
   file: File;
   rowCount?: number;
+  columnCount : number
 }
 
 export interface FileUploadContextType {

@@ -1,6 +1,6 @@
 import React from 'react'
 import EChart from '../../components/Charts';
-import { EChartsOption, BarSeriesOption } from 'echarts';
+import { EChartsOption, BarSeriesOption, LineSeriesOption } from 'echarts';
 import { warehouseStockData } from '../../constants/ChartsConstants';
 import { ChartBaseProps } from '../../types/charts';
 
@@ -9,7 +9,7 @@ const InventoryAnalysisChart: React.FC<ChartBaseProps> = React.memo(({ isDark, c
 
   const option: EChartsOption = React.useMemo(() => {
     const warehouses = ['UK', 'US', 'CA', 'DE'];
-    const series: BarSeriesOption[] = [];
+    const series: (BarSeriesOption | LineSeriesOption)[] = [];
     warehouses.forEach((wh, index) => {
       // Stack 1: Sold  
       series.push({
@@ -38,9 +38,36 @@ const InventoryAnalysisChart: React.FC<ChartBaseProps> = React.memo(({ isDark, c
       });
     });
 
+    // Overall Summary Metrics
+    series.push({
+      name: 'All WH Stock',
+      type: 'line',
+      smooth: true,
+      data: warehouseStockData.map(item =>
+        Object.values(item.available as Record<string, number>).reduce((acc, curr) => acc + curr, 0)
+      ),
+      itemStyle: { color: isDark ? '#10b981' : '#059669' },
+      symbol: 'circle',
+      symbolSize: 8,
+      tooltip: { valueFormatter: (value: unknown) => `${String(value)} (Total Available)` }
+    });
+
+    series.push({
+      name: 'Overall last 60 days sales',
+      type: 'line',
+      smooth: true,
+      data: warehouseStockData.map(item =>
+        Object.values(item.sold as Record<string, number>).reduce((acc, curr) => acc + curr, 0)
+      ),
+      itemStyle: { color: isDark ? '#f59e0b' : '#d97706' },
+      symbol: 'diamond',
+      symbolSize: 8,
+      tooltip: { valueFormatter: (value: unknown) => `${String(value)} (Total Sold - Last 60 Days)` }
+    });
+
     return {
       title: {
-        text: 'Inventory WH Stock & Last 60 Days Sales Analysis',
+        text: 'Regional Warehouse Inventory & 60-Day Sales Analysis',
         subtext: 'Comparison by Warehouse per Category',
         left: 'left',
         textStyle: { color: isDark ? '#f3f4f6' : '#111827', fontSize: 18, fontWeight: 700 },
@@ -50,7 +77,7 @@ const InventoryAnalysisChart: React.FC<ChartBaseProps> = React.memo(({ isDark, c
         top: 50,
         right: 0,
         textStyle: { color: isDark ? '#9ca3af' : '#6b7280' },
-        data: warehouses,
+        data: [...warehouses, 'All WH Stock', 'Overall last 60 days sales'],
         itemGap: 20
       },
       toolbox: {

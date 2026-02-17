@@ -7,12 +7,12 @@ interface LogColumnParams {
   deleteButtonIds: Set<number>;
 }
 
-const renderHeaderWithIcon = (label: string) => (
-  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-    <span>{label}</span>
-    <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
-  </div>
-);
+// const renderHeaderWithIcon = (label: string) => (
+//   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+//     <span>{label}</span>
+//     <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
+//   </div>
+// );
 
 export const generateFileLogColumns = ({
   handleDelete,
@@ -27,51 +27,35 @@ export const generateFileLogColumns = ({
       filterable: true,
       headerAlign: 'center',
       align: 'left',
-      renderHeader: () => renderHeaderWithIcon('File Name'),
+      // renderHeader: () => renderHeaderWithIcon('File Name'),
     },
     {
-      field: 'uploadedDate',
-      headerName: 'Upload Date',
+      field: 'stepNumber',
+      headerName: 'Step Type',
+      flex: 0.7,
+      minWidth: 180,
+      sortable: true,
+      filterable: true,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        const stepNumber = params.value;
+        return <span>
+          {stepNumber === 1 ? "last_60_days" :
+            stepNumber === 2 ? "next_60_days_previous_year" :
+              stepNumber === 3 ? "open_orders" : ""}
+        </span>;
+      },
+    },
+    {
+      field: 'warehouse',
+      headerName: 'Warehouse',
       flex: 0.9,
       minWidth: 140,
       sortable: true,
       filterable: true,
       headerAlign: 'center',
       align: 'center',
-      renderHeader: () => renderHeaderWithIcon('Upload Date'),
-    },
-    {
-      field: 'uploadedBy',
-      headerName: 'Uploaded By',
-      flex: 0.9,
-      minWidth: 140,
-      sortable: true,
-      filterable: true,
-      headerAlign: 'center',
-      align: 'center',
-      renderHeader: () => renderHeaderWithIcon('Uploaded By'),
-    },
-    {
-      field: 'startDate',
-      headerName: 'Start Date',
-      flex: 0.9,
-      minWidth: 140,
-      sortable: true,
-      filterable: true,
-      headerAlign: 'center',
-      align: 'center',
-      renderHeader: () => renderHeaderWithIcon('Start Date'),
-    },
-    {
-      field: 'endDate',
-      headerName: 'End Date',
-      flex: 0.9,
-      minWidth: 140,
-      sortable: true,
-      filterable: true,
-      headerAlign: 'center',
-      align: 'center',
-      renderHeader: () => renderHeaderWithIcon('End Date'),
     },
     {
       field: 'rowCount',
@@ -82,27 +66,75 @@ export const generateFileLogColumns = ({
       filterable: true,
       headerAlign: 'center',
       align: 'center',
-      renderHeader: () => renderHeaderWithIcon('Row Count'),
       renderCell: (params) => {
         const rowCount = params.row.rowCount;
         return <span style={{ fontWeight: 500 }}>{rowCount !== undefined && rowCount !== null ? rowCount : '-'}</span>;
       },
     },
     {
-      field: 'stepNumber',
-      headerName: 'Step',
+      field: 'columnCount',
+      headerName: 'Column Count',
       flex: 0.7,
-      minWidth: 80,
+      minWidth: 120,
       sortable: true,
       filterable: true,
       headerAlign: 'center',
       align: 'center',
-      renderHeader: () => renderHeaderWithIcon('Step'),
       renderCell: (params) => {
-        const stepNumber = params.value;
-        return <span>{`Step ${stepNumber}`}</span>;
+        const columnCount = params.row.columnCount;
+        return <span style={{ fontWeight: 500 }}>{columnCount !== undefined && columnCount !== null ? columnCount : '-'}</span>;
       },
     },
+    {
+      field: 'status',
+      headerName: 'Status',
+      flex: 0.9,
+      minWidth: 140,
+      sortable: true,
+      filterable: true,
+      headerAlign: 'center',
+      align: 'center',
+    },
+    {
+      field: 'uploadedDate',
+      headerName: 'Upload Date',
+      flex: 0.9,
+      minWidth: 140,
+      sortable: true,
+      filterable: true,
+      headerAlign: 'center',
+      align: 'center',
+    },
+    {
+      field: 'uploadedBy',
+      headerName: 'Uploaded By',
+      flex: 0.9,
+      minWidth: 140,
+      sortable: true,
+      filterable: true,
+      headerAlign: 'center',
+      align: 'center',
+    },
+    // {
+    //   field: 'startDate',
+    //   headerName: 'Start Date',
+    //   flex: 0.9,
+    //   minWidth: 140,
+    //   sortable: true,
+    //   filterable: true,
+    //   headerAlign: 'center',
+    //   align: 'center',
+    // },
+    // {
+    //   field: 'endDate',
+    //   headerName: 'End Date',
+    //   flex: 0.9,
+    //   minWidth: 140,
+    //   sortable: true,
+    //   filterable: true,
+    //   headerAlign: 'center',
+    //   align: 'center',
+    // },
     {
       field: 'actions',
       type: 'actions',
