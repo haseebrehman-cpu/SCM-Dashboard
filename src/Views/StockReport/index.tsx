@@ -25,9 +25,9 @@ const filtersArray = [
 
 const StockReportView = () => {
   const [filters, setFilters] = useState<{ [key: string]: string[] }>({
-    warehouse: ['UK'],
-    category: ['BUNDLES'],
-    itemNumber: ['YM-TPE-DC-MJ']
+    warehouse: [''],
+    category: [''],
+    itemNumber: ['']
   });
 
   const handleChange = (id: string) => (value: string[]) => {
