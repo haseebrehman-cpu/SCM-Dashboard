@@ -122,9 +122,9 @@ const sanitizeStringArray = (arr: string[]): string[] =>
     // Memoized handlers
     const handleChange_Callback = useCallback(
       (
-        event: React.SyntheticEvent,
+        _event: React.SyntheticEvent,
         newValue: string[],
-        reason: AutocompleteChangeReason,
+        _reason: AutocompleteChangeReason,
         details?: AutocompleteChangeDetails<string>
       ) => {
         const clickedOption = details?.option;
