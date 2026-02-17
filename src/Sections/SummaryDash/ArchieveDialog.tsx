@@ -14,17 +14,18 @@ interface ArchieveDialogProps {
 const ArchieveDialog: React.FC<ArchieveDialogProps> = ({ isOpen, onClose }) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
+  const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
+  const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
 
   const handleClose = () => {
     onClose();
   };
 
   const handleSubmit = () => {
-    console.log('Viewing archived report for:', selectedDate);
-    // Add logic here to load archived data based on selectedDate
-    if (selectedDate !== null && selectedDate !== '') {
-      toast.success('Data Saved');
+    console.log('Viewing archived report for:', startDate, "to", endDate);
+    // Add logic here to load archived data based on startDate
+    if (startDate !== null && startDate !== ''&& endDate !== null && endDate !== "") {
+      toast.success('Archieved Filter Applied Successfully');
     }
     onClose();
   };
@@ -46,11 +47,23 @@ const ArchieveDialog: React.FC<ArchieveDialogProps> = ({ isOpen, onClose }) => {
                 htmlFor="archive-date"
                 className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 text-left'
               >
-                Archive Date
+                Start Date
               </label>
               <DateEditor
-                value={selectedDate}
-                onChange={setSelectedDate}
+                value={startDate}
+                onChange={setStartDate}
+                isDark={isDark}
+                max={format(new Date(), 'yyyy-MM-dd')}
+              />
+              <label
+                htmlFor="archive-date"
+                className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 text-left'
+              >
+                End Date
+              </label>
+              <DateEditor
+                value={endDate}
+                onChange={setEndDate}
                 isDark={isDark}
                 max={format(new Date(), 'yyyy-MM-dd')}
               />
