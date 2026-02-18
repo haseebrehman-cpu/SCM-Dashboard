@@ -21,10 +21,13 @@ steps:
     npm run build
 
     echo "Deploying build to /var/www/vhosts/scm-frontend..."
+    rm -rf /var/www/vhosts/scm-frontend/*
     cp -r dist/ /var/www/vhosts/scm-frontend/
 
     echo "Reloading Nginx..."
-    sudo systemctl reload nginx
+    sudo systemctl daemon-reload
+    sudo systemctl restart nginx
+    sudo service nginx reload
 
     echo "===== Frontend Deployment Successful ====="
 
