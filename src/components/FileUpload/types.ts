@@ -1,10 +1,4 @@
-/**
- * Shared types for FileUpload components
- */
+import type { UploadedFile as UploadedFileInterface } from "../../types/Interfaces/interfaces";
 
-export interface UploadedFile {
-  files: File[];
-  previews: string[];
-  progress: number;
-  status: 'uploading' | 'completed' | 'error';
-}
+export type UploadedFile = UploadedFileInterface;
+
