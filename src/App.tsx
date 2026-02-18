@@ -24,7 +24,7 @@ export default function App() {
   return (
     <>
       <FileUploadProvider>
-        <Router>
+        <Router basename="/scm">
           <ScrollToTop />
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
