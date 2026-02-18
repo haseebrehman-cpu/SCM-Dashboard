@@ -5,7 +5,7 @@
       "destination": "/assets/$1"
     },
     {
-      "source": "/scm/(.*)",
+      "source": "/scm/(?!assets/)(.*)",
       "destination": "/index.html"
     }
   ]
