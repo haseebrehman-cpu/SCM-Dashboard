@@ -1,0 +1,31 @@
+trigger:
+- main
+
+pool:
+  name: Default
+
+steps:
+- script: |
+    echo "===== Starting Frontend Deployment ====="
+
+    echo "Node version:"
+    node -v
+    npm -v
+
+    cd $(Build.SourcesDirectory)
+
+    echo "Installing dependencies..."
+    npm install
+
+    echo "Building Vite app..."
+    npm run build
+
+    echo "Deploying build to /var/www/vhosts/scm-frontend..."
+    cp -r dist/ /var/www/vhosts/scm-frontend/
+
+    echo "Reloading Nginx..."
+    sudo systemctl reload nginx
+
+    echo "===== Frontend Deployment Successful ====="
+
+  displayName: Build and Deploy Vite Frontend
