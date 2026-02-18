@@ -1,8 +1,12 @@
 {
   "rewrites": [
     {
+      "source": "/scm/assets/(.*)",
+      "destination": "/assets/$1"
+    },
+    {
       "source": "/scm/(.*)",
-      "destination": "/scm/index.html"
+      "destination": "/index.html"
     }
   ]
 }
