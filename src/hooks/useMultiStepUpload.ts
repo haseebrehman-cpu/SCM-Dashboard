@@ -1,31 +1,41 @@
-import { useState, useCallback } from 'react';
-import { UploadedFile } from '../components/FileUpload/types';
-import { REQUIRED_FILES_COUNT, StepNumber } from '../constants/fileUpload';
-import toast from 'react-hot-toast';
-import { useFileUploadLogs } from './useFileUploadLogs';
+import { useState, useCallback } from "react";
+import toast from "react-hot-toast";
+import { UploadedFile } from "../components/FileUpload/types";
+import { REQUIRED_FILES_COUNT, StepNumber } from "../constants/fileUpload";
+import { useFileUploadLogs } from "./useFileUploadLogs";
+import { useUploadScmFiles } from "../api/scmFileUpload";
 
 interface UseMultiStepUploadReturn {
   currentStep: StepNumber;
   canProceedToNextStep: (step: StepNumber, file: UploadedFile | null) => boolean;
   handleNext: (step: StepNumber, file: UploadedFile | null) => void;
   handleBack: () => void;
-  handleComplete: (file1: UploadedFile | null, file2: UploadedFile | null, file3: UploadedFile | null, resetCallback: () => void) => void;
+  handleComplete: (
+    file1: UploadedFile | null,
+    file2: UploadedFile | null,
+    file3: UploadedFile | null,
+    resetCallback: () => void,
+    setUploading: (value: boolean) => void,
+  ) => void;
   isStepComplete: (file: UploadedFile | null) => boolean;
 }
 
 export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
   const [currentStep, setCurrentStep] = useState<StepNumber>(1);
   const { addFileLogs } = useFileUploadLogs();
+  const uploadMutation = useUploadScmFiles();
 
   const isStepComplete = useCallback((file: UploadedFile | null): boolean => {
-    return file !== null && file.status === 'completed';
+    return file !== null && file.status === "completed";
   }, []);
 
   const validateFileCount = useCallback((file: UploadedFile | null): boolean => {
     if (!file || !file.files) return false;
     
     if (file.files.length !== REQUIRED_FILES_COUNT) {
-      toast.error(`All ${REQUIRED_FILES_COUNT} Files are required to proceed further`);
+      toast.error(
+        `All ${REQUIRED_FILES_COUNT} files are required to proceed further.`,
+      );
       return false;
     }
     
@@ -61,34 +71,48 @@ export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
     file1: UploadedFile | null,
     file2: UploadedFile | null,
     file3: UploadedFile | null,
-    resetCallback: () => void
+    resetCallback: () => void,
+    setUploading: (value: boolean) => void,
   ) => {
-    // Prepare the JSON payload for API integration
-    const payload = {
-      last_60_days: file1?.files.map(f => f.name) || [],
-      next_60_days_previous_year: file2?.files.map(f => f.name) || [],
-      open_orders: file3?.files.map(f => f.name) || []
-    };
-
-    console.log('Final API Payload:', payload);
-
-    // Add logs for all uploaded files
-    if (file1?.files) {
-      addFileLogs(file1.files, 1);
-    }
-    if (file2?.files) {
-      addFileLogs(file2.files, 2);
-    }
-    if (file3?.files) {
-      addFileLogs(file3.files, 3);
+    if (!file1?.files || !file2?.files || !file3?.files) {
+      toast.error("Please upload files for all three steps before completing.");
+      return;
     }
 
-    toast.success('Files uploaded successfully');
+    setUploading(true);
 
-    // Reset all state
-    resetCallback();
-    setCurrentStep(1);
-  }, [addFileLogs]);
+    uploadMutation.mutate(
+      {
+        last_60_days: file1.files,
+        next_60_days_previous_year: file2.files,
+        open_orders: file3.files,
+      },
+      {
+        onSuccess: (data) => {
+          toast.success(data.message || "Files uploaded successfully.");
+
+          if (file1.files) {
+            addFileLogs(file1.files, 1);
+          }
+          if (file2.files) {
+            addFileLogs(file2.files, 2);
+          }
+          if (file3.files) {
+            addFileLogs(file3.files, 3);
+          }
+
+          resetCallback();
+          setCurrentStep(1);
+        },
+        onError: (error) => {
+          toast.error(error.message || "Failed to upload files. Please try again.");
+        },
+        onSettled: () => {
+          setUploading(false);
+        },
+      },
+    );
+  }, [addFileLogs, uploadMutation]);
 
   return {
     currentStep,

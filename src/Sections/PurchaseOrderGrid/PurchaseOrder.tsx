@@ -15,7 +15,6 @@ export default function PurchaseOrder() {
   const [tableData, setTableData] = useState(mockContainers);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-
   const {
     editedData,
     isEditing,

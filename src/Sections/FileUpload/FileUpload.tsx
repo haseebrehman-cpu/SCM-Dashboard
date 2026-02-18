@@ -1,9 +1,9 @@
-import React from 'react';
-import { CheckCircleIcon } from '../../icons';
-import { StepIndicator } from '../../components/FileUpload/StepIndicator';
-import { useFileUpload } from '../../hooks/useFileUpload';
-import { FileUploadStep } from './FileUploadStep';
-import { useMultiStepUpload } from '../../hooks/useMultiStepUpload';
+import React from "react";
+import { CheckCircleIcon } from "../../icons";
+import { StepIndicator } from "../../components/FileUpload/StepIndicator";
+import { useFileUpload } from "../../hooks/useFileUpload";
+import { FileUploadStep } from "./FileUploadStep";
+import { useMultiStepUpload } from "../../hooks/useMultiStepUpload";
 
 const FileUpload: React.FC = () => {
   const {
@@ -14,9 +14,10 @@ const FileUpload: React.FC = () => {
     setFile1,
     setFile2,
     setFile3,
+    setIsUploading,
     formatFileSize,
-    simulateUpload,
-    handleRemoveFile
+    registerFiles,
+    handleRemoveFile,
   } = useFileUpload();
 
   const {
@@ -27,15 +28,15 @@ const FileUpload: React.FC = () => {
   } = useMultiStepUpload();
 
   const handleUploadStep1 = (files: File[]) => {
-    simulateUpload(files, setFile1, 1);
+    registerFiles(files, setFile1, 1);
   };
 
   const handleUploadStep2 = (files: File[]) => {
-    simulateUpload(files, setFile2, 2);
+    registerFiles(files, setFile2, 2);
   };
 
   const handleUploadStep3 = (files: File[]) => {
-    simulateUpload(files, setFile3, 3);
+    registerFiles(files, setFile3, 3);
   };
 
   const handleRemoveFile1 = () => handleRemoveFile(file1, setFile1);
@@ -49,9 +50,9 @@ const FileUpload: React.FC = () => {
   };
 
   const allFilesCompleted =
-    file1?.status === 'completed' &&
-    file2?.status === 'completed' &&
-    file3?.status === 'completed';
+    file1?.status === "completed" &&
+    file2?.status === "completed" &&
+    file3?.status === "completed";
 
   return (
     <div className="flex items-center justify-center py-2 px-4">
@@ -114,7 +115,9 @@ const FileUpload: React.FC = () => {
               formatFileSize={formatFileSize}
               onUpload={handleUploadStep3}
               onRemove={handleRemoveFile3}
-              onComplete={() => handleComplete(file1, file2, file3, resetAllFiles)}
+              onComplete={() =>
+                handleComplete(file1, file2, file3, resetAllFiles, setIsUploading)
+              }
               onBack={handleBack}
               showBackButton={true}
               isLastStep={true}

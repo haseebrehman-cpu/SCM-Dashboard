@@ -6,14 +6,17 @@ import { UploadedFile } from '../components/FileUpload/types';
  * Validation functions (outside component to avoid re-creation and dependency issues)
  */
 const validateWarehouseCode = (files: File[]): boolean => {
-  const warehousePrefixes = ['UK_', 'US_', 'DE_', 'CA_'];
+  const warehousePrefixes = ["US_", "DE_", "UK_", "CA_"];
   const invalidFiles = files.filter(
-    (file) => !warehousePrefixes.some((prefix) => file.name.toUpperCase().startsWith(prefix))
+    (file) =>
+      !warehousePrefixes.some((prefix) =>
+        file.name.toUpperCase().startsWith(prefix),
+      ),
   );
 
   if (invalidFiles.length > 0) {
-    const invalidNames = invalidFiles.map((f) => f.name).join(', ');
-    const errorMsg = `File names must start with warehouse code (UK_, US_, DE_, CA_). Invalid: ${invalidNames}`;
+    const invalidNames = invalidFiles.map((f) => f.name).join(", ");
+    const errorMsg = `File names must start with warehouse region code (US_, DE_, UK_, CA_). Invalid: ${invalidNames}`;
     toast.error(errorMsg);
     return false;
   }
@@ -21,13 +24,19 @@ const validateWarehouseCode = (files: File[]): boolean => {
 };
 
 const validateOpenOrderPrefix = (files: File[]): boolean => {
-  const invalidFiles = files.filter(
-    (file) => !file.name.toUpperCase().startsWith('OPEN ORDERS')
-  );
+  const invalidFiles = files.filter((file) => {
+    const name = file.name.toLowerCase();
+    return !(
+      name.startsWith("open_order") ||
+      name.startsWith("open_orders")
+    );
+  });
 
   if (invalidFiles.length > 0) {
-    const invalidNames = invalidFiles.map((f) => f.name).join(', ');
-    const errorMsg = `File names must start with "Open Orders". Invalid: ${invalidNames}`;
+    const invalidNames = invalidFiles.map((f) => f.name).join(", ");
+    const errorMsg =
+      'Open orders file must start with "open_order" or "open_orders". Invalid: ' +
+      invalidNames;
     toast.error(errorMsg);
     return false;
   }
@@ -54,41 +63,35 @@ export const useFileUpload = () => {
   const [isUploading, setIsUploading] = useState(false);
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
   };
 
-  const simulateUpload = useCallback(
-    (files: File[], setFileState: (file: UploadedFile | null) => void, step: 1 | 2 | 3 = 1) => {
+  const registerFiles = useCallback(
+    (
+      files: File[],
+      setFileState: (file: UploadedFile | null) => void,
+      step: 1 | 2 | 3 = 1,
+    ) => {
       if (!validateFilesByStep(files, step)) {
-        setIsUploading(false);
         return;
       }
 
-      setIsUploading(true);
       const previews = files.map((file) => URL.createObjectURL(file));
-      toast.success('Files uploaded successfully');
 
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 10;
-        setFileState({
-          files,
-          previews,
-          progress,
-          status: progress < 100 ? 'uploading' : 'completed',
-        });
+      setFileState({
+        files,
+        previews,
+        progress: 100,
+        status: "completed",
+      });
 
-        if (progress >= 100) {
-          clearInterval(interval);
-          setIsUploading(false);
-        }
-      }, 200);
+      toast.success("Files validated successfully");
     },
-    []
+    [],
   );
 
   const handleRemoveFile = (file: UploadedFile | null, setFileState: (file: UploadedFile | null) => void) => {
@@ -108,7 +111,7 @@ export const useFileUpload = () => {
     setFile3,
     setIsUploading,
     formatFileSize,
-    simulateUpload,
+    registerFiles,
     handleRemoveFile,
   };
 };

@@ -61,6 +61,8 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
   });
 
   const isCurrentStepComplete = file?.status === 'completed';
+  const nextButtonLabel =
+    isLastStep && isUploading ? 'Validating Files' : stepConfig.nextButtonText;
 
   return (
     <div className="space-y-2">
@@ -96,9 +98,13 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
             size="sm"
             className="flex items-center gap-2"
           >
-            {stepConfig.nextButtonText}
+            {nextButtonLabel}
             {isLastStep ? (
-              <CheckCircleIcon className="w-4 h-4" />
+              isUploading ? (
+                <span className="h-4 w-4 border-2 border-white/60 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <CheckCircleIcon className="w-4 h-4" />
+              )
             ) : (
               <ArrowRightIcon className="w-4 h-4" />
             )}
