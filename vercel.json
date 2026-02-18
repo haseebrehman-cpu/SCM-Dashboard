@@ -1,12 +1,11 @@
 {
   "rewrites": [
-    
     {
       "source": "/scm/assets/(.*)",
       "destination": "/assets/$1"
     },
     {
-      "source": "/scm/(?!assets/)(.*)",
+      "source": "/scm/((?!assets/).*)",
       "destination": "/index.html"
     }
   ]
