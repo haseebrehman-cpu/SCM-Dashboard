@@ -3,24 +3,10 @@ import { useDropzone } from 'react-dropzone';
 import { ArrowRightIcon, CheckCircleIcon } from '../../icons';
 import Button from '../../components/ui/button/Button';
 import { UploadZone } from '../../components/FileUpload/UploadZone';
-import { UploadedFile } from '../../components/FileUpload/types';
-import { FILE_ACCEPT_TYPES, StepNumber, STEP_CONFIG } from '../../constants/fileUpload';
+import { FILE_ACCEPT_TYPES, STEP_CONFIG } from '../../constants/fileUpload';
+import { FileUploadStepProps } from '../../types/Interfaces/interfaces';
 
-interface FileUploadStepProps {
-  stepNumber: StepNumber;
-  file: UploadedFile | null;
-  isUploading: boolean;
-  previousFile: UploadedFile | null;
-  formatFileSize: (bytes: number) => string;
-  onUpload: (files: File[]) => void;
-  onRemove: () => void;
-  onNext?: () => void;
-  onBack?: () => void;
-  onComplete?: () => void;
-  showBackButton?: boolean;
-  showNextButton?: boolean;
-  isLastStep?: boolean;
-}
+
 
 export const FileUploadStep: React.FC<FileUploadStepProps> = ({
   stepNumber,

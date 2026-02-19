@@ -4,21 +4,7 @@ import { UploadedFile } from "../components/FileUpload/types";
 import { REQUIRED_FILES_COUNT, StepNumber } from "../constants/fileUpload";
 import { useFileUploadLogs } from "./useFileUploadLogs";
 import { useUploadScmFiles } from "../api/scmFileUpload";
-
-interface UseMultiStepUploadReturn {
-  currentStep: StepNumber;
-  canProceedToNextStep: (step: StepNumber, file: UploadedFile | null) => boolean;
-  handleNext: (step: StepNumber, file: UploadedFile | null) => void;
-  handleBack: () => void;
-  handleComplete: (
-    file1: UploadedFile | null,
-    file2: UploadedFile | null,
-    file3: UploadedFile | null,
-    resetCallback: () => void,
-    setUploading: (value: boolean) => void,
-  ) => void;
-  isStepComplete: (file: UploadedFile | null) => boolean;
-}
+import { UseMultiStepUploadReturn } from "../types/Interfaces/interfaces";
 
 export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
   const [currentStep, setCurrentStep] = useState<StepNumber>(1);
@@ -31,14 +17,14 @@ export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
 
   const validateFileCount = useCallback((file: UploadedFile | null): boolean => {
     if (!file || !file.files) return false;
-    
+
     if (file.files.length !== REQUIRED_FILES_COUNT) {
       toast.error(
         `All ${REQUIRED_FILES_COUNT} files are required to proceed further.`,
       );
       return false;
     }
-    
+
     return true;
   }, []);
 

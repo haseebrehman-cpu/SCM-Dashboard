@@ -6,23 +6,13 @@ import { generateFileLogColumns } from '../../utils/columnGenerators/fileUploadL
 import React from 'react';
 import { useDeleteFileUploads, useLatestUploadSession } from '../../api/scmFileUpload';
 import { Modal } from '../../components/ui/modal';
+import { ApiFileLogRow } from '../../types/Interfaces/interfaces';
 
 /**
  * FileLogsGrid Component
  * Displays a history of file uploads with bulk-deletion by date functionality.
  * Refactored to follow SRP by separating logic into custom hooks and column generators.
  */
-interface ApiFileLogRow {
-  id: number;
-  fileName: string;
-  stepNumber: number;
-  warehouse: string;
-  rowCount?: number;
-  columnCount?: number;
-  status: string;
-  uploadedDate: string;
-  uploadedBy: string;
-}
 
 const FileLogsGrid: React.FC = React.memo(() => {
   const { theme } = useTheme();

@@ -63,3 +63,46 @@ export interface UseMultiStepUploadReturn {
   ) => void;
   isStepComplete: (file: UploadedFile | null) => boolean;
 }
+
+export interface UseMultiStepUploadReturn {
+  currentStep: StepNumber;
+  canProceedToNextStep: (step: StepNumber, file: UploadedFile | null) => boolean;
+  handleNext: (step: StepNumber, file: UploadedFile | null) => void;
+  handleBack: () => void;
+  handleComplete: (
+    file1: UploadedFile | null,
+    file2: UploadedFile | null,
+    file3: UploadedFile | null,
+    resetCallback: () => void,
+    setUploading: (value: boolean) => void,
+  ) => void;
+  isStepComplete: (file: UploadedFile | null) => boolean;
+}
+
+export interface ApiFileLogRow {
+  id: number;
+  fileName: string;
+  stepNumber: number;
+  warehouse: string;
+  rowCount?: number;
+  columnCount?: number;
+  status: string;
+  uploadedDate: string;
+  uploadedBy: string;
+}
+
+export interface FileUploadStepProps {
+  stepNumber: StepNumber;
+  file: UploadedFile | null;
+  isUploading: boolean;
+  previousFile: UploadedFile | null;
+  formatFileSize: (bytes: number) => string;
+  onUpload: (files: File[]) => void;
+  onRemove: () => void;
+  onNext?: () => void;
+  onBack?: () => void;
+  onComplete?: () => void;
+  showBackButton?: boolean;
+  showNextButton?: boolean;
+  isLastStep?: boolean;
+}
