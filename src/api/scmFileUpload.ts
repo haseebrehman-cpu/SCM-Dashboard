@@ -3,7 +3,7 @@ import { LatestUploadSessionResponse, ScmUploadError, ScmUploadPayload, ScmUploa
 import toast from "react-hot-toast";
 
 const API_BASE_URL =
-  import.meta.env.VITE_SCM_API_BASE_URL ?? "";
+  import.meta.env.VITE_SCM_API_BASE_URL ?? "/api";
 
 type ScmUploadResponse = ScmUploadSuccess | ScmUploadError;
 
@@ -26,7 +26,6 @@ async function uploadScmFiles(payload: ScmUploadPayload): Promise<ScmUploadRespo
   const response = await fetch(`${API_BASE_URL}/files/`, {
     method: "POST",
     body: formData,
-    credentials: "include",
   });
 
   let data: ScmUploadResponse;
@@ -72,7 +71,6 @@ export const useUploadScmFiles = (): UseMutationResult<
 async function fetchLatestUploadSession(): Promise<LatestUploadSessionResponse> {
   const response = await fetch(`${API_BASE_URL}/files/`, {
     method: "GET",
-    credentials: "include",
   });
 
   let data: LatestUploadSessionResponse;
@@ -110,7 +108,6 @@ export const useLatestUploadSession = (): UseQueryResult<
 async function deleteFileUploads(sessionId: number): Promise<LatestUploadSessionResponse> {
   const response = await fetch(`${API_BASE_URL}/files/?session_id=${sessionId}`, {
     method: "DELETE",
-    credentials: "include",
   });
 
   let data: LatestUploadSessionResponse;

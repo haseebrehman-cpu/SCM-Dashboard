@@ -5,6 +5,15 @@ import svgr from "vite-plugin-svgr";
 // https://vite.dev/config/
 export default defineConfig({
   base: '/scm/',
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://skumapper.igate.com.pk/scm',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '/api'),
+      }
+    }
+  },
   plugins: [
     react(),
     svgr({
