@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://skumapper.igate.com.pk/scm/api/:path*"
+    },
+    {
       "source": "/scm/assets/(.*)",
       "destination": "/assets/$1"
     },
