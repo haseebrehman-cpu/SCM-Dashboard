@@ -3,7 +3,7 @@ import { LatestUploadSessionResponse, ScmUploadError, ScmUploadPayload, ScmUploa
 import toast from "react-hot-toast";
 
 const API_BASE_URL =
-  import.meta.env.VITE_SCM_API_BASE_URL ?? "/api";
+  import.meta.env.VITE_SCM_API_BASE_URL ?? "/scm/api";
 
 type ScmUploadResponse = ScmUploadSuccess | ScmUploadError;
 
