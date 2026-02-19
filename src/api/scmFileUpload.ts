@@ -2,6 +2,7 @@ import { useMutation, UseMutationResult, useQuery, UseQueryResult, useQueryClien
 import { LatestUploadSessionResponse, ScmUploadError, ScmUploadPayload, ScmUploadSuccess } from "../types/Interfaces/interfaces";
 import toast from "react-hot-toast";
 
+// api base url
 const API_BASE_URL =
   import.meta.env.VITE_SCM_API_BASE_URL ?? "/scm/api";
 
