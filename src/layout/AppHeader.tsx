@@ -6,6 +6,8 @@ import UserDropdown from "../components/header/UserDropdown";
 import { useKeyboardShortcut } from "../hooks/useKeyboardShortcut";
 import { useWindowResize } from "../hooks/useWindowResize";
 
+const getAssetPath = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
@@ -80,14 +82,14 @@ const AppHeader: React.FC = () => {
           <Link to="/" className="lg:hidden">
             <img
               className="dark:hidden"
-              src="./logos/Dark.svg"
+              src={getAssetPath("logos/Light.svg")}
               alt="Logo"
               width={50}
               height={50}
             />
             <img
               className="hidden dark:block"
-              src="./logos/Dark.svg"
+              src={getAssetPath("logos/Dark.svg")}
               alt="Logo"
               width={50}
               height={50}
