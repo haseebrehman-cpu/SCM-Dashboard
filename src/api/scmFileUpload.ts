@@ -43,7 +43,7 @@ async function uploadScmFiles(payload: ScmUploadPayload): Promise<ScmUploadRespo
   if (!response.ok || data.success === false) {
     const message =
       (data as ScmUploadError).message ||
-      `Failed to upload files. Server responded with status ${response.status}.`;
+      `Failed to upload file. Server responded with status ${response.status}.`;
     const error = new Error(message) as Error & { details?: unknown };
     error.details = (data as ScmUploadError).details;
     throw error;
