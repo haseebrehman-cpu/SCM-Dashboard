@@ -87,7 +87,7 @@ async function fetchLatestUploadSession(): Promise<LatestUploadSessionResponse> 
 
   if (!response.ok || data.success === false) {
     const message =
-      data.session?.message ||
+      data.sessions?.[0]?.session?.message ||
       `Failed to fetch latest upload session. Server responded with status ${response.status}.`;
     throw new Error(message);
   }
@@ -124,7 +124,7 @@ async function deleteFileUploads(sessionId: number): Promise<LatestUploadSession
 
   if (!response.ok || data.success === false) {
     const message =
-      data.session?.message ||
+      data.sessions?.[0]?.session?.message ||
       `Failed to delete uploads. Server responded with status ${response.status}.`;
     throw new Error(message);
   }

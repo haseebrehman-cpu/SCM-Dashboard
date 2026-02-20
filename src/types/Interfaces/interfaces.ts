@@ -1,6 +1,43 @@
 import { StepNumber } from "../../constants/fileUpload";
 
+export interface FileInSession {
+  filename: string;
+  warehouse: string | null;
+  row_count: number;
+  column_count: number;
+  status: string;
+  upload_timestamp: string;
+  message: string;
+  uploaded_by: string;
+}
+
+export interface SessionInfo {
+  id: number;
+  datetime_folder: string;
+  upload_timestamp: string;
+  total_files: number;
+  status: string;
+  message: string;
+  uploaded_by: string;
+}
+
+export interface SessionWithFiles {
+  session: SessionInfo;
+  files: {
+    last_60_days: FileInSession[];
+    next_60_days_previous_year: FileInSession[];
+    open_orders: FileInSession[];
+  };
+}
+
 export interface LatestUploadSessionResponse {
+  success: boolean;
+  total_sessions: number;
+  sessions: SessionWithFiles[];
+}
+
+// Keep for backward compatibility
+export interface OldLatestUploadSessionResponse {
   success: boolean;
   session: {
     id: number;
@@ -82,13 +119,15 @@ export interface UseMultiStepUploadReturn {
 export interface ApiFileLogRow {
   id: number;
   fileName: string;
-  stepNumber: number;
+  stepType?: string;
+  stepNumber?: number;
   warehouse: string;
   rowCount?: number;
   columnCount?: number;
   status: string;
   uploadedDate: string;
   uploadedBy: string;
+  sessionId?: number;
 }
 
 export interface FileUploadStepProps {

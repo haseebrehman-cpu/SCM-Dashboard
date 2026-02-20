@@ -1,8 +1,8 @@
 import { Box, Alert, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useTheme } from '../../hooks/useTheme';
 
 const StyledAlert = styled(Alert)(({ theme }) => ({
-  backgroundColor: '#fffdf7',
   borderLeft: '8px solid #f4b836',
   borderRadius: theme.shape.borderRadius,
   maxWidth: '100%',
@@ -13,7 +13,10 @@ const StyledAlert = styled(Alert)(({ theme }) => ({
   }
 }));
 
+
 const Headline = ({ alertMessage }: { alertMessage: string }) => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -25,7 +28,7 @@ const Headline = ({ alertMessage }: { alertMessage: string }) => {
           High Alert
         </AlertTitle> */}
 
-        <Typography variant="body1" sx={{ color: '#5e4a24', fontWeight: 500, alignItems: 'center' }}>
+        <Typography variant="body1" sx={{ color: isDark ? "#fff" : '#000', fontWeight: 500, alignItems: 'center' }}>
           {alertMessage}
         </Typography>
       </StyledAlert>
