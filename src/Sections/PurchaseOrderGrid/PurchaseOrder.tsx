@@ -65,7 +65,7 @@ export default function PurchaseOrder() {
           pageSizeOptions={[100, 500, 1000]}
           rowBufferPx={100}
           pagination
-          sx={getDataGridStyles(isDark, "70vh")}
+          sx={getDataGridStyles(isDark, "auto")}
           showToolbar
           rowSelection={false}
         />

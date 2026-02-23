@@ -8,10 +8,11 @@ import SignIn from "./pages/AuthPages/SignIn"
 import SignUp from "./pages/AuthPages/SignUp"
 import NotFound from "./pages/OtherPage/NotFound"
 import Home from "./pages/Dashboard/Home"
+import AppLayout from "./layout/AppLayout"
+
 
 // Lazy load pages for better performance and code splitting
 const UserProfiles = lazy(() => import("./pages/UserProfiles"));
-const AppLayout = lazy(() => import("./layout/AppLayout"));
 const PurchaseOrderPage = lazy(() => import("./pages/Dashboard/PurchaseOrder"));
 const ProductionRemainingReportPage = lazy(() => import("./pages/Dashboard/ProductionRemainingReport"));
 const StockPerformanceReportPage = lazy(() => import("./pages/Dashboard/StockPerformanceReport"));

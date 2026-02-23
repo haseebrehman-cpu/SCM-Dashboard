@@ -78,7 +78,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           pagination
           rowBufferPx={100}
           disableRowSelectionOnClick
-          sx={getDataGridStyles(isDark, "70vh")}
+          sx={getDataGridStyles(isDark, "auto")}
           showToolbar
         />
       </div>

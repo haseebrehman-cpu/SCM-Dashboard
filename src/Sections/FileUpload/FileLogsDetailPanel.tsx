@@ -206,7 +206,7 @@ export const FileLogsDetailPanel: React.FC<FileLogsDetailPanelProps> = ({ sessio
 
         {/* File Grid */}
         {activeCategory && (
-          <div style={{ width: '100%' }} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div style={{ height: '200px', width: '100%' }} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
             <DataGridPremium
               rows={filesByCategory[activeCategory as keyof typeof filesByCategory] || []}
               columns={fileColumns}
