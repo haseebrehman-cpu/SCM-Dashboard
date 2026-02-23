@@ -64,7 +64,7 @@ export default function ProductionReport() {
           pageSizeOptions={[100, 500, 1000, 1500]}
           pagination
           disableRowSelectionOnClick
-          sx={getDataGridStyles(isDark)}
+          sx={getDataGridStyles(isDark, "70vh")}
           rowBufferPx={100}
           showToolbar
         />

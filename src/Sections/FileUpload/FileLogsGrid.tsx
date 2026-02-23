@@ -144,9 +144,10 @@ const FileLogsGrid: React.FC = React.memo(() => {
             },
           }}
           pagination
+          checkboxSelection
+          keepNonExistentRowsSelected
           rowBufferPx={100}
-          disableRowSelectionOnClick
-          sx={getDataGridStyles(isDark)}
+          sx={getDataGridStyles(isDark, "70vh")}
           showToolbar
           getDetailPanelHeight={() => 'auto'}
           getDetailPanelContent={({ row }) => (

@@ -57,11 +57,18 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   handleReset = (): void => {
+    // Reload the page to reset everything
+    window.location.reload();
+  };
+
+  handleGoHome = (): void => {
+    // Clear error state before navigating
     this.setState({
       hasError: false,
       error: null,
       errorInfo: null,
     });
+    window.location.href = '/';
   };
 
   render() {
@@ -117,13 +124,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             <div className="flex gap-3">
               <button
                 onClick={this.handleReset}
-                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
+                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 cursor-pointer"
               >
                 Try Again
               </button>
               <button
-                onClick={() => window.location.href = '/'}
-                className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium rounded-lg transition-colors duration-200"
+                onClick={this.handleGoHome}
+                className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium rounded-lg transition-colors duration-200 cursor-pointer"
               >
                 Go Home
               </button>

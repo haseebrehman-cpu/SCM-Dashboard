@@ -218,7 +218,7 @@ export const FileLogsDetailPanel: React.FC<FileLogsDetailPanelProps> = ({ sessio
               }}
               pagination
               disableRowSelectionOnClick
-              sx={getDataGridStyles(isDark)}
+              sx={getDataGridStyles(isDark, "50vh")}
               density="compact"
             />
           </div>

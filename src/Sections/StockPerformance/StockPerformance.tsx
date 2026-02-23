@@ -62,7 +62,7 @@ export default function StockPerformance() {
           pagination
           disableRowSelectionOnClick
           rowBufferPx={100}
-          sx={getDataGridStyles(isDark)}
+          sx={getDataGridStyles(isDark, "70vh")}
           showToolbar
         />
       </div>
