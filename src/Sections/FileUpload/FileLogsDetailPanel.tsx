@@ -23,7 +23,7 @@ interface FileRow {
 export const FileLogsDetailPanel: React.FC<FileLogsDetailPanelProps> = ({ sessionData }) => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>('last_60_days');
 
   // Transform files by category
   const filesByCategory = useMemo(() => {
@@ -134,31 +134,23 @@ export const FileLogsDetailPanel: React.FC<FileLogsDetailPanelProps> = ({ sessio
       sortable: true,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params) => {
-        const isSuccess = params.value === 'Success';
-        return (
-          <span
-            style={{
-              padding: '4px 8px',
-              borderRadius: '4px',
-              backgroundColor: isSuccess ? '#dcfce7' : '#fee2e2',
-              color: isSuccess ? '#166534' : '#991b1b',
-              fontWeight: 500,
-              fontSize: '0.875rem',
-            }}
-          >
-            {params.value}
-          </span>
-        );
-      },
-    },
-    {
-      field: 'message',
-      headerName: 'Message',
-      flex: 1,
-      minWidth: 150,
-      sortable: false,
-      filterable: true,
+      // renderCell: (params) => {
+      //   const isSuccess = params.value === 'Success';
+      //   return (
+      //     <span
+      //       style={{
+      //         padding: '4px 8px',
+      //         borderRadius: '4px',
+      //         backgroundColor: isSuccess ? '#dcfce7' : '#fee2e2',
+      //         color: isSuccess ? '#166534' : '#991b1b',
+      //         fontWeight: 500,
+      //         fontSize: '0.875rem',
+      //       }}
+      //     >
+      //       {params.value}
+      //     </span>
+      //   );
+      // },
     },
     // {
     //   field: 'uploadedBy',
@@ -200,8 +192,8 @@ export const FileLogsDetailPanel: React.FC<FileLogsDetailPanelProps> = ({ sessio
               key={tab.key}
               onClick={() => setActiveCategory(tab.key)}
               className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-colors ${activeCategory === tab.key
-                  ? 'border-b-2 border-blue-600 text-blue-600 dark:text-blue-400'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                ? 'border-b-2 border-blue-600 text-blue-600 dark:text-blue-400'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
             >
               {tab.label}
@@ -214,7 +206,7 @@ export const FileLogsDetailPanel: React.FC<FileLogsDetailPanelProps> = ({ sessio
 
         {/* File Grid */}
         {activeCategory && (
-          <div style={{ height: 400, width: '100%' }} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div style={{ width: '100%' }} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
             <DataGridPremium
               rows={filesByCategory[activeCategory as keyof typeof filesByCategory] || []}
               columns={fileColumns}

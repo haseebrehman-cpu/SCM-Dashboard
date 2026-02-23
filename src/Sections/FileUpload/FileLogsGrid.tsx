@@ -35,7 +35,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
       status: session.session.status === 'Success' ? 'Success' : 'Failed',
       message: session.session.message,
       uploadedBy: session.session.uploaded_by,
-      sessionData: session, // Store full session data for detail panel
+      sessionData: session, // Stored full session data for detail panel
     }));
   }, [data]);
 
@@ -68,23 +68,23 @@ const FileLogsGrid: React.FC = React.memo(() => {
         filterable: true,
         align: 'center',
         headerAlign: 'center',
-        renderCell: (params) => {
-          const status = params.value;
-          const isSuccess = status === 'Success';
-          return (
-            <span
-              style={{
-                padding: '1px 8px',
-                borderRadius: '4px',
-                backgroundColor: isSuccess ? '#dcfce7' : '#fee2e2',
-                color: isSuccess ? '#166534' : '#991b1b',
-                fontWeight: 500,
-              }}
-            >
-              {status}
-            </span>
-          );
-        },
+        // renderCell: (params) => {
+        //   const status = params.value;
+        //   const isSuccess = status === 'Success';
+        //   return (
+        //     <span
+        //       style={{
+        //         padding: '1px 8px',
+        //         borderRadius: '4px',
+        //         backgroundColor: isSuccess ? '#dcfce7' : '#fee2e2',
+        //         color: isSuccess ? '#166534' : '#991b1b',
+        //         fontWeight: 500,
+        //       }}
+        //     >
+        //       {status}
+        //     </span>
+        //   );
+        // },
       },
       {
         field: 'message',

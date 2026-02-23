@@ -4,13 +4,14 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import { FileUploadProvider } from "./context/FileUploadContext";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 
+import SignIn from "./pages/AuthPages/SignIn"
+import SignUp from "./pages/AuthPages/SignUp"
+import NotFound from "./pages/OtherPage/NotFound"
+import Home from "./pages/Dashboard/Home"
+
 // Lazy load pages for better performance and code splitting
-const SignIn = lazy(() => import("./pages/AuthPages/SignIn"));
-const SignUp = lazy(() => import("./pages/AuthPages/SignUp"));
-const NotFound = lazy(() => import("./pages/OtherPage/NotFound"));
 const UserProfiles = lazy(() => import("./pages/UserProfiles"));
 const AppLayout = lazy(() => import("./layout/AppLayout"));
-const Home = lazy(() => import("./pages/Dashboard/Home"));
 const PurchaseOrderPage = lazy(() => import("./pages/Dashboard/PurchaseOrder"));
 const ProductionRemainingReportPage = lazy(() => import("./pages/Dashboard/ProductionRemainingReport"));
 const StockPerformanceReportPage = lazy(() => import("./pages/Dashboard/StockPerformanceReport"));

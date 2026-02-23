@@ -2,9 +2,12 @@ export const getDataGridStyles = (isDark: boolean) => ({
   border: 'none',
   backgroundColor: 'transparent',
   width: '100%',
-  height: '100vh',
+  height: '100%',
+  maxHeight: 'calc(52px * 12 + 56px + 1px)',
+  overflow: 'hidden',
   '& .MuiDataGrid-main': {
     backgroundColor: 'transparent',
+    overflow: 'auto',
   },
   '& .MuiDataGrid-container--top [role=row]': {
     backgroundColor: 'transparent',
