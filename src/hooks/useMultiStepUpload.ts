@@ -67,6 +67,7 @@ export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
 
     setUploading(true);
 
+
     uploadMutation.mutate(
       {
         last_60_days: file1.files,
@@ -98,6 +99,7 @@ export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
         },
       },
     );
+
   }, [addFileLogs, uploadMutation]);
 
   return {

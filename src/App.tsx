@@ -1,26 +1,21 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
-import { Suspense, lazy } from "react";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import { FileUploadProvider } from "./context/FileUploadContext";
-import LoadingSpinner from "./components/common/LoadingSpinner";
 
 import SignIn from "./pages/AuthPages/SignIn"
 import SignUp from "./pages/AuthPages/SignUp"
 import NotFound from "./pages/OtherPage/NotFound"
 import Home from "./pages/Dashboard/Home"
 import AppLayout from "./layout/AppLayout"
-
-
-// Lazy load pages for better performance and code splitting
-const UserProfiles = lazy(() => import("./pages/UserProfiles"));
-const PurchaseOrderPage = lazy(() => import("./pages/Dashboard/PurchaseOrder"));
-const ProductionRemainingReportPage = lazy(() => import("./pages/Dashboard/ProductionRemainingReport"));
-const StockPerformanceReportPage = lazy(() => import("./pages/Dashboard/StockPerformanceReport"));
-const FileUploadPage = lazy(() => import("./pages/Dashboard/FileUploadPage"));
-const SummaryDashboardPage = lazy(() => import("./pages/Dashboard/SummaryDashboard"));
-const StockReport = lazy(() => import("./pages/Dashboard/StockReport"));
-const WHContainerReport = lazy(() => import("./pages/Dashboard/WHContainerReport"));
-const CombinedReport = lazy(() => import("./pages/Dashboard/CombinedReport"));
+import UserProfiles from "./pages/UserProfiles";
+import PurchaseOrderPage from "./pages/Dashboard/PurchaseOrder";
+import ProductionRemainingReportPage from "./pages/Dashboard/ProductionRemainingReport";
+import StockPerformanceReportPage from "./pages/Dashboard/StockPerformanceReport";
+import FileUploadPage from "./pages/Dashboard/FileUploadPage";
+import SummaryDashboardPage from "./pages/Dashboard/SummaryDashboard";
+import StockReport from "./pages/Dashboard/StockReport";
+import WHContainerReport from "./pages/Dashboard/WHContainerReport";
+import CombinedReport from "./pages/Dashboard/CombinedReport";
 
 export default function App() {
   return (
@@ -28,8 +23,7 @@ export default function App() {
       <FileUploadProvider>
         <Router basename="/scm">
           <ScrollToTop />
-          <Suspense fallback={<LoadingSpinner />}>
-            <Routes>
+          <Routes>
               {/* Dashboard Layout */}
               <Route element={<AppLayout />}>
                 <Route index path="/" element={<Home />} />
@@ -51,9 +45,8 @@ export default function App() {
               {/* Fallback Route */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </Suspense>
-        </Router>
-      </FileUploadProvider>
-    </>
-  );
-}
+          </Router>
+        </FileUploadProvider>
+      </>
+    );
+  }

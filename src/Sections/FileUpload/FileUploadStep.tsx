@@ -5,6 +5,7 @@ import Button from '../../components/ui/button/Button';
 import { UploadZone } from '../../components/FileUpload/UploadZone';
 import { FILE_ACCEPT_TYPES, STEP_CONFIG } from '../../constants/fileUpload';
 import { FileUploadStepProps } from '../../types/Interfaces/interfaces';
+import { useUploadTodayCheck } from '../../hooks/useUploadTodayCheck';
 
 
 
@@ -24,6 +25,7 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
   isLastStep = false,
 }) => {
   const stepConfig = STEP_CONFIG[stepNumber];
+  const { uploadedToday, errorMessage: todayUploadErrorMessage } = useUploadTodayCheck();
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -36,7 +38,7 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
   );
 
   const isPreviousStepComplete = stepNumber === 1 || (previousFile?.status === 'completed');
-  const isDisabled = isUploading || !!file || !isPreviousStepComplete;
+  const isDisabled = isUploading || !!file || !isPreviousStepComplete || uploadedToday;
 
   const dropzone = useDropzone({
     onDrop,
@@ -50,6 +52,8 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
   const nextButtonLabel =
     isLastStep && isUploading ? 'Validating Files' : stepConfig.nextButtonText;
 
+
+
   return (
     <div className="space-y-2">
       <div className="mb-2">
@@ -60,6 +64,17 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
           {stepConfig.description}
         </p>
       </div>
+
+      {uploadedToday && (
+        <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+          <p className="text-sm font-semibold text-yellow-900 dark:text-yellow-100">
+            ⚠️ Upload Blocked
+          </p>
+          <p className="text-xs text-yellow-800 dark:text-yellow-200 mt-1">
+            {todayUploadErrorMessage}
+          </p>
+        </div>
+      )}
 
       <UploadZone
         dropzone={dropzone}

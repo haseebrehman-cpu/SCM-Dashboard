@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { UploadedFile } from '../components/FileUpload/types';
+import { useUploadTodayCheck } from './useUploadTodayCheck';
 
 /**
  * Validation functions (outside component to avoid re-creation and dependency issues)
@@ -62,6 +63,9 @@ export const useFileUpload = () => {
   const [file3, setFile3] = useState<UploadedFile | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
+  // Check if an upload has already been made today
+  const { uploadedToday, errorMessage: todayUploadErrorMessage } = useUploadTodayCheck();
+
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
@@ -76,6 +80,12 @@ export const useFileUpload = () => {
       setFileState: (file: UploadedFile | null) => void,
       step: 1 | 2 | 3 = 1,
     ) => {
+      // Check if an upload has already been made today
+      if (uploadedToday) {
+        toast.error(todayUploadErrorMessage || 'An upload has already been made today. Please delete the existing entry before uploading again.');
+        return;
+      }
+
       if (!validateFilesByStep(files, step)) {
         return;
       }
@@ -91,7 +101,7 @@ export const useFileUpload = () => {
 
       toast.success("Files validated successfully");
     },
-    [],
+    [uploadedToday, todayUploadErrorMessage],
   );
 
   const handleRemoveFile = (file: UploadedFile | null, setFileState: (file: UploadedFile | null) => void) => {
@@ -113,5 +123,7 @@ export const useFileUpload = () => {
     formatFileSize,
     registerFiles,
     handleRemoveFile,
+    uploadedToday,
+    todayUploadErrorMessage,
   };
 };
