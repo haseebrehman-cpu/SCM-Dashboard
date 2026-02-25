@@ -4,12 +4,19 @@ import { UploadedFile } from "../components/FileUpload/types";
 import { REQUIRED_FILES_COUNT, StepNumber } from "../constants/fileUpload";
 import { useFileUploadLogs } from "./useFileUploadLogs";
 import { useUploadScmFiles } from "../api/scmFileUpload";
-import { UseMultiStepUploadReturn } from "../types/Interfaces/interfaces";
+import { UseMultiStepUploadReturn, LatestUploadSessionResponse } from "../types/Interfaces/interfaces";
+import { useLatestSessionId } from "./useLatestSessionId";
 
 export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
   const [currentStep, setCurrentStep] = useState<StepNumber>(1);
+  const [isUploadSuccess, setIsUploadSuccess] = useState<boolean>(false);
+  const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+  const latestSessionId = useLatestSessionId();
   const { addFileLogs } = useFileUploadLogs();
   const uploadMutation = useUploadScmFiles();
+
+  // Use the latest session ID from files log grid
+  const sessionId = latestSessionId;
 
   const isStepComplete = useCallback((file: UploadedFile | null): boolean => {
     return file !== null && file.status === "completed";
@@ -66,7 +73,7 @@ export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
     }
 
     setUploading(true);
-
+    setIsUploadSuccess(false);
 
     uploadMutation.mutate(
       {
@@ -75,8 +82,11 @@ export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
         open_orders: file3.files,
       },
       {
-        onSuccess: (data) => {
-          toast.success(data.message || "Files uploaded successfully.");
+        onSuccess: (data: LatestUploadSessionResponse) => {
+          setIsUploadSuccess(true);
+          setShowSuccessModal(true);
+          // Session ID will be automatically updated from the files log grid
+          toast.success(data.sessions?.[0]?.session?.message || "Files uploaded successfully.");
 
           if (file1.files) {
             addFileLogs(file1.files, 1);
@@ -92,6 +102,8 @@ export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
           setCurrentStep(1);
         },
         onError: (error) => {
+          setIsUploadSuccess(false);
+          setShowSuccessModal(false);
           toast.error(error.message || "Failed to upload files. Please try again.");
         },
         onSettled: () => {
@@ -102,6 +114,10 @@ export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
 
   }, [addFileLogs, uploadMutation]);
 
+  const closeSuccessModal = useCallback(() => {
+    setShowSuccessModal(false);
+  }, []);
+
   return {
     currentStep,
     canProceedToNextStep,
@@ -109,5 +125,9 @@ export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
     handleBack,
     handleComplete,
     isStepComplete,
+    isUploadSuccess,
+    showSuccessModal,
+    closeSuccessModal,
+    sessionId,
   };
 };

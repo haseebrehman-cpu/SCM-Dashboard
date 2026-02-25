@@ -27,6 +27,8 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
   const stepConfig = STEP_CONFIG[stepNumber];
   const { uploadedToday, errorMessage: todayUploadErrorMessage } = useUploadTodayCheck();
 
+
+
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {

@@ -36,7 +36,7 @@ export const generatePurchaseOrderColumns = ({
   updateEditedData,
 }: ColumnGeneratorParams): GridColDef[] => [
     {
-      field: "containerName",
+      field: "container_name",
       headerName: "Container Name",
       flex: 1,
       minWidth: 180,
@@ -44,7 +44,7 @@ export const generatePurchaseOrderColumns = ({
       filterable: true,
     },
     {
-      field: "referenceContainer",
+      field: "reference_container",
       headerName: "Reference Container",
       flex: 1,
       minWidth: 180,
@@ -52,21 +52,21 @@ export const generatePurchaseOrderColumns = ({
       filterable: true,
     },
     {
-      field: "containerNumber",
+      field: "container_number",
       headerName: "Container Number",
       width: 180,
       sortable: true,
       filterable: true,
     },
     {
-      field: "containerRegion",
+      field: "container_region",
       headerName: "Container Region",
       width: 180,
       sortable: true,
       filterable: true,
     },
     {
-      field: "departureDate",
+      field: "departure_date",
       headerName: "Departure Date",
       width: 150,
       sortable: true,
@@ -74,7 +74,7 @@ export const generatePurchaseOrderColumns = ({
       renderHeader: () => renderDateHeader("Departure Date", isDark),
     },
     {
-      field: "arrivalDate",
+      field: "arrival_date",
       headerName: "Arrival Date",
       width: 180,
       sortable: true,
@@ -94,7 +94,7 @@ export const generatePurchaseOrderColumns = ({
       },
     },
     {
-      field: "deliveryStatus",
+      field: "delivery_status",
       headerName: "Delivery Status",
       width: 150,
       sortable: true,
@@ -120,7 +120,7 @@ export const generatePurchaseOrderColumns = ({
       },
     },
     {
-      field: "editedBy",
+      field: "modified_by",
       headerName: "Edited By",
       width: 180,
       sortable: true,

@@ -1,15 +1,27 @@
-import { useMutation, UseMutationResult, useQuery, UseQueryResult, useQueryClient } from "@tanstack/react-query";
-import { LatestUploadSessionResponse, ScmUploadError, ScmUploadPayload, ScmUploadSuccess } from "../types/Interfaces/interfaces";
+import {
+  useMutation,
+  UseMutationResult,
+  useQuery,
+  UseQueryResult,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  LatestUploadSessionResponse,
+  ScmUploadError,
+  ScmUploadPayload,
+  ScmUploadSuccess,
+} from "../types/Interfaces/interfaces";
 import toast from "react-hot-toast";
 
 // api base url
-const API_BASE_URL =
-  import.meta.env.VITE_SCM_API_BASE_URL ?? "/scm/api";
+const API_BASE_URL = import.meta.env.VITE_SCM_API_BASE_URL ?? "/scm/api";
 
 type ScmUploadResponse = ScmUploadSuccess | ScmUploadError;
 
 // Mutation File Uplaod
-async function uploadScmFiles(payload: ScmUploadPayload): Promise<ScmUploadResponse> {
+async function uploadScmFiles(
+  payload: ScmUploadPayload,
+): Promise<LatestUploadSessionResponse> {
   const formData = new FormData();
 
   payload.last_60_days.forEach((file) => {
@@ -29,37 +41,37 @@ async function uploadScmFiles(payload: ScmUploadPayload): Promise<ScmUploadRespo
     body: formData,
   });
 
-  let data: ScmUploadResponse;
+  let data: LatestUploadSessionResponse;
 
   try {
-    data = (await response.json()) as ScmUploadResponse;
+    data = (await response.json()) as LatestUploadSessionResponse;
   } catch (error) {
     if (!response.ok) {
-      throw new Error("Failed to upload files. Server returned an invalid response.");
+      throw new Error(
+        "Failed to upload files. Server returned an invalid response.",
+      );
     }
     throw error;
   }
 
   if (!response.ok || data.success === false) {
     const message =
-      (data as ScmUploadError).message ||
+      data.sessions?.[0]?.session?.message ||
       `Failed to upload file. Server responded with status ${response.status}.`;
-    const error = new Error(message) as Error & { details?: unknown };
-    error.details = (data as ScmUploadError).details;
-    throw error;
+    throw new Error(message);
   }
 
   return data;
 }
 
 export const useUploadScmFiles = (): UseMutationResult<
-  ScmUploadResponse,
+  LatestUploadSessionResponse,
   Error,
   ScmUploadPayload
 > => {
   const queryClient = useQueryClient();
 
-  return useMutation<ScmUploadResponse, Error, ScmUploadPayload>({
+  return useMutation<LatestUploadSessionResponse, Error, ScmUploadPayload>({
     mutationFn: uploadScmFiles,
     onSuccess: () => {
       // this will ensure latest-session grid reflects newly saved uploads
@@ -68,7 +80,56 @@ export const useUploadScmFiles = (): UseMutationResult<
   });
 };
 
-//  Query latest upload session 
+async function processScmFiles(session_id: number) {
+  const response = await fetch(`${API_BASE_URL}/process-data/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ session_id }),
+  });
+
+  let data: ScmUploadResponse;
+
+  try {
+    data = (await response.json()) as ScmUploadResponse;
+  } catch (error) {
+    if (!response.ok) {
+      throw new Error(
+        "Failed to process files. Server returned an invalid response.",
+      );
+    }
+    throw error;
+  }
+
+  if (!response.ok || data.success === false) {
+    const message =
+      (data as ScmUploadError).message ||
+      `Failed to process files. Server responded with status ${response.status}.`;
+    const error = new Error(message) as Error & { details?: unknown };
+    error.details = (data as ScmUploadError).details;
+    throw error;
+  }
+
+  return data;
+}
+
+export const useProcessScmFiles = (): UseMutationResult<
+  ScmUploadResponse,
+  Error,
+  number
+> => {
+  const queryClient = useQueryClient();
+
+  return useMutation<ScmUploadResponse, Error, number>({
+    mutationFn: processScmFiles,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["scmLatestUploadSession"] });
+    },
+  });
+};
+
+//  Query latest upload session
 async function fetchLatestUploadSession(): Promise<LatestUploadSessionResponse> {
   const response = await fetch(`${API_BASE_URL}/files/`, {
     method: "GET",
@@ -80,7 +141,9 @@ async function fetchLatestUploadSession(): Promise<LatestUploadSessionResponse> 
     data = (await response.json()) as LatestUploadSessionResponse;
   } catch (error) {
     if (!response.ok) {
-      throw new Error("Failed to fetch latest upload session. Server returned an invalid response.");
+      throw new Error(
+        "Failed to fetch latest upload session. Server returned an invalid response.",
+      );
     }
     throw error;
   }
@@ -106,10 +169,15 @@ export const useLatestUploadSession = (): UseQueryResult<
   });
 
 //  Delete uploads by session id
-async function deleteFileUploads(sessionId: number): Promise<LatestUploadSessionResponse> {
-  const response = await fetch(`${API_BASE_URL}/files/?session_id=${sessionId}`, {
-    method: "DELETE",
-  });
+async function deleteFileUploads(
+  sessionId: number,
+): Promise<LatestUploadSessionResponse> {
+  const response = await fetch(
+    `${API_BASE_URL}/files/?session_id=${sessionId}`,
+    {
+      method: "DELETE",
+    },
+  );
 
   let data: LatestUploadSessionResponse;
 
@@ -117,7 +185,9 @@ async function deleteFileUploads(sessionId: number): Promise<LatestUploadSession
     data = (await response.json()) as LatestUploadSessionResponse;
   } catch (error) {
     if (!response.ok) {
-      throw new Error("Failed to delete uploads. Server returned an invalid response.");
+      throw new Error(
+        "Failed to delete uploads. Server returned an invalid response.",
+      );
     }
     throw error;
   }
@@ -129,7 +199,7 @@ async function deleteFileUploads(sessionId: number): Promise<LatestUploadSession
     throw new Error(message);
   }
 
-  toast.success("Files Deleted Successfully!")
+  toast.success("Files Deleted Successfully!");
   return data;
 }
 

@@ -11,7 +11,7 @@ const FileUploadView = () => {
         description="Upload your files in two simple steps"
       />
       <div className="w-full max-w-full overflow-hidden">
-        <Headline alertMessage={"High Alert! First you need to fill the sku mapper application after that you can upload the Files."}/>
+        <Headline alertMessage={"First you need to fill the sku mapper application after that you can upload the Files."} />
         <FileUpload />
         <FileLogsGrid />
       </div>

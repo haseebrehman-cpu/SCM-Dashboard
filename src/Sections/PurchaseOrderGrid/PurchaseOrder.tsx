@@ -7,6 +7,7 @@ import { getDataGridStyles } from '../../styles/productionReportStyles';
 import { FileUploadDialog } from "../ProductionReport/FileUploadDialog";
 import { ProductionReportHeader } from "../ProductionReport/ProductionReportHeader";
 import { DataGridPremium } from "@mui/x-data-grid-premium";
+import { usePurchaseOrderReport } from "../../api/purchaseOrder";
 
 export default function PurchaseOrder() {
   const { theme } = useTheme();
@@ -23,6 +24,14 @@ export default function PurchaseOrder() {
     cancelEdit,
     updateEditedData,
   } = useInlineEdit(setTableData);
+
+  const { data: purchaseOrderResponse, isLoading } = usePurchaseOrderReport();
+  
+  const apiData = purchaseOrderResponse?.data || [];
+  
+  // Use API data if available, otherwise fall back to mock data
+  const displayData = apiData.length > 0 ? apiData : tableData;
+
 
   const columns = useMemo(
     () =>
@@ -59,7 +68,8 @@ export default function PurchaseOrder() {
 
         <DataGridPremium
           label="Purchase Order Report"
-          rows={tableData}
+          loading={isLoading}
+          rows={displayData}
           columns={columns}
           initialState={{ pagination: { paginationModel: PAGINATION_MODEL } }}
           pageSizeOptions={[100, 500, 1000]}

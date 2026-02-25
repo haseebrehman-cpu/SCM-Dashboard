@@ -30,10 +30,30 @@ export interface SessionWithFiles {
   };
 }
 
+export interface PurchaseOrderData {
+  id: number;
+  container_name: string;
+  reference_container: string;
+  container_number: number;
+  container_region: string;
+  departure_date: string;
+  arrival_date: string | null;
+  delivery_status: string | null;
+  modified_by: string;
+  upload_date: string
+}
+
 export interface LatestUploadSessionResponse {
   success: boolean;
   total_sessions: number;
   sessions: SessionWithFiles[];
+}
+
+export interface PurchaseOrderReportResponse {
+  success: boolean;
+  message: string;
+  total_records: number;
+  data: PurchaseOrderData[]
 }
 
 // Keep for backward compatibility
@@ -83,12 +103,15 @@ export interface UploadedFile {
   files: File[];
   previews: string[];
   progress: number;
-  status: 'uploading' | 'completed' | 'error';
+  status: "uploading" | "completed" | "error";
 }
 
 export interface UseMultiStepUploadReturn {
   currentStep: StepNumber;
-  canProceedToNextStep: (step: StepNumber, file: UploadedFile | null) => boolean;
+  canProceedToNextStep: (
+    step: StepNumber,
+    file: UploadedFile | null,
+  ) => boolean;
   handleNext: (step: StepNumber, file: UploadedFile | null) => void;
   handleBack: () => void;
   handleComplete: (
@@ -99,21 +122,10 @@ export interface UseMultiStepUploadReturn {
     setUploading: (value: boolean) => void,
   ) => void;
   isStepComplete: (file: UploadedFile | null) => boolean;
-}
-
-export interface UseMultiStepUploadReturn {
-  currentStep: StepNumber;
-  canProceedToNextStep: (step: StepNumber, file: UploadedFile | null) => boolean;
-  handleNext: (step: StepNumber, file: UploadedFile | null) => void;
-  handleBack: () => void;
-  handleComplete: (
-    file1: UploadedFile | null,
-    file2: UploadedFile | null,
-    file3: UploadedFile | null,
-    resetCallback: () => void,
-    setUploading: (value: boolean) => void,
-  ) => void;
-  isStepComplete: (file: UploadedFile | null) => boolean;
+  isUploadSuccess: boolean;
+  showSuccessModal: boolean;
+  closeSuccessModal: () => void;
+  sessionId: number | null;
 }
 
 export interface ApiFileLogRow {

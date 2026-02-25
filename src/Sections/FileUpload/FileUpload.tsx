@@ -4,8 +4,11 @@ import { StepIndicator } from "../../components/FileUpload/StepIndicator";
 import { useFileUpload } from "../../hooks/useFileUpload";
 import { FileUploadStep } from "./FileUploadStep";
 import { useMultiStepUpload } from "../../hooks/useMultiStepUpload";
+import ProcessModal from "./ProcessModal";
+import Header from "./Header";
 
 const FileUpload: React.FC = () => {
+
   const {
     file1,
     file2,
@@ -25,6 +28,9 @@ const FileUpload: React.FC = () => {
     handleNext,
     handleBack,
     handleComplete,
+    showSuccessModal,
+    closeSuccessModal,
+    sessionId,
   } = useMultiStepUpload();
 
   const handleUploadStep1 = (files: File[]) => {
@@ -58,14 +64,7 @@ const FileUpload: React.FC = () => {
     <div className="flex items-center justify-center py-2 px-4">
       <div className="w-full max-w-4xl">
         {/* Header */}
-        <div className="text-center mb-2">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-            Linnworks Files Upload
-          </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Upload your files in three simple steps
-          </p>
-        </div>
+        <Header />
 
         {/* Step Indicator */}
         <StepIndicator
@@ -75,19 +74,12 @@ const FileUpload: React.FC = () => {
           file3Status={file3?.status}
         />
 
-        {/* Main Content */}
+        <ProcessModal
+          showSuccessModal={showSuccessModal}
+          closeSuccessModal={closeSuccessModal}
+          sessionId={sessionId}
+        />        {/* Main Content */}
         <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-3 md:p-4 border border-gray-200 dark:border-gray-700">
-          {/* {uploadedToday && (
-            <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <p className="text-sm font-semibold text-red-900 dark:text-red-100">
-                🚫 Upload Blocked - Already Uploaded Today
-              </p>
-              <p className="text-xs text-red-800 dark:text-red-200 mt-1">
-                You have already uploaded files today. Please delete the existing upload session before attempting another upload.
-              </p>
-            </div>
-          )} */}
-          
           {currentStep === 1 && (
             <FileUploadStep
               stepNumber={1}
