@@ -56,7 +56,7 @@ export const usePurchaseOrderReport = (): UseQueryResult<PurchaseOrderReportResp
     refetchOnMount: true
   })
 
-export const patchPurchaseOrderReportData = async (rowId: number, arrivalDate: string): Promise<PurchaseOrderReportResponse> => {
+export const patchPurchaseOrderReportData = async (rowId: number, arrivalDate: string | null): Promise<PurchaseOrderReportResponse> => {
   const requestBody = {
     id: rowId,
     arrival_date: arrivalDate,
@@ -87,10 +87,10 @@ export const patchPurchaseOrderReportData = async (rowId: number, arrivalDate: s
   return data;
 }
 
-export const usePatchPurchaseOrderReport = (): UseMutationResult<PurchaseOrderReportResponse, Error, { rowId: number, arrivalDate: string }, unknown> => {
+export const usePatchPurchaseOrderReport = (): UseMutationResult<PurchaseOrderReportResponse, Error, { rowId: number, arrivalDate: string | null }, unknown> => {
   const queryClient = useQueryClient();
 
-  return useMutation<PurchaseOrderReportResponse, Error, { rowId: number, arrivalDate: string }, unknown>({
+  return useMutation<PurchaseOrderReportResponse, Error, { rowId: number, arrivalDate: string | null }, unknown>({
     mutationFn: ({ rowId, arrivalDate }) => patchPurchaseOrderReportData(rowId, arrivalDate),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: PURCHASE_ORDER_REPORT_QUERY_KEY });

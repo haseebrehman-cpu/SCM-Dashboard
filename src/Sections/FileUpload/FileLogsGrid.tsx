@@ -156,8 +156,8 @@ const FileLogsGrid: React.FC = React.memo(() => {
           slotProps={{
             toolbar: {
               printOptions: { disableToolbarButton: true },
-              excelOptions: { disableToolbarButton: true }, 
-              csvOptions: { disableToolbarButton: false }, 
+              excelOptions: { disableToolbarButton: true },
+              csvOptions: { disableToolbarButton: false },
             }
           }}
         />
@@ -176,9 +176,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
             Delete Upload Session
           </h2>
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            {selectedSessionId
-              ? `Are you sure you want to delete all files from session #${selectedSessionId}?`
-              : 'Are you sure you want to delete this upload session?'}
+            'Are you sure you want to delete this upload session?
           </p>
           <div className="flex justify-end gap-3 pt-2">
             <button

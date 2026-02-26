@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { createTheme, ThemeProvider } from "@mui/material";
+import { createTheme, ThemeProvider, IconButton } from "@mui/material";
 import { format, parseISO } from 'date-fns';
 
 interface DateEditorProps {
@@ -57,12 +57,18 @@ export const DateEditor: React.FC<DateEditorProps> = ({ value, onChange, isDark,
           minDate={minDate ? parseISO(minDate) : undefined}
           disabled={disabled}
           onChange={(newDate: Date | null) => {
-            if (newDate) {
-              const dateString = format(newDate, 'yyyy-MM-dd');
-              onChange(dateString);
+            if (!newDate) {
+              onChange("");
+              return;
             }
+
+            const dateString = format(newDate, 'yyyy-MM-dd');
+            onChange(dateString);
           }}
           slotProps={{
+            actionBar: {
+              actions: ['clear'],
+            },
             popper: {
               sx: {
                 zIndex: 999999,
@@ -78,6 +84,38 @@ export const DateEditor: React.FC<DateEditorProps> = ({ value, onChange, isDark,
             },
           }}
         />
+
+        {!disabled && value && (
+          <IconButton
+            size="small"
+            aria-label="Clear date"
+            onClick={(e) => {
+              e.stopPropagation();
+              onChange("");
+            }}
+            sx={{
+              ml: 0.5,
+              color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(31, 41, 55, 0.8)',
+              '&:hover': {
+                backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(31, 41, 55, 0.08)',
+              },
+            }}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </IconButton>
+        )}
       </ThemeProvider>
     </div>
   );

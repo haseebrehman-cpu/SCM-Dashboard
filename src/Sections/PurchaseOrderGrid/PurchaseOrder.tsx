@@ -1,6 +1,6 @@
 import { useTheme } from "../../hooks/useTheme";
 import { useState, useMemo, useCallback } from "react";
-import {  PAGINATION_MODEL } from '../../mockData/purchaseOrderMock';
+import { PAGINATION_MODEL } from '../../mockData/purchaseOrderMock';
 import { useInlineEdit } from '../../hooks/useInlineEdit';
 import { generatePurchaseOrderColumns } from '../../utils/columnGenerators/purchaseOrder';
 import { getDataGridStyles } from '../../styles/productionReportStyles';
@@ -11,7 +11,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { usePurchaseOrderReport, usePatchPurchaseOrderReport, useUploadPurchaseOrderFiles } from "../../api/purchaseOrder";
 import toast from "react-hot-toast";
-
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { Button } from "@mui/material";
 export default function PurchaseOrder() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -29,7 +30,7 @@ export default function PurchaseOrder() {
     updateEditedData,
   } = useInlineEdit();
 
-  const { data: purchaseOrderResponse, isLoading } = usePurchaseOrderReport();
+  const { data: purchaseOrderResponse, isLoading, refetch } = usePurchaseOrderReport();
   const patchMutation = usePatchPurchaseOrderReport();
   const uploadMutation = useUploadPurchaseOrderFiles();
 
@@ -48,8 +49,11 @@ export default function PurchaseOrder() {
       setIsUpdatingDate(true);
 
       try {
-        if (editedData?.arrivalDate) {
-          await patchMutation.mutateAsync({ rowId: editingRowId, arrivalDate: editedData.arrivalDate });
+        if (editedData) {
+          await patchMutation.mutateAsync({
+            rowId: editingRowId,
+            arrivalDate: editedData.arrivalDate === "" ? null : editedData.arrivalDate,
+          });
         }
 
         await saveEdit("test@mail.com");
@@ -80,10 +84,15 @@ export default function PurchaseOrder() {
       }),
     [isDark, editedData, isEditing, startEdit, handleSave, cancelEdit, handleDateChange, isUpdatingDate, updatingRowId]
   );
+  const handleRefreshApi = () => {
+    refetch();
+    toast.success("Data Refetched Successfully!")
+  }
 
   return (
     <>
       <div className="flex justify-end my-2">
+        <Button onClick={() => handleRefreshApi()} startIcon={<RefreshIcon />} />
         <ProductionReportHeader
           isDark={isDark}
           onUploadClick={() => setIsDialogOpen(true)}
@@ -92,7 +101,6 @@ export default function PurchaseOrder() {
         />
       </div>
       <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
-
         {isDialogOpen && (
           <FileUploadDialog
             isOpen={isDialogOpen}

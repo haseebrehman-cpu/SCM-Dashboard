@@ -98,7 +98,7 @@ export const generatePurchaseOrderColumns = ({
             />
           );
         }
-        return <span>{params.value}</span>;
+        return <span>{params.value ?? null}</span>;
       },
     },
     {

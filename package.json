@@ -21,7 +21,7 @@
     "@fullcalendar/list": "^6.1.15",
     "@fullcalendar/react": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
-    "@mui/icons-material": "^7.3.7",
+    "@mui/icons-material": "^7.3.8",
     "@mui/material": "^7.3.7",
     "@mui/x-data-grid": "^8.27.0",
     "@mui/x-data-grid-premium": "^8.27.0",
