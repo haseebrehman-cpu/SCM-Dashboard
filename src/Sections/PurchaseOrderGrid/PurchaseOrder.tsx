@@ -7,7 +7,7 @@ import { getDataGridStyles } from '../../styles/productionReportStyles';
 import { FileUploadDialog } from "../ProductionReport/FileUploadDialog";
 import { ProductionReportHeader } from "../ProductionReport/ProductionReportHeader";
 import { DataGridPremium } from "@mui/x-data-grid-premium";
-import { usePurchaseOrderReport, usePatchPurchaseOrderReport } from "../../api/purchaseOrder";
+import { usePurchaseOrderReport, usePatchPurchaseOrderReport, useUploadPurchaseOrderFiles } from "../../api/purchaseOrder";
 import toast from "react-hot-toast";
 
 export default function PurchaseOrder() {
@@ -17,7 +17,6 @@ export default function PurchaseOrder() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isUpdatingDate, setIsUpdatingDate] = useState(false);
   const [updatingRowId, setUpdatingRowId] = useState<number | null>(null);
-
 
   const {
     editingRowId,
@@ -31,6 +30,7 @@ export default function PurchaseOrder() {
 
   const { data: purchaseOrderResponse, isLoading, refetch } = usePurchaseOrderReport();
   const patchMutation = usePatchPurchaseOrderReport();
+  const uploadMutation = useUploadPurchaseOrderFiles();
 
   const apiData = purchaseOrderResponse?.data || [];
 
@@ -63,7 +63,7 @@ export default function PurchaseOrder() {
         setUpdatingRowId(null);
       }
     }
-  }, [editingRowId, editedData, patchMutation, saveEdit,]);
+  }, [editingRowId, editedData, patchMutation, saveEdit, refetch]);
 
 
   const columns = useMemo(
@@ -98,6 +98,16 @@ export default function PurchaseOrder() {
           <FileUploadDialog
             isOpen={isDialogOpen}
             onClose={() => setIsDialogOpen(false)}
+            onUpload={async (file) => {
+              try {
+                const result = await uploadMutation.mutateAsync(file);
+                toast.success(result.message || "Bulk update complete.");
+                await refetch();
+              } catch (error) {
+                const message = error instanceof Error ? error.message : "Failed to upload file";
+                toast.error(message);
+              }
+            }}
           />
         )}
 

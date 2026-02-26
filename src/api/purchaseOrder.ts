@@ -1,5 +1,5 @@
 import { UseQueryResult, useQuery, useMutation, UseMutationResult } from "@tanstack/react-query";
-import { PurchaseOrderReportResponse } from "../types/Interfaces/interfaces";
+import { PurchaseOrderReportResponse, PurchaseOrderBulkUpdateErrorResponse, PurchaseOrderBulkUpdateSuccessResponse } from "../types/Interfaces/interfaces";
 const API_BASE_URL = import.meta.env.VITE_SCM_API_BASE_URL ?? "/scm/api";
 
 const REQUEST_TIMEOUT_MS = 30_000;
@@ -89,4 +89,48 @@ export const usePatchPurchaseOrderReport = (): UseMutationResult<PurchaseOrderRe
   return useMutation<PurchaseOrderReportResponse, Error, { rowId: number, arrivalDate: string }, unknown>({
     mutationFn: ({ rowId, arrivalDate }) => patchPurchaseOrderReportData(rowId, arrivalDate),
   });
+}
+
+type PurchaseOrderBulkUpdateResponse =
+  | PurchaseOrderBulkUpdateSuccessResponse
+  | PurchaseOrderBulkUpdateErrorResponse;
+
+async function uploadPurchaseOrderFile(file: File): Promise<PurchaseOrderBulkUpdateSuccessResponse> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetchWithTimeout(`${API_BASE_URL}/bulk-update/`, {
+    method: "POST",
+    body: formData,
+  });
+
+  let data: PurchaseOrderBulkUpdateResponse;
+
+  try {
+    data = (await response.json()) as PurchaseOrderBulkUpdateResponse;
+  } catch (error) {
+    if (!response.ok) {
+      throw new Error(
+        "Failed to upload file. Server returned an invalid response.",
+      );
+    }
+    throw error;
+  }
+
+  if (!response.ok || data.success === false) {
+    const message =
+      (data as PurchaseOrderBulkUpdateErrorResponse).message ||
+      `Failed to upload file. Server responded with status ${response.status}.`;
+    throw new Error(message);
+  }
+
+  return data;
+}
+
+export const useUploadPurchaseOrderFiles = (): UseMutationResult<PurchaseOrderBulkUpdateSuccessResponse, Error, File> => {
+
+  return useMutation<PurchaseOrderBulkUpdateSuccessResponse, Error, File>({
+    mutationFn: uploadPurchaseOrderFile,
+
+  })
 }

@@ -56,6 +56,33 @@ export interface PurchaseOrderReportResponse {
   data: PurchaseOrderData[]
 }
 
+export interface PurchaseOrderBulkUpdateDetailRow {
+  container_name: string | null;
+  reference_container: string | null;
+  container_region: string | null;
+  arrival_date: string | null;
+  status: "updated" | "not_found" | "skipped";
+  rows_affected?: number;
+  reason?: string;
+}
+
+export interface PurchaseOrderBulkUpdateSuccessResponse {
+  success: true;
+  message: string;
+  summary?: Record<string, unknown>;
+  total_csv_rows: number;
+  updated: number;
+  not_found: number;
+  skipped: number;
+  details: PurchaseOrderBulkUpdateDetailRow[];
+}
+
+export interface PurchaseOrderBulkUpdateErrorResponse {
+  success: false;
+  message: string;
+  expected_columns?: string[];
+}
+
 // Keep for backward compatibility
 export interface OldLatestUploadSessionResponse {
   success: boolean;
