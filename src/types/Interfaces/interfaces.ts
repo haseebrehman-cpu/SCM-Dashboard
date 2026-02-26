@@ -34,7 +34,7 @@ export interface PurchaseOrderData {
   id: number;
   container_name: string;
   reference_container: string;
-  container_number: number;
+  container_number: string;
   container_region: string;
   departure_date: string;
   arrival_date: string | null;

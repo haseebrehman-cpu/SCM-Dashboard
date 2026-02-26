@@ -1,44 +1,39 @@
 import { useState, useCallback } from 'react';
-import { Container, EditableFields } from '../types/purchaseOrder';
+import { EditableFields } from '../types/purchaseOrder';
+import { PurchaseOrderData } from '../types/Interfaces/interfaces';
 
 interface UseInlineEditReturn {
   editingRowId: number | null;
   editedData: EditableFields | null;
   isEditing: (rowId: number) => boolean;
-  startEdit: (row: Container) => void;
+  startEdit: (row: PurchaseOrderData) => void;
   saveEdit: (userEmail?: string) => void;
   cancelEdit: () => void;
   updateEditedData: (updates: Partial<EditableFields>) => void;
 }
 
 export const useInlineEdit = (
-  setTableData: React.Dispatch<React.SetStateAction<Container[]>>
 ): UseInlineEditReturn => {
   const [editingRowId, setEditingRowId] = useState<number | null>(null);
   const [editedData, setEditedData] = useState<EditableFields | null>(null);
 
   const isEditing = useCallback((rowId: number) => editingRowId === rowId, [editingRowId]);
 
-  const startEdit = useCallback((row: Container) => {
+  const startEdit = useCallback((row: PurchaseOrderData) => {
     setEditingRowId(row.id);
     setEditedData({
-      arrivalDate: row.arrivalDate,
-      deliveryStatus: row.deliveryStatus,
-      editedBy: row.editedBy,
+      arrivalDate: row.arrival_date ?? "",
+      deliveryStatus: row.delivery_status === "Delivered" ? "Delivered" : "InTransit",
+      editedBy: row.modified_by,
     });
   }, []);
 
-  const saveEdit = useCallback((userEmail?: string) => {
+  const saveEdit = useCallback(() => {
     if (editingRowId !== null && editedData) {
-      setTableData((prevData) =>
-        prevData.map((row) =>
-          row.id === editingRowId ? { ...row, ...editedData, editedBy: userEmail || row.editedBy } : row
-        )
-      );
       setEditingRowId(null);
       setEditedData(null);
     }
-  }, [editingRowId, editedData, setTableData]);
+  }, [editingRowId, editedData]);
 
   const cancelEdit = useCallback(() => {
     setEditingRowId(null);

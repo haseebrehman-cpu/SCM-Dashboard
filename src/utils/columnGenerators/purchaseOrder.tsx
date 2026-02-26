@@ -1,6 +1,7 @@
 import { GridColDef } from "@mui/x-data-grid";
 import Badge from "../../components/ui/badge/Badge";
-import { Container, EditableFields, DeliveryStatus } from '../../types/purchaseOrder';
+import { EditableFields, DeliveryStatus } from '../../types/purchaseOrder';
+import { PurchaseOrderData } from "../../types/Interfaces/interfaces";
 import { DateEditor } from '../../Sections/PurchaseOrderGrid/DateEditor';
 import { ActionButtons } from '../../Sections/PurchaseOrderGrid/ActionButtons';
 
@@ -8,7 +9,7 @@ interface ColumnGeneratorParams {
   isDark: boolean;
   editedData: EditableFields | null;
   isEditing: (rowId: number) => boolean;
-  startEdit: (row: Container) => void;
+  startEdit: (row: PurchaseOrderData) => void;
   saveEdit: (userEmail?: string) => void;
   cancelEdit: () => void;
   onDateChange: (rowId: number, arrivalDate: string) => void;
@@ -94,7 +95,7 @@ export const generatePurchaseOrderColumns = ({
               }}
               isDark={isDark}
               minDate={params.row.departure_date}
-              />
+            />
           );
         }
         return <span>{params.value}</span>;
@@ -144,10 +145,10 @@ export const generatePurchaseOrderColumns = ({
       filterable: false,
       renderCell: (params) => {
         const isCurrentRowUpdating = params.row.id === updatingRowId && isUpdatingDate;
-        
+
         if (isCurrentRowUpdating) {
           return (
-            <div 
+            <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -157,24 +158,11 @@ export const generatePurchaseOrderColumns = ({
                 position: 'relative'
               }}
             >
-              <div
-                style={{
-                  width: '20px',
-                  height: '20px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: isDark ? '#10b981' : '#059669',
-                  fontSize: '14px',
-                  fontWeight: 'bold'
-                }}
-              >
-                Updating...
-              </div>
+              <span className="h-4 w-4 border-2 border-white/60 border-t-transparent rounded-full animate-spin" />
             </div>
           );
         }
-        
+
         return (
           <ActionButtons
             isEditing={isEditing(params.row.id)}

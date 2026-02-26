@@ -1,6 +1,8 @@
-import { UseQueryResult, useQuery, useMutation, UseMutationResult } from "@tanstack/react-query";
+import { UseQueryResult, useQuery, useMutation, UseMutationResult, useQueryClient } from "@tanstack/react-query";
 import { PurchaseOrderReportResponse, PurchaseOrderBulkUpdateErrorResponse, PurchaseOrderBulkUpdateSuccessResponse } from "../types/Interfaces/interfaces";
 const API_BASE_URL = import.meta.env.VITE_SCM_API_BASE_URL ?? "/scm/api";
+
+export const PURCHASE_ORDER_REPORT_QUERY_KEY = ["scmPurchaseOrderReport"] as const;
 
 const REQUEST_TIMEOUT_MS = 30_000;
 
@@ -47,7 +49,7 @@ async function fetchPurchaseOrderReport(): Promise<PurchaseOrderReportResponse> 
 
 export const usePurchaseOrderReport = (): UseQueryResult<PurchaseOrderReportResponse, Error> =>
   useQuery<PurchaseOrderReportResponse, Error>({
-    queryKey: ["scmPurchaseOrderReport"],
+    queryKey: PURCHASE_ORDER_REPORT_QUERY_KEY,
     queryFn: fetchPurchaseOrderReport,
     staleTime: 60_000,
     refetchOnWindowFocus: true,
@@ -86,8 +88,13 @@ export const patchPurchaseOrderReportData = async (rowId: number, arrivalDate: s
 }
 
 export const usePatchPurchaseOrderReport = (): UseMutationResult<PurchaseOrderReportResponse, Error, { rowId: number, arrivalDate: string }, unknown> => {
+  const queryClient = useQueryClient();
+
   return useMutation<PurchaseOrderReportResponse, Error, { rowId: number, arrivalDate: string }, unknown>({
     mutationFn: ({ rowId, arrivalDate }) => patchPurchaseOrderReportData(rowId, arrivalDate),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: PURCHASE_ORDER_REPORT_QUERY_KEY });
+    },
   });
 }
 
@@ -128,9 +135,13 @@ async function uploadPurchaseOrderFile(file: File): Promise<PurchaseOrderBulkUpd
 }
 
 export const useUploadPurchaseOrderFiles = (): UseMutationResult<PurchaseOrderBulkUpdateSuccessResponse, Error, File> => {
+  const queryClient = useQueryClient();
 
   return useMutation<PurchaseOrderBulkUpdateSuccessResponse, Error, File>({
     mutationFn: uploadPurchaseOrderFile,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: PURCHASE_ORDER_REPORT_QUERY_KEY });
+    },
 
   })
 }

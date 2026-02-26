@@ -1,7 +1,5 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { format, parseISO } from 'date-fns';
 
@@ -47,40 +45,40 @@ const getDatePickerTheme = (isDark: boolean) => createTheme({
 });
 
 export const DateEditor: React.FC<DateEditorProps> = ({ value, onChange, isDark, max, minDate, disabled }) => {
+  const theme = useMemo(() => getDatePickerTheme(isDark), [isDark]);
+
   return (
     <div style={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <ThemeProvider theme={getDatePickerTheme(isDark)}>
-          <DatePicker
-            format="MM/dd/yyyy"
-            value={value ? parseISO(value) : null}
-            maxDate={max ? parseISO(max) : undefined}
-            minDate={minDate ? parseISO(minDate) : undefined}
-            disabled={disabled}
-            onChange={(newDate: Date | null) => {
-              if (newDate) {
-                const dateString = format(newDate, 'yyyy-MM-dd');
-                onChange(dateString);
-              }
-            }}
-            slotProps={{
-              popper: {
-                sx: {
-                  zIndex: 999999,
+      <ThemeProvider theme={theme}>
+        <DatePicker
+          format="MM/dd/yyyy"
+          value={value ? parseISO(value) : null}
+          maxDate={max ? parseISO(max) : undefined}
+          minDate={minDate ? parseISO(minDate) : undefined}
+          disabled={disabled}
+          onChange={(newDate: Date | null) => {
+            if (newDate) {
+              const dateString = format(newDate, 'yyyy-MM-dd');
+              onChange(dateString);
+            }
+          }}
+          slotProps={{
+            popper: {
+              sx: {
+                zIndex: 999999,
+              },
+            },
+            textField: {
+              size: "small",
+              sx: {
+                '& input': {
+                  color: isDark ? '#ffffff' : 'rgb(31 41 55)',
                 },
               },
-              textField: {
-                size: "small",
-                sx: {
-                  '& input': {
-                    color: isDark ? '#ffffff' : 'rgb(31 41 55)',
-                  },
-                },
-              },
-            }}
-          />
-        </ThemeProvider>
-      </LocalizationProvider>
+            },
+          }}
+        />
+      </ThemeProvider>
     </div>
   );
 };

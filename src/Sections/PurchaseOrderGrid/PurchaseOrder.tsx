@@ -1,19 +1,20 @@
 import { useTheme } from "../../hooks/useTheme";
 import { useState, useMemo, useCallback } from "react";
-import { mockContainers, PAGINATION_MODEL } from '../../mockData/purchaseOrderMock';
+import {  PAGINATION_MODEL } from '../../mockData/purchaseOrderMock';
 import { useInlineEdit } from '../../hooks/useInlineEdit';
 import { generatePurchaseOrderColumns } from '../../utils/columnGenerators/purchaseOrder';
 import { getDataGridStyles } from '../../styles/productionReportStyles';
 import { FileUploadDialog } from "../ProductionReport/FileUploadDialog";
 import { ProductionReportHeader } from "../ProductionReport/ProductionReportHeader";
 import { DataGridPremium } from "@mui/x-data-grid-premium";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { usePurchaseOrderReport, usePatchPurchaseOrderReport, useUploadPurchaseOrderFiles } from "../../api/purchaseOrder";
 import toast from "react-hot-toast";
 
 export default function PurchaseOrder() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const [tableData, setTableData] = useState(mockContainers);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isUpdatingDate, setIsUpdatingDate] = useState(false);
   const [updatingRowId, setUpdatingRowId] = useState<number | null>(null);
@@ -26,16 +27,15 @@ export default function PurchaseOrder() {
     saveEdit,
     cancelEdit,
     updateEditedData,
-  } = useInlineEdit(setTableData);
+  } = useInlineEdit();
 
-  const { data: purchaseOrderResponse, isLoading, refetch } = usePurchaseOrderReport();
+  const { data: purchaseOrderResponse, isLoading } = usePurchaseOrderReport();
   const patchMutation = usePatchPurchaseOrderReport();
   const uploadMutation = useUploadPurchaseOrderFiles();
 
-  const apiData = purchaseOrderResponse?.data || [];
+  const apiData = purchaseOrderResponse?.data;
 
-  // Use API data if available, otherwise fall back to mock data
-  const displayData = apiData.length > 0 ? apiData : tableData;
+  const rows = apiData ?? [];
 
   const handleDateChange = useCallback((rowId: number, arrivalDate: string) => {
     if (!isEditing(rowId)) return;
@@ -50,7 +50,6 @@ export default function PurchaseOrder() {
       try {
         if (editedData?.arrivalDate) {
           await patchMutation.mutateAsync({ rowId: editingRowId, arrivalDate: editedData.arrivalDate });
-          await refetch()
         }
 
         await saveEdit("test@mail.com");
@@ -63,7 +62,7 @@ export default function PurchaseOrder() {
         setUpdatingRowId(null);
       }
     }
-  }, [editingRowId, editedData, patchMutation, saveEdit, refetch]);
+  }, [editingRowId, editedData, patchMutation, saveEdit]);
 
 
   const columns = useMemo(
@@ -101,7 +100,6 @@ export default function PurchaseOrder() {
             onUpload={async (file) => {
               try {
                 await uploadMutation.mutateAsync(file);
-                await refetch();
               } catch (error) {
                 const message = error instanceof Error ? error.message : "Failed to upload file";
                 toast.error(message);
@@ -111,26 +109,28 @@ export default function PurchaseOrder() {
           />
         )}
 
-        <DataGridPremium
-          label="Purchase Order Report"
-          loading={isLoading}
-          rows={displayData}
-          columns={columns}
-          initialState={{ pagination: { paginationModel: PAGINATION_MODEL } }}
-          pageSizeOptions={[100, 500, 1000]}
-          rowBufferPx={100}
-          pagination
-          sx={getDataGridStyles(isDark, "75vh")}
-          showToolbar
-          rowSelection={false}
-          slotProps={{
-            toolbar: {
-              printOptions: { disableToolbarButton: true },
-              excelOptions: { disableToolbarButton: true },
-              csvOptions: { disableToolbarButton: false },
-            }
-          }}
-        />
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DataGridPremium
+            label="Purchase Order Report"
+            loading={isLoading}
+            rows={rows}
+            columns={columns}
+            initialState={{ pagination: { paginationModel: PAGINATION_MODEL } }}
+            pageSizeOptions={[100, 500, 1000]}
+            rowBufferPx={100}
+            pagination
+            sx={getDataGridStyles(isDark, "75vh")}
+            showToolbar
+            rowSelection={false}
+            slotProps={{
+              toolbar: {
+                printOptions: { disableToolbarButton: true },
+                excelOptions: { disableToolbarButton: true },
+                csvOptions: { disableToolbarButton: false },
+              }
+            }}
+          />
+        </LocalizationProvider>
       </div>
     </>
   );
