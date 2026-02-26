@@ -100,12 +100,12 @@ export default function PurchaseOrder() {
             onClose={() => setIsDialogOpen(false)}
             onUpload={async (file) => {
               try {
-                const result = await uploadMutation.mutateAsync(file);
-                toast.success(result.message || "Bulk update complete.");
+                await uploadMutation.mutateAsync(file);
                 await refetch();
               } catch (error) {
                 const message = error instanceof Error ? error.message : "Failed to upload file";
                 toast.error(message);
+                throw error;
               }
             }}
           />

@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 interface FileUploadDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onUpload?: (file: File) => void;
+  onUpload?: (file: File) => void | Promise<void>;
 }
 
 export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({ isOpen, onClose, onUpload }) => {
@@ -29,8 +29,7 @@ export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({ isOpen, onCl
     (files: File[]) => {
       setIsUploading(true);
       const previews = files.map((file) => URL.createObjectURL(file));
-      toast.success('File upload started...');
-    
+
 
       let progress = 0;
       const interval = setInterval(() => {
@@ -45,7 +44,6 @@ export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({ isOpen, onCl
         if (progress >= 100) {
           clearInterval(interval);
           setIsUploading(false);
-          toast.success('File uploaded successfully');
         }
       }, 150);
     },
@@ -85,18 +83,22 @@ export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({ isOpen, onCl
     onClose();
   };
 
-  const handleConfirmUpload = () => {
-    if (file && file.files.length > 0) {
-      if (onUpload) {
-        onUpload(file.files[0]);
-      }
+  const handleConfirmUpload = async () => {
+    if (!file || file.files.length === 0 || !onUpload) return;
+
+    setIsUploading(true);
+    try {
+      await onUpload(file.files[0]);
       handleClose();
+      toast.success('File uploaded successfully');
+    } finally {
+      setIsUploading(false);
     }
   };
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
-      <div className="flex flex-col  max-w-xl w-[600px] mx-auto p-10">
+      <div className="flex flex-col  max-w-3xl w-[800px] mx-auto p-10">
         <div className="mb-4 text-center">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             Upload Production Report
@@ -130,7 +132,7 @@ export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({ isOpen, onCl
             disabled={!file || file.status !== 'completed' || isUploading}
             startIcon={file?.status === 'completed' ? <CheckCircleIcon className="w-4 h-4" /> : <IosShareIcon sx={{ fontSize: '14px' }} />}
           >
-            {file?.status === 'completed' ? 'Confirm Upload' : 'Upload'}
+            {isUploading ? 'Uploading' : (file?.status === 'completed' ? 'Confirm Upload' : 'Upload')}
           </Button>
         </div>
       </div>
