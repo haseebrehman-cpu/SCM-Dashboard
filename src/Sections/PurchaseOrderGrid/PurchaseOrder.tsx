@@ -18,20 +18,23 @@ export default function PurchaseOrder() {
   const [isUpdatingDate, setIsUpdatingDate] = useState(false);
   const [updatingRowId, setUpdatingRowId] = useState<number | null>(null);
 
+
   const {
     editingRowId,
     editedData,
     isEditing,
     startEdit,
+    saveEdit,
     cancelEdit,
     updateEditedData,
   } = useInlineEdit(setTableData);
 
-  const { data: purchaseOrderResponse, isLoading } = usePurchaseOrderReport();
+  const { data: purchaseOrderResponse, isLoading, refetch } = usePurchaseOrderReport();
   const patchMutation = usePatchPurchaseOrderReport();
 
   const apiData = purchaseOrderResponse?.data || [];
 
+  // Use API data if available, otherwise fall back to mock data
   const displayData = apiData.length > 0 ? apiData : tableData;
 
   const handleDateChange = useCallback((rowId: number, arrivalDate: string) => {
@@ -47,8 +50,10 @@ export default function PurchaseOrder() {
       try {
         if (editedData?.arrivalDate) {
           await patchMutation.mutateAsync({ rowId: editingRowId, arrivalDate: editedData.arrivalDate });
+          await refetch()
         }
 
+        await saveEdit("test@mail.com");
         toast.success('Record Updated Successfully!');
       } catch (error) {
         console.error('Failed to save data:', error);
@@ -58,7 +63,7 @@ export default function PurchaseOrder() {
         setUpdatingRowId(null);
       }
     }
-  }, [editingRowId, editedData, patchMutation]);
+  }, [editingRowId, editedData, patchMutation, saveEdit,]);
 
 
   const columns = useMemo(

@@ -92,12 +92,7 @@ export const patchPurchaseOrderReportData = async (rowId: number, arrivalDate: s
 }
 
 export const usePatchPurchaseOrderReport = (): UseMutationResult<PurchaseOrderReportResponse, Error, {rowId: number, arrivalDate: string}, unknown> => {
-  const queryClient = useQueryClient();
-
   return useMutation<PurchaseOrderReportResponse, Error, {rowId: number, arrivalDate: string}, unknown>({
     mutationFn: ({rowId, arrivalDate}) => patchPurchaseOrderReportData(rowId, arrivalDate),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["scmPurchaseOrderReport"] });
-    },
   });
 }
