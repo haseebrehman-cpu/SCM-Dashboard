@@ -220,6 +220,13 @@ export const FileLogsDetailPanel: React.FC<FileLogsDetailPanelProps> = ({ sessio
               disableRowSelectionOnClick
               sx={getDataGridStyles(isDark, "50vh")}
               density="compact"
+              slotProps={{
+                toolbar: {
+                  printOptions: { disableToolbarButton: true },
+                  excelOptions: { disableToolbarButton: true },
+                  csvOptions: { disableToolbarButton: false },
+                }
+              }}
             />
           </div>
         )}

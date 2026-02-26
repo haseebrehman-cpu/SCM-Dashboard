@@ -23,6 +23,13 @@ const WHContainerGrid = () => {
         sx={getDataGridStyles(isDark, "auto")}
         rowBufferPx={100}
         showToolbar
+        slotProps={{
+          toolbar: {
+            printOptions: { disableToolbarButton: true },
+            excelOptions: { disableToolbarButton: true }, 
+            csvOptions: { disableToolbarButton: false }, 
+          }
+        }}
       />
     </div>
   )

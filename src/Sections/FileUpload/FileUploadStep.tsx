@@ -27,8 +27,6 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
   const stepConfig = STEP_CONFIG[stepNumber];
   const { uploadedToday, errorMessage: todayUploadErrorMessage } = useUploadTodayCheck();
 
-
-
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
@@ -54,8 +52,6 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
   const nextButtonLabel =
     isLastStep && isUploading ? 'Validating Files' : stepConfig.nextButtonText;
 
-
-
   return (
     <div className="space-y-2">
       <div className="mb-2">
@@ -70,7 +66,7 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
       {uploadedToday && (
         <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
           <p className="text-sm font-semibold text-yellow-900 dark:text-yellow-100">
-            ⚠️ Upload Blocked
+            ⚠️ File for Today already exists
           </p>
           <p className="text-xs text-yellow-800 dark:text-yellow-200 mt-1">
             {todayUploadErrorMessage}

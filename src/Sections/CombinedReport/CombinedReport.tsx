@@ -32,6 +32,13 @@ const CombinedReportGrid = () => {
         rowBufferPx={100}
         columnHeaderHeight={56}
         showToolbar
+        slotProps={{
+          toolbar: {
+            printOptions: { disableToolbarButton: true },
+            excelOptions: { disableToolbarButton: true }, 
+            csvOptions: { disableToolbarButton: false }, 
+          }
+        }}
       />
     </div>
   )

@@ -26,9 +26,9 @@ export default function PurchaseOrder() {
   } = useInlineEdit(setTableData);
 
   const { data: purchaseOrderResponse, isLoading } = usePurchaseOrderReport();
-  
+
   const apiData = purchaseOrderResponse?.data || [];
-  
+
   // Use API data if available, otherwise fall back to mock data
   const displayData = apiData.length > 0 ? apiData : tableData;
 
@@ -40,7 +40,7 @@ export default function PurchaseOrder() {
         editedData,
         isEditing,
         startEdit,
-        saveEdit: () => saveEdit("haseeb.rehman@igate.com.pk"),
+        saveEdit: () => saveEdit("test@igate.com.pk"),
         cancelEdit,
         updateEditedData,
       }),
@@ -75,9 +75,16 @@ export default function PurchaseOrder() {
           pageSizeOptions={[100, 500, 1000]}
           rowBufferPx={100}
           pagination
-          sx={getDataGridStyles(isDark, "auto")}
+          sx={getDataGridStyles(isDark, "75vh")}
           showToolbar
           rowSelection={false}
+          slotProps={{
+            toolbar: {
+              printOptions: { disableToolbarButton: true },
+              excelOptions: { disableToolbarButton: true }, 
+              csvOptions: { disableToolbarButton: false }, 
+            }
+          }}
         />
       </div>
     </>

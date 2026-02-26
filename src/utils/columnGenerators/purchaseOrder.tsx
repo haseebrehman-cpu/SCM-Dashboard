@@ -2,7 +2,6 @@ import { GridColDef } from "@mui/x-data-grid";
 import Badge from "../../components/ui/badge/Badge";
 import { Container, EditableFields, DeliveryStatus } from '../../types/purchaseOrder';
 import { DateEditor } from '../../Sections/PurchaseOrderGrid/DateEditor';
-import { StatusEditor } from '../../Sections/PurchaseOrderGrid/StatusEditor';
 import { ActionButtons } from '../../Sections/PurchaseOrderGrid/ActionButtons';
 
 interface ColumnGeneratorParams {
@@ -25,6 +24,7 @@ const renderDateHeader = (title: string, isDark: boolean) => (
     </span>
   </div>
 );
+
 
 export const generatePurchaseOrderColumns = ({
   isDark,
@@ -100,21 +100,21 @@ export const generatePurchaseOrderColumns = ({
       sortable: true,
       filterable: true,
       renderCell: (params) => {
-        const status = params.value as DeliveryStatus;
-
-        if (isEditing(params.row.id) && editedData) {
-          return (
-            <StatusEditor
-              value={editedData.deliveryStatus}
-              onChange={(status) => updateEditedData({ deliveryStatus: status })}
-              isDark={isDark}
-            />
-          );
+        const arrivalDate = params.row.arrival_date;
+        const currentDate = new Date();
+        
+        let deliveryStatus: DeliveryStatus = "InTransit";
+        
+        if (arrivalDate) {
+          const arrival = new Date(arrivalDate);
+          if (currentDate < arrival) {
+            deliveryStatus = "Delivered";
+          }
         }
-
+        
         return (
-          <Badge size="sm" color={status === "Delivered" ? "success" : "warning"}>
-            {status}
+          <Badge size="sm" color={deliveryStatus === "Delivered" ? "success" : "warning"}>
+            {deliveryStatus === "Delivered" ? "Delivered" : "In Transit"}
           </Badge>
         );
       },

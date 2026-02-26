@@ -80,6 +80,13 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           disableRowSelectionOnClick
           sx={getDataGridStyles(isDark, "auto")}
           showToolbar
+          slotProps={{
+            toolbar: {
+              printOptions: { disableToolbarButton: true },
+              excelOptions: { disableToolbarButton: true }, 
+              csvOptions: { disableToolbarButton: false }, 
+            }
+          }}
         />
       </div>
     </>

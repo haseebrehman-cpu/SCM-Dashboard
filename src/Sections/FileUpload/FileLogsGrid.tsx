@@ -153,6 +153,13 @@ const FileLogsGrid: React.FC = React.memo(() => {
           getDetailPanelContent={({ row }) => (
             <FileLogsDetailPanel sessionData={row.sessionData} />
           )}
+          slotProps={{
+            toolbar: {
+              printOptions: { disableToolbarButton: true },
+              excelOptions: { disableToolbarButton: true }, 
+              csvOptions: { disableToolbarButton: false }, 
+            }
+          }}
         />
       </div>
 

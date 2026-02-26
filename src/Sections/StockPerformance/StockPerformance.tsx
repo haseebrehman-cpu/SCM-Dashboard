@@ -64,6 +64,13 @@ export default function StockPerformance() {
           rowBufferPx={100}
           sx={getDataGridStyles(isDark, "auto")}
           showToolbar
+          slotProps={{
+            toolbar: {
+              printOptions: { disableToolbarButton: true },
+              excelOptions: { disableToolbarButton: true }, 
+              csvOptions: { disableToolbarButton: false }, 
+            }
+          }}
         />
       </div>
     </>
