@@ -11,7 +11,9 @@ interface ColumnGeneratorParams {
   startEdit: (row: Container) => void;
   saveEdit: (userEmail?: string) => void;
   cancelEdit: () => void;
-  updateEditedData: (updates: Partial<EditableFields>) => void;
+  onDateChange: (rowId: number, arrivalDate: string) => void;
+  isUpdatingDate?: boolean;
+  updatingRowId?: number | null;
 }
 
 const renderDateHeader = (title: string, isDark: boolean) => (
@@ -33,7 +35,9 @@ export const generatePurchaseOrderColumns = ({
   startEdit,
   saveEdit,
   cancelEdit,
-  updateEditedData,
+  onDateChange,
+  isUpdatingDate,
+  updatingRowId,
 }: ColumnGeneratorParams): GridColDef[] => [
     {
       field: "container_name",
@@ -85,9 +89,12 @@ export const generatePurchaseOrderColumns = ({
           return (
             <DateEditor
               value={editedData.arrivalDate}
-              onChange={(date) => updateEditedData({ arrivalDate: date })}
+              onChange={(date) => {
+                onDateChange(params.row.id, date);
+              }}
               isDark={isDark}
-            />
+              minDate={params.row.departure_date}
+              />
           );
         }
         return <span>{params.value}</span>;
@@ -101,20 +108,23 @@ export const generatePurchaseOrderColumns = ({
       filterable: true,
       renderCell: (params) => {
         const arrivalDate = params.row.arrival_date;
-        const currentDate = new Date();
-        
+
         let deliveryStatus: DeliveryStatus = "InTransit";
-        
+
         if (arrivalDate) {
-          const arrival = new Date(arrivalDate);
-          if (currentDate < arrival) {
+          const arrival = new Date(arrivalDate + 'T00:00:00');
+
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          if (arrival <= today) {
             deliveryStatus = "Delivered";
           }
         }
-        
+
         return (
           <Badge size="sm" color={deliveryStatus === "Delivered" ? "success" : "warning"}>
-            {deliveryStatus === "Delivered" ? "Delivered" : "In Transit"}
+            {params.row.arrival_date ? (deliveryStatus === "Delivered" ? "Delivered" : "In Transit") : "In Transit"}
           </Badge>
         );
       },
@@ -132,14 +142,48 @@ export const generatePurchaseOrderColumns = ({
       width: 120,
       sortable: false,
       filterable: false,
-      renderCell: (params) => (
-        <ActionButtons
-          isEditing={isEditing(params.row.id)}
-          isDark={isDark}
-          onEdit={() => startEdit(params.row)}
-          onSave={saveEdit}
-          onCancel={cancelEdit}
-        />
-      ),
+      renderCell: (params) => {
+        const isCurrentRowUpdating = params.row.id === updatingRowId && isUpdatingDate;
+        
+        if (isCurrentRowUpdating) {
+          return (
+            <div 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100%',
+                width: '100%',
+                position: 'relative'
+              }}
+            >
+              <div
+                style={{
+                  width: '20px',
+                  height: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: isDark ? '#10b981' : '#059669',
+                  fontSize: '14px',
+                  fontWeight: 'bold'
+                }}
+              >
+                Updating...
+              </div>
+            </div>
+          );
+        }
+        
+        return (
+          <ActionButtons
+            isEditing={isEditing(params.row.id)}
+            isDark={isDark}
+            onEdit={() => startEdit(params.row)}
+            onSave={saveEdit}
+            onCancel={cancelEdit}
+          />
+        );
+      },
     },
   ];

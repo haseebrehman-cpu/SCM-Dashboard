@@ -1,5 +1,5 @@
 import { useTheme } from "../../hooks/useTheme";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { mockContainers, PAGINATION_MODEL } from '../../mockData/purchaseOrderMock';
 import { useInlineEdit } from '../../hooks/useInlineEdit';
 import { generatePurchaseOrderColumns } from '../../utils/columnGenerators/purchaseOrder';
@@ -7,30 +7,58 @@ import { getDataGridStyles } from '../../styles/productionReportStyles';
 import { FileUploadDialog } from "../ProductionReport/FileUploadDialog";
 import { ProductionReportHeader } from "../ProductionReport/ProductionReportHeader";
 import { DataGridPremium } from "@mui/x-data-grid-premium";
-import { usePurchaseOrderReport } from "../../api/purchaseOrder";
+import { usePurchaseOrderReport, usePatchPurchaseOrderReport } from "../../api/purchaseOrder";
+import toast from "react-hot-toast";
 
 export default function PurchaseOrder() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-
   const [tableData, setTableData] = useState(mockContainers);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isUpdatingDate, setIsUpdatingDate] = useState(false);
+  const [updatingRowId, setUpdatingRowId] = useState<number | null>(null);
 
   const {
+    editingRowId,
     editedData,
     isEditing,
     startEdit,
-    saveEdit,
     cancelEdit,
     updateEditedData,
   } = useInlineEdit(setTableData);
 
   const { data: purchaseOrderResponse, isLoading } = usePurchaseOrderReport();
+  const patchMutation = usePatchPurchaseOrderReport();
 
   const apiData = purchaseOrderResponse?.data || [];
 
-  // Use API data if available, otherwise fall back to mock data
   const displayData = apiData.length > 0 ? apiData : tableData;
+
+  const handleDateChange = useCallback((rowId: number, arrivalDate: string) => {
+    if (!isEditing(rowId)) return;
+    updateEditedData({ arrivalDate });
+  }, [isEditing, updateEditedData]);
+
+  const handleSave = useCallback(async () => {
+    if (editingRowId !== null) {
+      setUpdatingRowId(editingRowId);
+      setIsUpdatingDate(true);
+
+      try {
+        if (editedData?.arrivalDate) {
+          await patchMutation.mutateAsync({ rowId: editingRowId, arrivalDate: editedData.arrivalDate });
+        }
+
+        toast.success('Record Updated Successfully!');
+      } catch (error) {
+        console.error('Failed to save data:', error);
+        toast.error('Failed to save data');
+      } finally {
+        setIsUpdatingDate(false);
+        setUpdatingRowId(null);
+      }
+    }
+  }, [editingRowId, editedData, patchMutation]);
 
 
   const columns = useMemo(
@@ -40,11 +68,13 @@ export default function PurchaseOrder() {
         editedData,
         isEditing,
         startEdit,
-        saveEdit: () => saveEdit("test@igate.com.pk"),
+        saveEdit: handleSave,
         cancelEdit,
-        updateEditedData,
+        onDateChange: handleDateChange,
+        isUpdatingDate,
+        updatingRowId,
       }),
-    [isDark, editedData, isEditing, startEdit, saveEdit, cancelEdit, updateEditedData]
+    [isDark, editedData, isEditing, startEdit, handleSave, cancelEdit, handleDateChange, isUpdatingDate, updatingRowId]
   );
 
   return (
@@ -81,8 +111,8 @@ export default function PurchaseOrder() {
           slotProps={{
             toolbar: {
               printOptions: { disableToolbarButton: true },
-              excelOptions: { disableToolbarButton: true }, 
-              csvOptions: { disableToolbarButton: false }, 
+              excelOptions: { disableToolbarButton: true },
+              csvOptions: { disableToolbarButton: false },
             }
           }}
         />

@@ -10,6 +10,8 @@ interface DateEditorProps {
   onChange: (date: string) => void;
   isDark: boolean;
   max?: string;
+  minDate?: string;
+  disabled?: boolean;
 }
 
 const getDatePickerTheme = (isDark: boolean) => createTheme({
@@ -44,7 +46,7 @@ const getDatePickerTheme = (isDark: boolean) => createTheme({
   },
 });
 
-export const DateEditor: React.FC<DateEditorProps> = ({ value, onChange, isDark, max }) => {
+export const DateEditor: React.FC<DateEditorProps> = ({ value, onChange, isDark, max, minDate, disabled }) => {
   return (
     <div style={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -53,6 +55,8 @@ export const DateEditor: React.FC<DateEditorProps> = ({ value, onChange, isDark,
             format="MM/dd/yyyy"
             value={value ? parseISO(value) : null}
             maxDate={max ? parseISO(max) : undefined}
+            minDate={minDate ? parseISO(minDate) : undefined}
+            disabled={disabled}
             onChange={(newDate: Date | null) => {
               if (newDate) {
                 const dateString = format(newDate, 'yyyy-MM-dd');

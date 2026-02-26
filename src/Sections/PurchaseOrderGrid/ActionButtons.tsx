@@ -16,8 +16,9 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
   onSave,
   onCancel,
 }) => {
-  if (isEditing) {
-    return (
+  return (
+    <>
+      {isEditing ? (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', height: '100%', width: '100%' }}>
         <IconButton
           size="small"
@@ -67,35 +68,34 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
           </svg>
         </IconButton>
       </div>
-    );
-  }
-
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%' }}>
-      <IconButton
-        size="small"
-        onClick={onEdit}
-        sx={{
-          color: isDark ? '#60a5fa' : '#2563eb',
-          '&:hover': {
-            backgroundColor: isDark ? 'rgba(96, 165, 250, 0.1)' : 'rgba(37, 99, 235, 0.1)',
-          },
-        }}
-      >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+    ) : (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%' }}>
+        <IconButton
+          size="small"
+          onClick={onEdit}
+          sx={{
+            color: isDark ? '#60a5fa' : '#2563eb',
+            '&:hover': {
+              backgroundColor: isDark ? 'rgba(96, 165, 250, 0.1)' : 'rgba(37, 99, 235, 0.1)',
+            },
+          }}
         >
-          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-        </svg>
-      </IconButton>
-    </div>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+          </svg>
+        </IconButton>
+      </div>
+    )}
+    </>
   );
 };
