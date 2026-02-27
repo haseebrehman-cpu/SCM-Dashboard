@@ -13,6 +13,8 @@ import { usePurchaseOrderReport, usePatchPurchaseOrderReport, useUploadPurchaseO
 import toast from "react-hot-toast";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Button } from "@mui/material";
+import CachedIcon from '@mui/icons-material/Cached';
+
 export default function PurchaseOrder() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -56,7 +58,7 @@ export default function PurchaseOrder() {
           });
         }
 
-        await saveEdit("test@mail.com");
+        saveEdit("test@mail.com");
         toast.success('Record Updated Successfully!');
       } catch (error) {
         console.error('Failed to save data:', error);
@@ -67,7 +69,6 @@ export default function PurchaseOrder() {
       }
     }
   }, [editingRowId, editedData, patchMutation, saveEdit]);
-
 
   const columns = useMemo(
     () =>
@@ -84,21 +85,40 @@ export default function PurchaseOrder() {
       }),
     [isDark, editedData, isEditing, startEdit, handleSave, cancelEdit, handleDateChange, isUpdatingDate, updatingRowId]
   );
-  const handleRefreshApi = () => {
-    refetch();
-    toast.success("Data Refetched Successfully!")
+
+  const handleRefreshApi = async () => {
+    try {
+      const result = await refetch()
+      if (result.isSuccess) {
+        toast.success("Data Refetched Successfully!")
+      } else if (result.isError) {
+        toast.error("Failed to refetch data. Please try again.");
+      }
+    } catch (error) {
+      toast.error("An error occurred while refetching data.");
+      console.error("Refetch error:", error);
+    }
   }
 
   return (
     <>
       <div className="flex justify-end my-2">
-        <Button onClick={() => handleRefreshApi()} startIcon={<RefreshIcon />} />
+        <Button onClick={() => handleRefreshApi()} startIcon={<RefreshIcon />} >Refresh Report</Button>
+        <Button onClick={() => handleRefreshApi()} startIcon={<CachedIcon />}>Load Reports</Button>
         <ProductionReportHeader
           isDark={isDark}
           onUploadClick={() => setIsDialogOpen(true)}
           isSelectWarehouse={false}
           isShowUpload={true}
         />
+      </div>
+      <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+        <p className="text-sm font-semibold text-yellow-900 dark:text-yellow-100">
+          ⚠️ Attention
+        </p>
+        <p className="text-xs text-yellow-800 dark:text-yellow-200 mt-1">
+          Arrival Dates cannot be empty, please make sure to fill the arrival dates for all records
+        </p>
       </div>
       <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
         {isDialogOpen && (
