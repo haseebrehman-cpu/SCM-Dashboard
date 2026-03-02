@@ -21,6 +21,11 @@ const filtersArray = [
     filterName: "Select Container Number",
     filterOptions: ["81", "707", "180", "704"]
   },
+  {
+    id: 'skuName',
+    filterName: "Select SKU",
+    filterOptions: ["A-81", "A-707", "A-180", "C-704"]
+  },
 ]
 
 const WHContainerReportView = () => {

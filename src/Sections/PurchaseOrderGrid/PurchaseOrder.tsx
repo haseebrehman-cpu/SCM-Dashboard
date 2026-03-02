@@ -100,11 +100,42 @@ export default function PurchaseOrder() {
     }
   }
 
+  const arrivalDates = rows.map((item) => item.arrival_date)
+
+  function checkForEmptyItems(arr: (string | null)[]): boolean {
+    for (let i = 0; i < arr.length; i++) {
+      const item = arr[i];
+      if (item === null ||
+        item === undefined ||
+        item === '' ||
+        (typeof item === 'string' && item.trim() === '')) {
+        console.log(`Empty item found at index ${i}: "${item}"`);
+        return false;
+      }
+    } 
+    return true;
+  }
+
+  const isArrivalEmpty = checkForEmptyItems(arrivalDates)
+
+  const countEmptyItems = (arr: (string | null | undefined)[]): number => {
+    let count = 0;
+    for (const item of arr) {
+      if (item == null || (typeof item === 'string' && item.trim() === '')) {
+        count++;
+      }
+    }
+    return count;
+  };
+  const emptyItemCount = countEmptyItems(arrivalDates);
+
+
+
   return (
     <>
       <div className="flex justify-end my-2">
         <Button onClick={() => handleRefreshApi()} startIcon={<RefreshIcon />} >Refresh Report</Button>
-        <Button onClick={() => handleRefreshApi()} startIcon={<CachedIcon />}>Load Reports</Button>
+        <Button disabled={!isArrivalEmpty} onClick={() => handleRefreshApi()} startIcon={<CachedIcon />}>Load Reports</Button>
         <ProductionReportHeader
           isDark={isDark}
           onUploadClick={() => setIsDialogOpen(true)}
@@ -112,14 +143,18 @@ export default function PurchaseOrder() {
           isShowUpload={true}
         />
       </div>
-      <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-        <p className="text-sm font-semibold text-yellow-900 dark:text-yellow-100">
-          ⚠️ Attention
-        </p>
-        <p className="text-xs text-yellow-800 dark:text-yellow-200 mt-1">
-          Arrival Dates cannot be empty, please make sure to fill the arrival dates for all records
-        </p>
-      </div>
+      {!isArrivalEmpty && (
+        <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+          <p className="text-sm font-semibold text-yellow-900 dark:text-yellow-100">
+            ⚠️ Attention
+          </p>
+          <p className="text-xs text-yellow-800 dark:text-yellow-200 mt-1">
+            Arrival Dates cannot be empty, please make sure to fill the arrival dates for all records.
+            {` Count of missing arrival dates: ${emptyItemCount}`}
+          </p>
+        </div>
+      )}
+
       <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
         {isDialogOpen && (
           <FileUploadDialog
