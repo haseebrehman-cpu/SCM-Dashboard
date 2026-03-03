@@ -1,12 +1,12 @@
 import { UseQueryResult, useQuery, useMutation, UseMutationResult, useQueryClient } from "@tanstack/react-query";
 import { PurchaseOrderReportResponse, PurchaseOrderBulkUpdateErrorResponse, PurchaseOrderBulkUpdateSuccessResponse } from "../types/Interfaces/interfaces";
-const API_BASE_URL = import.meta.env.VITE_SCM_API_BASE_URL ?? "/scm/api";
+export const API_BASE_URL = import.meta.env.VITE_SCM_API_BASE_URL ?? "/scm/api";
 
 export const PURCHASE_ORDER_REPORT_QUERY_KEY = ["scmPurchaseOrderReport"] as const;
 
 const REQUEST_TIMEOUT_MS = 30_000;
 
-const fetchWithTimeout = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+export const fetchWithTimeout = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
@@ -144,4 +144,46 @@ export const useUploadPurchaseOrderFiles = (): UseMutationResult<PurchaseOrderBu
     },
 
   })
+}
+
+export async function postUploadPurchaseOrderReport(session_id: number): Promise<PurchaseOrderBulkUpdateSuccessResponse> {
+  const formData = new FormData();
+  formData.append("session_id", String(session_id));
+
+  const response = await fetchWithTimeout(`${API_BASE_URL}/container-report/`, {
+    method: "POST",
+    body: formData,
+  });
+
+  let data: PurchaseOrderBulkUpdateResponse;
+  try {
+    data = (await response.json()) as PurchaseOrderBulkUpdateResponse;
+  } catch (error) {
+    if (!response.ok) {
+      throw new Error(
+        "Failed to upload file. Server returned an invalid response.",
+      );
+    }
+    throw error;
+  }
+
+  if (!response.ok || data.success === false) {
+    const message =
+      (data as PurchaseOrderBulkUpdateErrorResponse).message ||
+      `Failed to upload file. Server responded with status ${response.status}.`;
+    throw new Error(message);
+  }
+
+  return data;
+}
+
+export const useUploadPurchaseOrderReport = (): UseMutationResult<PurchaseOrderBulkUpdateSuccessResponse, Error, number> => {
+  const queryClient = useQueryClient();
+
+  return useMutation<PurchaseOrderBulkUpdateSuccessResponse, Error, number>({
+    mutationFn: postUploadPurchaseOrderReport,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: PURCHASE_ORDER_REPORT_QUERY_KEY });
+    },
+  });
 }

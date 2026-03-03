@@ -1,6 +1,6 @@
 export interface StockReportRow {
   id: number;
-  Data_From: string;
+  Data_From?: string;
   UploadDate: string;
   WareHouseCode: string;
   CategoryName: string;

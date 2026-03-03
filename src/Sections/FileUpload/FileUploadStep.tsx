@@ -96,6 +96,8 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
             onClick={isLastStep ? onComplete : onNext}
             size="sm"
             className="flex items-center gap-2"
+            disabled={isUploading}
+            loading={isUploading}
           >
             {nextButtonLabel}
             {isLastStep ? (

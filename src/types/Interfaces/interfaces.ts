@@ -56,6 +56,89 @@ export interface PurchaseOrderReportResponse {
   data: PurchaseOrderData[]
 }
 
+// Stock report API response (table=stock)
+export interface StockReportApiRow {
+  id: number;
+  warehouse_code: string;
+  category_name: string;
+  item_number: string;
+  item_title: string;
+  sold_quantity: number;
+  available: number;
+  upload_date: string;
+}
+
+export interface StockReportApiResponse {
+  success: boolean;
+  table: string;
+  message: string;
+  pagination: {
+    page: number;
+    page_size: number;
+    total_records: number;
+    total_pages: number;
+    has_next: boolean;
+    has_previous: boolean;
+  };
+  data: StockReportApiRow[];
+}
+
+// Container report API response (table=container)
+export interface ContainerReportApiRow {
+  id: number;
+  warehouse_code: string | null;
+  category_name: string;
+  item_number: string;
+  container_name: string;
+  intransit_quantity: number;
+  container_region: string;
+  container_number: number;
+  departure_date: string;
+  arrival_date: string;
+  left_days: number;
+  upload_date: string;
+}
+
+export interface ContainerReportApiResponse {
+  success: boolean;
+  table: string;
+  message: string;
+  pagination: {
+    page: number;
+    page_size: number;
+    total_records: number;
+    total_pages: number;
+    has_next: boolean;
+    has_previous: boolean;
+  };
+  data: ContainerReportApiRow[];
+}
+
+// Combined report API response (table=combined)
+// Note: API does not return id; rows are identified by index
+export interface CombinedReportApiRow {
+  upload_date: string;
+  category_name: string;
+  item_number: string;
+  item_title: string;
+  [key: string]: string | number | unknown;
+}
+
+export interface CombinedReportApiResponse {
+  success: boolean;
+  table: string;
+  message: string;
+  pagination: {
+    page: number;
+    page_size: number;
+    total_records: number;
+    total_pages: number;
+    has_next: boolean;
+    has_previous: boolean;
+  };
+  data: CombinedReportApiRow[];
+}
+
 export interface PurchaseOrderBulkUpdateDetailRow {
   container_name: string | null;
   reference_container: string | null;

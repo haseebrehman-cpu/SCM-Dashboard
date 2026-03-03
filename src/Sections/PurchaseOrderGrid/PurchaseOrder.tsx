@@ -9,11 +9,12 @@ import { ProductionReportHeader } from "../ProductionReport/ProductionReportHead
 import { DataGridPremium } from "@mui/x-data-grid-premium";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { usePurchaseOrderReport, usePatchPurchaseOrderReport, useUploadPurchaseOrderFiles } from "../../api/purchaseOrder";
+import { usePurchaseOrderReport, usePatchPurchaseOrderReport, useUploadPurchaseOrderFiles, useUploadPurchaseOrderReport } from "../../api/purchaseOrder";
 import toast from "react-hot-toast";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Button } from "@mui/material";
 import CachedIcon from '@mui/icons-material/Cached';
+import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 
 export default function PurchaseOrder() {
   const { theme } = useTheme();
@@ -21,6 +22,10 @@ export default function PurchaseOrder() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isUpdatingDate, setIsUpdatingDate] = useState(false);
   const [updatingRowId, setUpdatingRowId] = useState<number | null>(null);
+
+  const latestSessionId = useLatestSessionId();
+  const sessionId = latestSessionId;
+  const loadReportMutation = useUploadPurchaseOrderReport();
 
   const {
     editingRowId,
@@ -112,7 +117,7 @@ export default function PurchaseOrder() {
         console.log(`Empty item found at index ${i}: "${item}"`);
         return false;
       }
-    } 
+    }
     return true;
   }
 
@@ -130,12 +135,33 @@ export default function PurchaseOrder() {
   const emptyItemCount = countEmptyItems(arrivalDates);
 
 
+  const handleLoadReportClick = async () => {
+    if (sessionId === null) {
+      toast.error("No upload session found. Please upload a file first.");
+      return;
+    }
+
+    try {
+      await loadReportMutation.mutateAsync(sessionId);
+      toast.success("Report loaded successfully!");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to load report";
+      toast.error(message);
+    }
+  }
+
 
   return (
     <>
       <div className="flex justify-end my-2">
         <Button onClick={() => handleRefreshApi()} startIcon={<RefreshIcon />} >Refresh Report</Button>
-        <Button disabled={!isArrivalEmpty} onClick={() => handleRefreshApi()} startIcon={<CachedIcon />}>Load Reports</Button>
+        <Button
+          disabled={!isArrivalEmpty || sessionId === null || loadReportMutation.isPending}
+          onClick={() => handleLoadReportClick()}
+          startIcon={<CachedIcon />}
+        >
+          Load Reports
+        </Button>
         <ProductionReportHeader
           isDark={isDark}
           onUploadClick={() => setIsDialogOpen(true)}

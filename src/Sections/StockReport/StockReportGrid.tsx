@@ -1,12 +1,42 @@
-import { DataGridPremium } from "@mui/x-data-grid-premium"
-import { STOCK_REPORT_DATA, PAGINATION_MODEL } from "../../mockData/stockReportMock"
-import { getDataGridStyles } from "../../styles/productionReportStyles"
+import { useState, useMemo } from "react";
+import { DataGridPremium, GridPaginationModel } from "@mui/x-data-grid-premium";
+import { PAGINATION_MODEL } from "../../mockData/stockReportMock";
+import { getDataGridStyles } from "../../styles/productionReportStyles";
 import { useTheme } from "../../hooks/useTheme";
 import { generateStockReportColumns } from "../../utils/columnGenerators/stockReport";
+import { useStockReport } from "../../api/containerDetailReport";
+import { StockReportRow } from "../../types/stockReport";
+import { StockReportApiRow } from "../../types/Interfaces/interfaces";
+
+function mapApiRowToGridRow(apiRow: StockReportApiRow): StockReportRow {
+  return {
+    id: apiRow.id,
+    UploadDate: apiRow.upload_date,
+    WareHouseCode: apiRow.warehouse_code,
+    CategoryName: apiRow.category_name,
+    ItemNumber: apiRow.item_number,
+    ItemTitle: apiRow.item_title,
+    SoldQuantity: apiRow.sold_quantity,
+    Available: apiRow.available,
+  };
+}
 
 const StockReportGrid = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(PAGINATION_MODEL);
+
+  const page = paginationModel.page + 1;
+  const pageSize = paginationModel.pageSize ?? 100;
+
+  const { data, isLoading } = useStockReport(page, pageSize);
+
+  const rows: StockReportRow[] = useMemo(
+    () => (data?.data ?? []).map(mapApiRowToGridRow),
+    [data?.data]
+  );
+
+  const rowCount = data?.pagination?.total_records ?? 0;
 
   const columns = generateStockReportColumns();
 
@@ -14,25 +44,29 @@ const StockReportGrid = () => {
     <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
       <DataGridPremium
         label="Stock Report"
-        rows={STOCK_REPORT_DATA}
+        rows={rows}
         columns={columns}
-        initialState={{ pagination: { paginationModel: PAGINATION_MODEL } }}
+        paginationMode="server"
+        rowCount={rowCount}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
         pageSizeOptions={[100, 500, 1000, 1500]}
         pagination
         disableRowSelectionOnClick
-        sx={getDataGridStyles(isDark, "auto")}
+        loading={isLoading}
+        sx={getDataGridStyles(isDark, "80vh")}
         rowBufferPx={100}
         showToolbar
         slotProps={{
           toolbar: {
             printOptions: { disableToolbarButton: true },
-            excelOptions: { disableToolbarButton: true }, 
-            csvOptions: { disableToolbarButton: false }, 
-          }
+            excelOptions: { disableToolbarButton: true },
+            csvOptions: { disableToolbarButton: false },
+          },
         }}
       />
     </div>
-  )
-}
+  );
+};
 
-export default StockReportGrid
+export default StockReportGrid;

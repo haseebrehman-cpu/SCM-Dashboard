@@ -2,13 +2,6 @@ import { GridColDef } from "@mui/x-data-grid";
 
 export const generateWarehouseColumns = (): GridColDef[] => [
   {
-    field: "Data_From",
-    headerName: "Data_From",
-    width: 150,
-    sortable: true,
-    filterable: true,
-  },
-  {
     field: "CategoryName",
     headerName: "Category Name",
     width: 150,
@@ -16,7 +9,7 @@ export const generateWarehouseColumns = (): GridColDef[] => [
     filterable: true,
   },
   {
-    field: "itemNumber",
+    field: "ItemNumber",
     headerName: "Item Number",
     width: 150,
     sortable: true,
@@ -25,13 +18,6 @@ export const generateWarehouseColumns = (): GridColDef[] => [
   {
     field: "ContainerName",
     headerName: "Container Name",
-    width: 200,
-    sortable: true,
-    filterable: true,
-  },
-  {
-    field: "values",
-    headerName: "Values",
     width: 150,
     sortable: true,
     filterable: true,
@@ -39,7 +25,25 @@ export const generateWarehouseColumns = (): GridColDef[] => [
   {
     field: "ContainerRegion",
     headerName: "Container Region",
-    width: 200,
+    width: 150,
+    sortable: true,
+    filterable: true,
+    headerAlign: "center",
+    align: "center",
+  },
+  {
+    field: "IntransitQuantity",
+    headerName: "Intransit Qty",
+    width: 120,
+    sortable: true,
+    filterable: true,
+    headerAlign: "center",
+    align: "center",
+  },
+  {
+    field: "ContainerNumber",
+    headerName: "Container #",
+    width: 110,
     sortable: true,
     filterable: true,
     headerAlign: "center",
@@ -48,7 +52,7 @@ export const generateWarehouseColumns = (): GridColDef[] => [
   {
     field: "DepartureDate",
     headerName: "Departure Date",
-    width: 130,
+    width: 140,
     sortable: true,
     filterable: true,
     headerAlign: "center",
@@ -57,16 +61,7 @@ export const generateWarehouseColumns = (): GridColDef[] => [
   {
     field: "ArrivalDate",
     headerName: "Arrival Date",
-    width: 130,
-    sortable: true,
-    filterable: true,
-    headerAlign: "center",
-    align: "center",
-  },
-  {
-    field: "CurrentDate",
-    headerName: "Current Date",
-    width: 130,
+    width: 140,
     sortable: true,
     filterable: true,
     headerAlign: "center",
@@ -75,7 +70,16 @@ export const generateWarehouseColumns = (): GridColDef[] => [
   {
     field: "LeftDays",
     headerName: "Left Days",
-    width: 130,
+    width: 100,
+    sortable: true,
+    filterable: true,
+    headerAlign: "center",
+    align: "center",
+  },
+  {
+    field: "UploadDate",
+    headerName: "Current Date",
+    width: 140,
     sortable: true,
     filterable: true,
     headerAlign: "center",

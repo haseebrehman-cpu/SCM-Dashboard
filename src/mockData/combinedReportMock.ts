@@ -166,6 +166,8 @@ const generateMockData = (count: number): CombinedReportRow[] => {
 // Export mock data
 export const combinedReportData: CombinedReportRow[] = generateMockData(150);
 
+export const PAGINATION_MODEL = { page: 0, pageSize: 100 };
+
 // Get unique categories for filtering
 export const getUniqueCategories = (): string[] => {
   return categories;

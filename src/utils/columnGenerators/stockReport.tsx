@@ -2,13 +2,6 @@ import { GridColDef } from "@mui/x-data-grid";
 
 export const generateStockReportColumns = (): GridColDef[] => [
   {
-    field: "Data_From",
-    headerName: "Data_From",
-    width: 150,
-    sortable: true,
-    filterable: true,
-  },
-  {
     field: "UploadDate",
     headerName: "Upload Date",
     width: 150,
@@ -46,8 +39,8 @@ export const generateStockReportColumns = (): GridColDef[] => [
   },
   {
     field: "SoldQuantity",
-    headerName: "Sold Quantity",
-    width: 130,
+    headerName: "Last 60 Days Sales",
+    width: 200,
     sortable: true,
     filterable: true,
     headerAlign: "center",
@@ -55,8 +48,8 @@ export const generateStockReportColumns = (): GridColDef[] => [
   },
   {
     field: "Available",
-    headerName: "Available",
-    width: 130,
+    headerName: "Warehouse Stock",
+    width: 160,
     sortable: true,
     filterable: true,
     headerAlign: "center",

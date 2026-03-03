@@ -4,9 +4,19 @@ import { allContainers } from '../../mockData/combinedReportMock';
 
 interface ColumnConfig {
   isDark: boolean;
+  /** Dynamic container column keys from API (e.g. "C-81 2025-11-29 2026-03-07 3"). When provided, used instead of allContainers. */
+  containerKeys?: string[];
 }
 
-export const generateCombinedReportColumns = ({ isDark }: ColumnConfig): GridColDef[] => {
+/** Parse container key "C-81 2025-11-29 2026-03-07 3" - last segment is days left (0 = delivered) */
+function parseContainerStatus(key: string): 'Delivered' | number {
+  const parts = key.trim().split(/\s+/);
+  const last = parts[parts.length - 1];
+  const n = parseInt(last ?? "0", 10);
+  return isNaN(n) ? 0 : n === 0 ? "Delivered" : n;
+}
+
+export const generateCombinedReportColumns = ({ isDark, containerKeys }: ColumnConfig): GridColDef[] => {
   const headerStyle = {
     color: isDark ? '#98a2b3' : '#475467', // gray-400 : gray-600
     fontWeight: '600',
@@ -25,20 +35,11 @@ export const generateCombinedReportColumns = ({ isDark }: ColumnConfig): GridCol
   const baseColumns: GridColDef[] = [
     {
       field: 'uploadDate',
-      headerName: 'Upload Date',
+      headerName: 'Current Date',
       width: 130,
       renderHeader: () => <div style={headerStyle}>Upload Date</div>,
       renderCell: (params: GridRenderCellParams<CombinedReportRow>) => (
         <div style={cellStyle}>{params.value}</div>
-      ),
-    },
-    {
-      field: 'dataFrom',
-      headerName: 'Data From',
-      width: 150,
-      renderHeader: () => <div style={headerStyle}>Data From</div>,
-      renderCell: (params: GridRenderCellParams<CombinedReportRow>) => (
-        <div style={{ ...cellStyle, fontWeight: '600' }}>{params.value}</div>
       ),
     },
     {
@@ -190,124 +191,50 @@ export const generateCombinedReportColumns = ({ isDark }: ColumnConfig): GridCol
     },
   ];
 
-  // Dynamic container columns
+  // Dynamic container columns - from API containerKeys or fallback to mock allContainers
   const containerColumns: GridColDef[] = [];
 
-  // Add CA containers
-  allContainers.CA.forEach(container => {
-    const columnKey = `${container.containerNumber} ${container.shipmentDate} ${container.arrivalDate} ${container.status}`;
-    containerColumns.push({
-      field: columnKey,
-      headerName: columnKey,
-      width: 250,
-      type: 'number',
-      headerAlign: 'right',
-      align: 'right',
-      renderHeader: () => (
-        <div style={{ ...headerStyle, textAlign: 'right', fontSize: '11px' }}>
-          {columnKey}
+  const createContainerColumn = (columnKey: string, status: 'Delivered' | number) => ({
+    field: columnKey,
+    headerName: columnKey,
+    width: 250,
+    type: 'number' as const,
+    headerAlign: 'right' as const,
+    align: 'right' as const,
+    renderHeader: () => (
+      <div style={{ ...headerStyle, textAlign: 'right', fontSize: '11px' }}>
+        {columnKey}
+      </div>
+    ),
+    renderCell: (params: GridRenderCellParams<CombinedReportRow>) => {
+      const value = params.value as number;
+      const color = status === 'Delivered'
+        ? (isDark ? '#12b76a' : '#039855')
+        : (isDark ? '#f79009' : '#dc6803');
+      return (
+        <div style={{ ...cellStyle, fontWeight: '600', color }}>
+          {value?.toLocaleString() || 0}
         </div>
-      ),
-      renderCell: (params: GridRenderCellParams<CombinedReportRow>) => {
-        const value = params.value as number;
-        const color = container.status === 'Delivered'
-          ? (isDark ? '#12b76a' : '#039855')
-          : (isDark ? '#f79009' : '#dc6803');
-        return (
-          <div style={{ ...cellStyle, fontWeight: '600', color }}>
-            {value?.toLocaleString() || 0}
-          </div>
-        );
-      },
-    });
+      );
+    },
   });
 
-  // Add DE containers
-  allContainers.DE.forEach(container => {
-    const columnKey = `${container.containerNumber} ${container.shipmentDate} ${container.arrivalDate} ${container.status}`;
-    containerColumns.push({
-      field: columnKey,
-      headerName: columnKey,
-      width: 260,
-      type: 'number',
-      headerAlign: 'right',
-      align: 'right',
-      renderHeader: () => (
-        <div style={{ ...headerStyle, textAlign: 'right', fontSize: '11px' }}>
-          {columnKey}
-        </div>
-      ),
-      renderCell: (params: GridRenderCellParams<CombinedReportRow>) => {
-        const value = params.value as number;
-        const color = container.status === 'Delivered'
-          ? (isDark ? '#12b76a' : '#039855')
-          : (isDark ? '#f79009' : '#dc6803');
-        return (
-          <div style={{ ...cellStyle, fontWeight: '600', color }}>
-            {value?.toLocaleString() || 0}
-          </div>
-        );
-      },
+  if (containerKeys?.length) {
+    containerKeys.forEach(key => {
+      containerColumns.push(createContainerColumn(key, parseContainerStatus(key)));
     });
-  });
-
-  // Add UK containers
-  allContainers.UK.forEach(container => {
-    const columnKey = `${container.containerNumber} ${container.shipmentDate} ${container.arrivalDate} ${container.status}`;
-    containerColumns.push({
-      field: columnKey,
-      headerName: columnKey,
-      width: 260,
-      type: 'number',
-      headerAlign: 'right',
-      align: 'right',
-      renderHeader: () => (
-        <div style={{ ...headerStyle, textAlign: 'right', fontSize: '11px' }}>
-          {columnKey}
-        </div>
-      ),
-      renderCell: (params: GridRenderCellParams<CombinedReportRow>) => {
-        const value = params.value as number;
-        const color = container.status === 'Delivered'
-          ? (isDark ? '#12b76a' : '#039855')
-          : (isDark ? '#f79009' : '#dc6803');
-        return (
-          <div style={{ ...cellStyle, fontWeight: '600', color }}>
-            {value?.toLocaleString() || 0}
-          </div>
-        );
-      },
-    });
-  });
-
-  // Add US containers
-  allContainers.US.forEach(container => {
-    const columnKey = `${container.containerNumber} ${container.shipmentDate} ${container.arrivalDate} ${container.status}`;
-    containerColumns.push({
-      field: columnKey,
-      headerName: columnKey,
-      width: 260,
-      type: 'number',
-      headerAlign: 'right',
-      align: 'right',
-      renderHeader: () => (
-        <div style={{ ...headerStyle, textAlign: 'right', fontSize: '11px' }}>
-          {columnKey}
-        </div>
-      ),
-      renderCell: (params: GridRenderCellParams<CombinedReportRow>) => {
-        const value = params.value as number;
-        const color = container.status === 'Delivered'
-          ? (isDark ? '#12b76a' : '#039855')
-          : (isDark ? '#f79009' : '#dc6803');
-        return (
-          <div style={{ ...cellStyle, fontWeight: '600', color }}>
-            {value?.toLocaleString() || 0}
-          </div>
-        );
-      },
-    });
-  });
+  } else {
+    const addFromMock = (containers: { containerNumber: string; shipmentDate: string; arrivalDate: string; status: 'Delivered' | number }[]) => {
+      containers.forEach(c => {
+        const columnKey = `${c.containerNumber} ${c.shipmentDate} ${c.arrivalDate} ${c.status}`;
+        containerColumns.push(createContainerColumn(columnKey, c.status));
+      });
+    };
+    addFromMock(allContainers.CA);
+    addFromMock(allContainers.DE);
+    addFromMock(allContainers.UK);
+    addFromMock(allContainers.US);
+  }
 
   // Summary columns
   const summaryColumns: GridColDef[] = [

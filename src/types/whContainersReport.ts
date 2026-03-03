@@ -1,13 +1,14 @@
 export interface WHContainerReportRow {
   id: number;
-  Data_From: string;
+  WareHouseCode: string | null;
   CategoryName: string;
-  itemNumber: string;
+  ItemNumber: string;
   ContainerName: string;
-  values: number;
+  IntransitQuantity: number;
   ContainerRegion: string;
+  ContainerNumber: number;
   DepartureDate: string;
   ArrivalDate: string;
-  CurrentDate: string;
   LeftDays: number;
+  UploadDate: string;
 }
