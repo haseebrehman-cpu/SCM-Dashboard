@@ -83,6 +83,11 @@ export interface StockReportApiResponse {
   data: StockReportApiRow[];
 }
 
+export interface CancelRunningReportResponse {
+  success: boolean;
+  message: string
+}
+
 // Container report API response (table=container)
 export interface ContainerReportApiRow {
   id: number;

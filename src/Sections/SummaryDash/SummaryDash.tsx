@@ -83,8 +83,8 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           slotProps={{
             toolbar: {
               printOptions: { disableToolbarButton: true },
-              excelOptions: { disableToolbarButton: true }, 
-              csvOptions: { disableToolbarButton: false }, 
+              excelOptions: { disableToolbarButton: true },
+              csvOptions: { disableToolbarButton: false },
             }
           }}
         />

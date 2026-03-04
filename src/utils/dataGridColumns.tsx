@@ -2,7 +2,7 @@ import { GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
 import { IconButton } from "@mui/material";
 import { EditableStatusCell } from "../components/DataGrid/EditableStatusCell";
 import { EditableTextFieldCell } from "../components/DataGrid/EditableTextFieldCell";
-import { STATUS_OPTIONS, REASON_OPTIONS } from "../config/summaryDashboard";
+import { STATUS_OPTIONS } from "../config/summaryDashboard";
 
 /**
  * Utility function to create DataGrid columns
@@ -11,9 +11,9 @@ import { STATUS_OPTIONS, REASON_OPTIONS } from "../config/summaryDashboard";
 export const createSummaryDashboardColumns = (
   isDark: boolean,
   editingRowId: number | null,
-  editValues: { status: string; reason: string; factoryComments: string } | null,
+  editValues: { status: string; reason1: string; reason2: string; reason3: string; reason4: string; factoryComments: string } | null,
   onStatusChange: (value: string) => void,
-  onReasonChange: (value: string) => void,
+  onReasonChange: (field: 'reason1' | 'reason2' | 'reason3' | 'reason4', value: string) => void,
   onCommentsChange: (value: string) => void,
   onEdit: (id: number) => void,
   onSave: (id: number) => void,
@@ -145,22 +145,86 @@ export const createSummaryDashboardColumns = (
       },
     },
     {
-      field: "reason",
-      headerName: "Reason",
+      field: "reason1",
+      headerName: "Reason 1",
       width: 350,
       sortable: true,
       filterable: true,
       headerAlign: "center",
       align: "left",
-      renderHeader: () => renderHeader("Reason"),
       renderCell: (params) => {
         const isEditing = editingRowId === params.row.id;
         if (isEditing && editValues) {
           return (
-            <EditableStatusCell
-              value={editValues.reason}
-              options={REASON_OPTIONS}
-              onChange={onReasonChange}
+            <EditableTextFieldCell
+              value={editValues.reason1}
+              onChange={(value) => onReasonChange('reason1', value)}
+              isDark={isDark}
+            />
+          );
+        }
+        return <span>{params.value}</span>;
+      },
+    },
+    {
+      field: "reason2",
+      headerName: "Reason 2",
+      width: 350,
+      sortable: true,
+      filterable: true,
+      headerAlign: "center",
+      align: "left",
+      renderCell: (params) => {
+        const isEditing = editingRowId === params.row.id;
+        if (isEditing && editValues) {
+          return (
+            <EditableTextFieldCell
+              value={editValues.reason2}
+              onChange={(value) => onReasonChange('reason2', value)}
+              isDark={isDark}
+            />
+          );
+        }
+        return <span>{params.value}</span>;
+      },
+    },
+    {
+      field: "reason3",
+      headerName: "Reason 3",
+      width: 350,
+      sortable: true,
+      filterable: true,
+      headerAlign: "center",
+      align: "left",
+      renderCell: (params) => {
+        const isEditing = editingRowId === params.row.id;
+        if (isEditing && editValues) {
+          return (
+            <EditableTextFieldCell
+              value={editValues.reason3}
+              onChange={(value) => onReasonChange('reason3', value)}
+              isDark={isDark}
+            />
+          );
+        }
+        return <span>{params.value}</span>;
+      },
+    },
+    {
+      field: "reason4",
+      headerName: "Reason 4",
+      width: 350,
+      sortable: true,
+      filterable: true,
+      headerAlign: "center",
+      align: "left",
+      renderCell: (params) => {
+        const isEditing = editingRowId === params.row.id;
+        if (isEditing && editValues) {
+          return (
+            <EditableTextFieldCell
+              value={editValues.reason4}
+              onChange={(value) => onReasonChange('reason4', value)}
               isDark={isDark}
             />
           );
@@ -215,28 +279,28 @@ export const createSummaryDashboardColumns = (
               key="save"
               icon={
                 <IconButton
-                size="small"
-                onClick={() => onSave(params.id as number)}
-                sx={{
-                  color: isDark ? '#10b981' : '#059669',
-                  '&:hover': {
-                    backgroundColor: isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(5, 150, 105, 0.1)',
-                  },
-                }}
-              >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  size="small"
+                  onClick={() => onSave(params.id as number)}
+                  sx={{
+                    color: isDark ? '#10b981' : '#059669',
+                    '&:hover': {
+                      backgroundColor: isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(5, 150, 105, 0.1)',
+                    },
+                  }}
                 >
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              </IconButton>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </IconButton>
               }
               label="Save"
               onClick={() => onSave(params.id as number)}

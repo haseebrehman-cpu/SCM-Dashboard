@@ -34,7 +34,6 @@ const WHContainerGrid = () => {
 
   const { data, isLoading } = useContainerReport(page, pageSize);
 
-  // Prefetch the next 2 pages in the background for instant navigation
   const totalPages = data?.pagination?.total_pages;
   usePrefetchContainerReport("container", page, pageSize, totalPages, 6);
 

@@ -19,7 +19,10 @@ export const generateSummaryDashboardData = (count: number = 50): SummaryDashboa
       dispatchCoverDay: parseFloat((Math.random() * 25).toFixed(5)),
       maxD: parseFloat((Math.random() * 10).toFixed(5)),
       status: isHighPriority ? STATUS_OPTIONS[0] : STATUS_OPTIONS[Math.floor(Math.random() * 3) + 1],
-      reason: REASON_OPTIONS[Math.floor(Math.random() * REASON_OPTIONS.length)],
+      reason1: REASON_OPTIONS[Math.floor(Math.random() * REASON_OPTIONS.length)],
+      reason2: '',
+      reason3: '',
+      reason4: '',
       factoryComments: "",
     };
   });

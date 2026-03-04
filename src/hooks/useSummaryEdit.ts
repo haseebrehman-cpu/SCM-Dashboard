@@ -3,7 +3,10 @@ import { SummaryDashboardRow } from '../config/summaryDashboard';
 
 interface EditValues {
   status: string;
-  reason: string;
+  reason1: string;
+  reason2: string;
+  reason3: string;
+  reason4: string;
   factoryComments: string;
 }
 
@@ -14,7 +17,7 @@ interface UseSummaryEditReturn {
   handleSave: (id: number) => void;
   handleCancel: () => void;
   handleStatusChange: (value: string) => void;
-  handleReasonChange: (value: string) => void;
+  handleReasonChange: (field: 'reason1' | 'reason2' | 'reason3' | 'reason4', value: string) => void;
   handleCommentsChange: (value: string) => void;
 }
 
@@ -30,7 +33,10 @@ export const useSummaryEdit = (
       setEditingRowId(id);
       setEditValues({
         status: row.status,
-        reason: row.reason,
+        reason1: row.reason1 || '',
+        reason2: row.reason2 || '',
+        reason3: row.reason3 || '',
+        reason4: row.reason4 || '',
         factoryComments: row.factoryComments,
       });
     }
@@ -44,7 +50,10 @@ export const useSummaryEdit = (
             ? {
                 ...row,
                 status: editValues.status,
-                reason: editValues.reason,
+                reason1: editValues.reason1,
+                reason2: editValues.reason2,
+                reason3: editValues.reason3,
+                reason4: editValues.reason4,
                 factoryComments: editValues.factoryComments,
                 editedBy: "haseeb.rehman@igate.com.pk"
               }
@@ -65,8 +74,8 @@ export const useSummaryEdit = (
     setEditValues((prev) => prev ? { ...prev, status: value } : null);
   }, []);
 
-  const handleReasonChange = useCallback((value: string) => {
-    setEditValues((prev) => prev ? { ...prev, reason: value } : null);
+  const handleReasonChange = useCallback((field: 'reason1' | 'reason2' | 'reason3' | 'reason4', value: string) => {
+    setEditValues((prev) => prev ? { ...prev, [field]: value } : null);
   }, []);
 
   const handleCommentsChange = useCallback((value: string) => {

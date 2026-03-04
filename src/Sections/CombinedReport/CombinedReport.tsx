@@ -37,7 +37,6 @@ const CombinedReportGrid = () => {
 
   const { data, isLoading } = useCombinedReport(page, pageSize);
 
-  // Prefetch the next 2 pages in the background for instant navigation
   const totalPages = data?.pagination?.total_pages;
   usePrefetchContainerReport("combined", page, pageSize, totalPages, 6);
 
@@ -49,7 +48,7 @@ const CombinedReportGrid = () => {
 
   const rowCount = data?.pagination?.total_records ?? 0;
 
-  // Extract container column keys from first row (API returns dynamic container columns)
+  // Here Extracting thhe container column keys from first row (API returns dynamic container columns)
   const containerKeys = useMemo(() => {
     const first = data?.data?.[0];
     if (!first || typeof first !== "object") return undefined;

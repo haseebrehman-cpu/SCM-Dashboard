@@ -15,7 +15,10 @@ export interface SummaryDashboardRow {
   dispatchCoverDay: number;
   maxD: number;
   status: string;
-  reason: string;
+  reason1: string;
+  reason2: string;
+  reason3: string;
+  reason4: string;
   factoryComments: string;
   editedBy?: string;
 }
@@ -25,6 +28,7 @@ export const STATUS_OPTIONS = [
   "High Selling Item – High Priority",
   "Moderate Selling Item – Medium Priority",
   "Low Selling Item – Low Priority",
+  "No Action Required – FYI Only",
 ] as const;
 
 export const REASON_OPTIONS = [

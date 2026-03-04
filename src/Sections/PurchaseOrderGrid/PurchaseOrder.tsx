@@ -15,11 +15,14 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import { Button } from "@mui/material";
 import CachedIcon from '@mui/icons-material/Cached';
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
+import { useDeleteRunningReport } from "../../api/containerDetailReport";
+import LoadReportProgressDialog from "./LoadReportProgressDialog";
 
 export default function PurchaseOrder() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isLoadReportDialogOpen, setIsLoadReportDialogOpen] = useState(false);
   const [isUpdatingDate, setIsUpdatingDate] = useState(false);
   const [updatingRowId, setUpdatingRowId] = useState<number | null>(null);
 
@@ -40,6 +43,7 @@ export default function PurchaseOrder() {
   const { data: purchaseOrderResponse, isLoading, refetch } = usePurchaseOrderReport();
   const patchMutation = usePatchPurchaseOrderReport();
   const uploadMutation = useUploadPurchaseOrderFiles();
+  const deleteMutation = useDeleteRunningReport()
 
   const apiData = purchaseOrderResponse?.data;
 
@@ -134,30 +138,43 @@ export default function PurchaseOrder() {
   };
   const emptyItemCount = countEmptyItems(arrivalDates);
 
-
-  const handleLoadReportClick = async () => {
+  const handleLoadReportClick = () => {
     if (sessionId === null) {
       toast.error("No upload session found. Please upload a file first.");
       return;
     }
+    setIsLoadReportDialogOpen(true);
+  }
 
-    try {
-      await loadReportMutation.mutateAsync(sessionId);
-      toast.success("Report loaded successfully!");
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to load report";
-      toast.error(message);
+  const handleConfirmLoadReport = async () => {
+    if (sessionId !== null) {
+      try {
+        await loadReportMutation.mutateAsync(sessionId);
+      } catch (error) {
+        console.error("Failed to load report:", error);
+      }
     }
   }
 
+  const handleCancelLoadReport = async () => {
+    if (sessionId !== null) {
+      try {
+        await deleteMutation.mutateAsync(sessionId);
+        toast.success("Report loading cancelled.");
+      } catch (error) {
+        toast.error("Failed to cancel report loading.");
+        console.error("Cancel error:", error);
+      }
+    }
+  }
 
   return (
     <>
       <div className="flex justify-end my-2">
         <Button onClick={() => handleRefreshApi()} startIcon={<RefreshIcon />} >Refresh Report</Button>
         <Button
-          disabled={!isArrivalEmpty || sessionId === null || loadReportMutation.isPending}
-          onClick={() => handleLoadReportClick()}
+          disabled={!isArrivalEmpty || sessionId === null}
+          onClick={handleLoadReportClick}
           startIcon={<CachedIcon />}
         >
           Load Reports
@@ -198,6 +215,20 @@ export default function PurchaseOrder() {
           />
         )}
 
+        {isLoadReportDialogOpen && (
+          <LoadReportProgressDialog
+            isOpen={isLoadReportDialogOpen}
+            onClose={() => setIsLoadReportDialogOpen(false)}
+            onConfirm={handleConfirmLoadReport}
+            onCancel={handleCancelLoadReport}
+            isDark={isDark}
+            isPending={loadReportMutation.isPending}
+            isSuccess={loadReportMutation.isSuccess}
+            isError={loadReportMutation.isError}
+            errorMessage={loadReportMutation.error?.message}
+          />
+        )}
+
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DataGridPremium
             label="Purchase Order Report"
@@ -205,7 +236,7 @@ export default function PurchaseOrder() {
             rows={rows}
             columns={columns}
             initialState={{ pagination: { paginationModel: PAGINATION_MODEL } }}
-            pageSizeOptions={[100, 500, 1000]}
+            pageSizeOptions={[100, 250, 500, 1000, 1500]}
             rowBufferPx={100}
             pagination
             sx={getDataGridStyles(isDark, "75vh")}

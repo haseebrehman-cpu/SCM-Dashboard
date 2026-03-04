@@ -24,7 +24,7 @@ export const generateWarehouseColumns = (): GridColDef[] => [
   },
   {
     field: "ContainerRegion",
-    headerName: "Container Region",
+    headerName: "Warehouse",
     width: 150,
     sortable: true,
     filterable: true,

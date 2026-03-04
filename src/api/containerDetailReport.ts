@@ -1,10 +1,11 @@
 import { useEffect, useCallback } from "react";
-import { API_BASE_URL, fetchWithTimeout } from "./purchaseOrder";
-import { UseQueryResult, useQuery, useQueryClient } from "@tanstack/react-query";
+import { API_BASE_URL } from "./purchaseOrder";
+import { UseMutationResult, UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   StockReportApiResponse,
   ContainerReportApiResponse,
   CombinedReportApiResponse,
+  CancelRunningReportResponse,
 } from "../types/Interfaces/interfaces";
 
 export const CONTAINER_DETAIL_REPORT_QUERY_KEY = ["containerDetailReport"] as const;
@@ -14,9 +15,13 @@ export async function fetchContainerDetailReport<T = StockReportApiResponse | Co
   page: number,
   pageSize: number
 ): Promise<T> {
-  const response = await fetchWithTimeout(
-    `${API_BASE_URL}/container-report/?table=${table}&page=${page}&limit=${pageSize}`,
-    { method: "GET" }
+  const response = await fetch(
+    `${API_BASE_URL}/container-report/?table=${table}&page=${page}&limit=${pageSize}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }
   );
 
   let data: T;
@@ -46,8 +51,8 @@ export const useContainerDetailReport = <T = StockReportApiResponse | ContainerR
     queryKey: [...CONTAINER_DETAIL_REPORT_QUERY_KEY, table, page, pageSize],
     queryFn: () => fetchContainerDetailReport<T>(table, page, pageSize),
     staleTime: 60_000,
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: false
   });
 
 /**
@@ -102,3 +107,42 @@ export const useCombinedReport = (
   pageSize: number
 ): UseQueryResult<CombinedReportApiResponse, Error> =>
   useContainerDetailReport<CombinedReportApiResponse>("combined", page, pageSize);
+
+async function deleteRunningReport(session_id: number): Promise<CancelRunningReportResponse> {
+  const formData = new FormData();
+  formData.append("session_id", String(session_id));
+
+  const response = await fetch(`${API_BASE_URL}/container-report/`, {
+    method: "DELETE",
+    body: formData
+  });
+
+  let data: CancelRunningReportResponse;
+
+  try {
+    data = (await response.json()) as CancelRunningReportResponse;
+  } catch (error) {
+    if (!response.ok) {
+      throw new Error(
+        'Failed to delete the running report'
+      )
+    }
+    throw error;
+  }
+  if (!response.ok || data.success === false) {
+    const message = (data as CancelRunningReportResponse).message || `Failed to delete the running report. Server responded with status ${response.status}.`
+    throw new Error(message)
+  }
+  return data
+}
+
+export const useDeleteRunningReport = (): UseMutationResult<CancelRunningReportResponse, Error, number> => {
+  const queryClient = useQueryClient();
+
+  return useMutation<CancelRunningReportResponse, Error, number>({
+    mutationFn: deleteRunningReport,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: CONTAINER_DETAIL_REPORT_QUERY_KEY })
+    }
+  })
+}

@@ -4,24 +4,8 @@ export const API_BASE_URL = import.meta.env.VITE_SCM_API_BASE_URL ?? "/scm/api";
 
 export const PURCHASE_ORDER_REPORT_QUERY_KEY = ["scmPurchaseOrderReport"] as const;
 
-const REQUEST_TIMEOUT_MS = 30_000;
-
-export const fetchWithTimeout = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-
-  try {
-    return await fetch(input, {
-      ...init,
-      signal: controller.signal,
-    });
-  } finally {
-    clearTimeout(timeoutId);
-  }
-};
-
 async function fetchPurchaseOrderReport(): Promise<PurchaseOrderReportResponse> {
-  const response = await fetchWithTimeout(`${API_BASE_URL}/process-data`, {
+  const response = await fetch(`${API_BASE_URL}/process-data`, {
     method: "GET",
     headers: {
     },
@@ -52,8 +36,8 @@ export const usePurchaseOrderReport = (): UseQueryResult<PurchaseOrderReportResp
     queryKey: PURCHASE_ORDER_REPORT_QUERY_KEY,
     queryFn: fetchPurchaseOrderReport,
     staleTime: 60_000,
-    refetchOnWindowFocus: true,
-    refetchOnMount: true
+    refetchOnWindowFocus: false,
+    refetchOnMount: false
   })
 
 export const patchPurchaseOrderReportData = async (rowId: number, arrivalDate: string | null): Promise<PurchaseOrderReportResponse> => {
@@ -62,7 +46,7 @@ export const patchPurchaseOrderReportData = async (rowId: number, arrivalDate: s
     arrival_date: arrivalDate,
   };
 
-  const response = await fetchWithTimeout(`${API_BASE_URL}/process-data/`, {
+  const response = await fetch(`${API_BASE_URL}/process-data/`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -106,7 +90,7 @@ async function uploadPurchaseOrderFile(file: File): Promise<PurchaseOrderBulkUpd
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await fetchWithTimeout(`${API_BASE_URL}/bulk-update/`, {
+  const response = await fetch(`${API_BASE_URL}/bulk-update/`, {
     method: "POST",
     body: formData,
   });
@@ -150,7 +134,7 @@ export async function postUploadPurchaseOrderReport(session_id: number): Promise
   const formData = new FormData();
   formData.append("session_id", String(session_id));
 
-  const response = await fetchWithTimeout(`${API_BASE_URL}/container-report/`, {
+  const response = await fetch(`${API_BASE_URL}/container-report/`, {
     method: "POST",
     body: formData,
   });
