@@ -18,8 +18,8 @@ const filtersArray = [
   },
   {
     id: 'containerNumber',
-    filterName: "Select Container Number",
-    filterOptions: ["81", "707", "180", "704"]
+    filterName: "Select Container Name",
+    filterOptions: ["C-81", "DE-707", "U-180", "S-704"]
   },
   {
     id: 'skuName',

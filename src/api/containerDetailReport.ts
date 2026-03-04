@@ -1,5 +1,6 @@
+import { useEffect, useCallback } from "react";
 import { API_BASE_URL, fetchWithTimeout } from "./purchaseOrder";
-import { UseQueryResult, useQuery } from "@tanstack/react-query";
+import { UseQueryResult, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   StockReportApiResponse,
   ContainerReportApiResponse,
@@ -48,6 +49,40 @@ export const useContainerDetailReport = <T = StockReportApiResponse | ContainerR
     refetchOnWindowFocus: true,
     refetchOnMount: true,
   });
+
+/**
+ * Prefetch the next `prefetchCount` pages for a container-detail table.
+ * Call this hook alongside the main data-fetching hook so that when the user
+ * navigates forward the data is already in the React-Query cache.
+ */
+export function usePrefetchContainerReport<T = StockReportApiResponse | ContainerReportApiResponse>(
+  table: string,
+  currentPage: number,
+  pageSize: number,
+  totalPages: number | undefined,
+  prefetchCount = 6
+): void {
+  const queryClient = useQueryClient();
+
+  const prefetch = useCallback(() => {
+    if (totalPages === undefined) return;
+
+    for (let i = 1; i <= prefetchCount; i++) {
+      const nextPage = currentPage + i;
+      if (nextPage > totalPages) break;
+
+      queryClient.prefetchQuery<T, Error>({
+        queryKey: [...CONTAINER_DETAIL_REPORT_QUERY_KEY, table, nextPage, pageSize],
+        queryFn: () => fetchContainerDetailReport<T>(table, nextPage, pageSize),
+        staleTime: 60_000,
+      });
+    }
+  }, [queryClient, table, currentPage, pageSize, totalPages, prefetchCount]);
+
+  useEffect(() => {
+    prefetch();
+  }, [prefetch]);
+}
 
 // Convenience hooks for specific tables
 export const useStockReport = (

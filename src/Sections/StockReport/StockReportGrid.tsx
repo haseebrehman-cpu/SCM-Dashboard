@@ -4,20 +4,20 @@ import { PAGINATION_MODEL } from "../../mockData/stockReportMock";
 import { getDataGridStyles } from "../../styles/productionReportStyles";
 import { useTheme } from "../../hooks/useTheme";
 import { generateStockReportColumns } from "../../utils/columnGenerators/stockReport";
-import { useStockReport } from "../../api/containerDetailReport";
+import { useStockReport, usePrefetchContainerReport } from "../../api/containerDetailReport";
 import { StockReportRow } from "../../types/stockReport";
 import { StockReportApiRow } from "../../types/Interfaces/interfaces";
 
 function mapApiRowToGridRow(apiRow: StockReportApiRow): StockReportRow {
   return {
-    id: apiRow.id,
-    UploadDate: apiRow.upload_date,
-    WareHouseCode: apiRow.warehouse_code,
-    CategoryName: apiRow.category_name,
-    ItemNumber: apiRow.item_number,
-    ItemTitle: apiRow.item_title,
-    SoldQuantity: apiRow.sold_quantity,
-    Available: apiRow.available,
+    id: apiRow?.id,
+    UploadDate: apiRow?.upload_date,
+    WareHouseCode: apiRow?.warehouse_code,
+    CategoryName: apiRow?.category_name,
+    ItemNumber: apiRow?.item_number,
+    ItemTitle: apiRow?.item_title,
+    SoldQuantity: apiRow?.sold_quantity,
+    Available: apiRow?.available,
   };
 }
 
@@ -26,10 +26,13 @@ const StockReportGrid = () => {
   const isDark = theme === "dark";
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(PAGINATION_MODEL);
 
-  const page = paginationModel.page + 1;
-  const pageSize = paginationModel.pageSize ?? 100;
+  const page = paginationModel?.page + 1;
+  const pageSize = paginationModel?.pageSize ?? 100;
 
   const { data, isLoading } = useStockReport(page, pageSize);
+
+  const totalPages = data?.pagination?.total_pages;
+  usePrefetchContainerReport("stock", page, pageSize, totalPages, 6);
 
   const rows: StockReportRow[] = useMemo(
     () => (data?.data ?? []).map(mapApiRowToGridRow),

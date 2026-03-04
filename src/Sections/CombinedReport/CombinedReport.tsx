@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { DataGridPremium, GridPaginationModel } from "@mui/x-data-grid-premium";
 import { useTheme } from "../../hooks/useTheme";
 import { getDataGridStyles } from "../../styles/productionReportStyles";
-import { useCombinedReport } from "../../api/containerDetailReport";
+import { useCombinedReport, usePrefetchContainerReport } from "../../api/containerDetailReport";
 import { generateCombinedReportColumns } from "../../utils/columnGenerators/combinedReport";
 import { PAGINATION_MODEL } from "../../mockData/combinedReportMock";
 import { CombinedReportRow } from "../../types/combinedReport";
@@ -36,6 +36,10 @@ const CombinedReportGrid = () => {
   const pageSize = paginationModel.pageSize ?? 100;
 
   const { data, isLoading } = useCombinedReport(page, pageSize);
+
+  // Prefetch the next 2 pages in the background for instant navigation
+  const totalPages = data?.pagination?.total_pages;
+  usePrefetchContainerReport("combined", page, pageSize, totalPages, 6);
 
   const rows: CombinedReportRow[] = useMemo(() => {
     const list = data?.data ?? [];

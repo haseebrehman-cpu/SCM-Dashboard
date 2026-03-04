@@ -3,7 +3,7 @@ import { getDataGridStyles } from "../../styles/productionReportStyles"
 import { useTheme } from "../../hooks/useTheme";
 import { generateWarehouseColumns } from "../../utils/columnGenerators/whContainerReport";
 import { PAGINATION_MODEL } from "../../mockData/whContainersReportMock";
-import { useContainerReport } from "../../api/containerDetailReport";
+import { useContainerReport, usePrefetchContainerReport } from "../../api/containerDetailReport";
 import { useMemo, useState } from "react";
 import { ContainerReportApiRow } from "../../types/Interfaces/interfaces";
 import { WHContainerReportRow } from "../../types/whContainersReport";
@@ -33,6 +33,10 @@ const WHContainerGrid = () => {
   const pageSize = paginationModel.pageSize ?? 100;
 
   const { data, isLoading } = useContainerReport(page, pageSize);
+
+  // Prefetch the next 2 pages in the background for instant navigation
+  const totalPages = data?.pagination?.total_pages;
+  usePrefetchContainerReport("container", page, pageSize, totalPages, 6);
 
   const rowCount = data?.pagination?.total_records ?? 0;
 
