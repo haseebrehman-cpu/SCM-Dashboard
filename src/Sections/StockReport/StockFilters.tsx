@@ -93,34 +93,6 @@ const StockFilters = React.memo<StockFiltersProps>(
       [sanitizedValue]
     );
 
-    const renderValue_Callback = useCallback(
-      (selected: string[]) => (
-        <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-          {selected
-            .filter((v) => v !== ALL_OPTION)
-            .map((value) => (
-              <Box
-                key={value}
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 1,
-                  backgroundColor: 'action.selected',
-                  borderRadius: 1,
-                  pl: 1,
-                  pr: 0.5,
-                  py: 0.25,
-                  fontSize: '0.875rem',
-                }}
-              >
-                {value}
-              </Box>
-            ))}
-        </Box>
-      ),
-      []
-    );
-
     // Memoized handlers
     const handleChange_Callback = useCallback(
       (
@@ -186,7 +158,7 @@ const StockFilters = React.memo<StockFiltersProps>(
           value={displayedValue}
           onChange={handleChange_Callback}
           renderOption={renderOption_Callback}
-          renderValue={renderValue_Callback}
+          renderTags={() => null}
           disablePortal
           slotProps={{
             listbox: {
@@ -197,7 +169,7 @@ const StockFilters = React.memo<StockFiltersProps>(
           renderInput={(params) => (
             <TextField
               {...params}
-              label={filterName}
+              label={displayedValue.length > 0 ? `${filterName} (${displayedValue.length})` : filterName}
               placeholder={filterName}
               InputProps={{
                 ...params.InputProps,

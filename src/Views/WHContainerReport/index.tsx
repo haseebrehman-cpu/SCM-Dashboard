@@ -77,7 +77,7 @@ const WHContainerReportView = () => {
               loading={isLoading}
             />
           ))}
-          <Button onClick={handleApplyFilter} variant="contained" sx={{ borderRadius: '12px', ml: 1 }}>Apply Filter</Button>
+          <Button onClick={handleApplyFilter}>Apply Filter</Button>
           {Object.values(appliedFilters).some(arr => arr.length > 0) && (
             <Button onClick={handleCancel} color="error" sx={{ borderRadius: '12px', ml: 1 }}>
               Cancel
