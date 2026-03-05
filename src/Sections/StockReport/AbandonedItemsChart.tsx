@@ -1,8 +1,12 @@
 import React from 'react'
 import EChart from '../../components/Charts';
 import { EChartsOption } from 'echarts';
-import { abandonedData } from '../../constants/ChartsConstants';
 import { ChartBaseProps } from '../../types/charts';
+import { CategoryDistributionItem } from '../../types/Interfaces/interfaces';
+
+interface AbandonedItemsChartProps extends ChartBaseProps {
+  data: CategoryDistributionItem[];
+}
 
 interface PieFormatterParams {
   name: string;
@@ -11,11 +15,14 @@ interface PieFormatterParams {
   color: string;
 }
 
-const AbandonedItemsChart: React.FC<ChartBaseProps> = React.memo(({ isDark, colors, commonTooltip }) => {
+const AbandonedItemsChart: React.FC<AbandonedItemsChartProps> = React.memo(({ isDark, colors, commonTooltip, data }) => {
+  // Filter out items with 0 stock to make the chart cleaner
+  const filteredData = React.useMemo(() => data.filter(item => item.total_available > 0), [data]);
+
   const option: EChartsOption = React.useMemo(() => ({
     title: {
-      text: 'Abandoned Items',
-      subtext: 'Distribution by Category',
+      text: 'Stock Distribution By Category',
+      subtext: 'Categories with available stock',
       left: 'left',
       top: 'top',
       textStyle: { color: isDark ? '#f3f4f6' : '#111827', fontSize: 18, fontWeight: 700 },
@@ -36,17 +43,23 @@ const AbandonedItemsChart: React.FC<ChartBaseProps> = React.memo(({ isDark, colo
       }
     },
     legend: {
+      type: 'scroll',
       show: true,
       orient: 'vertical',
-      right: 0,
-      top: 'middle',
+      right: -5,
+      top: 60,
+      bottom: 20,
       itemGap: 10,
       itemWidth: 10,
       itemHeight: 10,
-      textStyle: { color: isDark ? '#9ca3af' : '#6b7280' }
+      textStyle: { color: isDark ? '#9ca3af' : '#6b7280', fontSize: 11 },
+      pageIconColor: isDark ? '#6366f1' : '#4f46e5',
+      pageTextStyle: { color: isDark ? '#9ca3af' : '#6b7280' }
     },
     toolbox: {
       show: true,
+      top: 0,
+      right: 10,
       feature: {
         saveAsImage: { show: true, title: 'Save' },
       },
@@ -54,11 +67,11 @@ const AbandonedItemsChart: React.FC<ChartBaseProps> = React.memo(({ isDark, colo
     },
     series: [
       {
-        name: 'Abandoned Items',
+        name: 'Stock Distribution',
         type: 'pie',
-        radius: ['50%', '75%'],
-        center: ['40%', '50%'],
-        avoidLabelOverlap: false,
+        radius: ['40%', '70%'],
+        center: ['35%', '60%'],
+        avoidLabelOverlap: true,
         itemStyle: {
           borderRadius: 6,
           borderColor: isDark ? '#1f2937' : '#fff',
@@ -70,20 +83,20 @@ const AbandonedItemsChart: React.FC<ChartBaseProps> = React.memo(({ isDark, colo
           scaleSize: 10,
           label: {
             show: true,
-            fontSize: 18,
+            fontSize: 14,
             fontWeight: 'bold',
             color: isDark ? '#f3f4f6' : '#111827'
           }
         },
         labelLine: { show: false },
-        data: abandonedData.map((item, index) => ({
-          value: item.value,
-          name: item.name,
+        data: filteredData.map((item, index) => ({
+          value: item.total_available,
+          name: item.category_name,
           itemStyle: { color: colors.palette[index % colors.palette.length] }
         }))
       }
     ]
-  }), [isDark, colors, commonTooltip]);
+  }), [isDark, colors, commonTooltip, filteredData]);
 
   return <EChart option={option} height={400} width="100%" />;
 });

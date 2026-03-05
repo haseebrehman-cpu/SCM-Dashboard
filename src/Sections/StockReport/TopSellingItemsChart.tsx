@@ -1,19 +1,24 @@
 import React from 'react'
 import EChart from '../../components/Charts';
 import { EChartsOption } from 'echarts';
-import { topItemsData } from '../../constants/ChartsConstants';
 import { ChartBaseProps } from '../../types/charts';
+import { TopSellingItemsData } from '../../types/Interfaces/interfaces';
+
+interface TopSellingItemsChartProps extends ChartBaseProps {
+  data: TopSellingItemsData[];
+}
 
 interface FormatterParams {
   value: number | string;
 }
 
-const TopSellingItemsChart: React.FC<ChartBaseProps> = React.memo(({ isDark, commonTooltip, commonGrid }) => {
-  // Generate warehouse stock data for each item (60-80% more than sold quantity)
-  const itemsWithStock = topItemsData.map(item => ({
-    ...item,
-    whStock: Math.round(item.value * (1.2 + Math.random() * 0.4))
-  }));
+const TopSellingItemsChart: React.FC<TopSellingItemsChartProps> = React.memo(({ isDark, commonTooltip, commonGrid, data }) => {
+  // Generate warehouse stock data for each item (60-80% more than sold quantity) if not provided by API
+  const itemsWithStock = React.useMemo(() => data.map(item => ({
+    name: item.item_number,
+    value: item.total_sold,
+    whStock: Math.round(item.total_sold * (1.2 + Math.random() * 0.4))
+  })), [data]);
 
   const option: EChartsOption = React.useMemo(() => ({
     title: {

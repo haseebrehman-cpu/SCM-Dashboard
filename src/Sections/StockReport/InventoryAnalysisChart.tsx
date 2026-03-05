@@ -1,11 +1,35 @@
 import React from 'react'
 import EChart from '../../components/Charts';
 import { EChartsOption, BarSeriesOption, LineSeriesOption } from 'echarts';
-import { warehouseStockData } from '../../constants/ChartsConstants';
 import { ChartBaseProps } from '../../types/charts';
+import { RegionalSummaryItem } from '../../types/Interfaces/interfaces';
 
-const InventoryAnalysisChart: React.FC<ChartBaseProps> = React.memo(({ isDark, colors, commonTooltip, commonGrid }) => {
-  const categories = warehouseStockData.map(item => item.category);
+interface InventoryAnalysisChartProps extends ChartBaseProps {
+  data: RegionalSummaryItem[];
+}
+
+const InventoryAnalysisChart: React.FC<InventoryAnalysisChartProps> = React.memo(({ isDark, colors, commonTooltip, commonGrid, data }) => {
+
+  const warehouseStockData = React.useMemo(() => {
+    const grouped: Record<string, { category: string, sold: Record<string, number>, available: Record<string, number> }> = {};
+
+    data.forEach(item => {
+      const normalizedCategory = item.category_name.trim().toUpperCase();
+      if (!grouped[normalizedCategory]) {
+        grouped[normalizedCategory] = {
+          category: normalizedCategory,
+          sold: {},
+          available: {}
+        };
+      }
+      grouped[normalizedCategory].sold[item.warehouse_code] = item.sold_last_60_days;
+      grouped[normalizedCategory].available[item.warehouse_code] = item.total_available;
+    });
+
+    return Object.values(grouped);
+  }, [data]);
+
+  const categories = React.useMemo(() => warehouseStockData.map(item => item.category), [warehouseStockData]);
 
   const option: EChartsOption = React.useMemo(() => {
     const warehouses = ['UK', 'US', 'CA', 'DE'];
@@ -21,7 +45,7 @@ const InventoryAnalysisChart: React.FC<ChartBaseProps> = React.memo(({ isDark, c
           color: colors.palette[index % colors.palette.length],
           borderRadius: index === warehouses.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0],
         },
-        tooltip: { valueFormatter: (value: unknown) => `${String(value)} (Last 6 days sold qty)` }
+        tooltip: { valueFormatter: (value: unknown) => `${String(value)} (Last 60 days sold qty)` }
       });
       // Stack 2: Available
       series.push({
@@ -98,11 +122,39 @@ const InventoryAnalysisChart: React.FC<ChartBaseProps> = React.memo(({ isDark, c
           fontWeight: 500
         }
       },
-      grid: { ...commonGrid, top: 100, bottom: 30, left: '5%', right: '5%' },
+      dataZoom: [
+        {
+          type: 'slider',
+          show: true,
+          xAxisIndex: [0],
+          start: 0,
+          end: categories.length > 20 ? (20 / categories.length) * 100 : 100,
+          height: 20,
+          bottom: 10,
+          borderColor: 'transparent',
+          backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)',
+          fillerColor: isDark ? 'rgba(99, 102, 241, 0.2)' : 'rgba(99, 102, 241, 0.1)',
+          handleStyle: { color: colors.primary },
+          textStyle: { color: isDark ? '#9ca3af' : '#6b7280' }
+        },
+        {
+          type: 'inside',
+          xAxisIndex: [0],
+          start: 0,
+          end: categories.length > 20 ? (20 / categories.length) * 100 : 100,
+        }
+      ],
+      grid: { ...commonGrid, top: 110, bottom: 60, left: '5%', right: '5%' },
       xAxis: {
         type: 'category',
         data: categories,
-        axisLabel: { color: isDark ? '#9ca3af' : '#6b7280', interval: 0, rotate: 0, fontWeight: 500 },
+        axisLabel: {
+          color: isDark ? '#9ca3af' : '#6b7280',
+          interval: 0,
+          rotate: 45,
+          fontWeight: 500,
+          fontSize: 10
+        },
         axisLine: { lineStyle: { color: isDark ? '#374151' : '#e5e7eb' } },
         axisTick: { show: false }
       },
@@ -115,9 +167,9 @@ const InventoryAnalysisChart: React.FC<ChartBaseProps> = React.memo(({ isDark, c
       },
       series
     };
-  }, [isDark, colors, commonTooltip, commonGrid, categories]);
+  }, [isDark, colors, commonTooltip, commonGrid, categories, warehouseStockData]);
 
-  return <EChart option={option} height={400} width="100%" />;
+  return <EChart option={option} height={600} width="100%" />;
 });
 
-export default InventoryAnalysisChart
+export default InventoryAnalysisChart;

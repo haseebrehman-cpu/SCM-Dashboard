@@ -56,6 +56,44 @@ export interface PurchaseOrderReportResponse {
   data: PurchaseOrderData[]
 }
 
+export interface TopSellingItemsData {
+  item_number: string;
+  total_sold: number;
+}
+
+export interface TopSellingItemsResponse {
+  success: boolean;
+  chart: string;
+  total_records: number;
+  data: TopSellingItemsData[];
+}
+
+export interface RegionalSummaryItem {
+  category_name: string;
+  warehouse_code: string;
+  total_available: number;
+  sold_last_60_days: number;
+}
+
+export interface RegionalSummaryResponse {
+  success: boolean;
+  chart: "regional_summary";
+  total_records: number;
+  data: RegionalSummaryItem[];
+}
+
+export interface CategoryDistributionItem {
+  category_name: string;
+  total_available: number;
+}
+
+export interface CategoryDistributionResponse {
+  success: boolean;
+  chart: "category_distribution";
+  total_records: number;
+  data: CategoryDistributionItem[];
+}
+
 export interface FilterOptionsResponse {
   success: boolean;
   table: string;
