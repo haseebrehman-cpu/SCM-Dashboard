@@ -4,31 +4,37 @@ import StockFilters from '../../Sections/StockReport/StockFilters'
 import StockReportCharts from '../../Sections/StockReport/StockReportCharts'
 import StockReportKpi from '../../Sections/StockReport/StockReportKpi'
 import StockReportGrid from '../../Sections/StockReport/StockReportGrid';
-
-const filtersArray = [
-  {
-    id: 'warehouse',
-    filterName: "Select Warehouse",
-    filterOptions: ["UK", "US", "CA", "DE"]
-  },
-  {
-    id: 'category',
-    filterName: "Select Category",
-    filterOptions: ["BUNDLES", "BOXING GLOVES", "CLOTHING", "BELTS"]
-  },
-  {
-    id: 'itemNumber',
-    filterName: "Select Item Number",
-    filterOptions: ["YM-TPE-DC-MJ", "YM-TPE-SCB", "YM-TPE-SCO", "YM-TPE-DC-CU"]
-  },
-]
+import { useFilterOptions } from '../../api/containerDetailReport';
+import toast from 'react-hot-toast';
 
 const StockReportView = () => {
+  const { data: filterOptionsData, isLoading } = useFilterOptions("stock");
+
   const [filters, setFilters] = useState<{ [key: string]: string[] }>({
-    warehouse: [''],
-    category: [''],
-    itemNumber: ['']
+    warehouse: [],
+    category: [],
+    item_number: []
   });
+
+  const [appliedFilters, setAppliedFilters] = useState<{ [key: string]: string[] }>({});
+
+  const filtersArray = [
+    {
+      id: 'warehouse',
+      filterName: "Select Warehouse",
+      filterOptions: filterOptionsData?.filter_options.warehouse || []
+    },
+    {
+      id: 'category',
+      filterName: "Select Category",
+      filterOptions: filterOptionsData?.filter_options.category || []
+    },
+    {
+      id: 'item_number',
+      filterName: "Select Item Number",
+      filterOptions: filterOptionsData?.filter_options.item_number || []
+    },
+  ];
 
   const handleChange = (id: string) => (value: string[]) => {
     setFilters(prev => ({
@@ -36,6 +42,20 @@ const StockReportView = () => {
       [id]: value,
     }));
   };
+
+  const handleApplyFilter = () => {
+    toast.success("Filters Applied SuccessFully!")
+    setAppliedFilters(filters);
+  };
+
+  const handleCancel = () => {
+    setFilters({
+      warehouse: [],
+      category: [],
+      item_number: []
+    })
+    setAppliedFilters({})
+  }
 
   return (
     <Box>
@@ -49,14 +69,20 @@ const StockReportView = () => {
               handleChange={handleChange(item.id)}
               filterName={item.filterName}
               options={item.filterOptions}
+              loading={isLoading}
             />
           ))}
-          <Button>Apply Filter</Button>
+          <Button onClick={handleApplyFilter} sx={{ borderRadius: '12px', ml: 1 }}>Apply Filter</Button>
+          {Object.values(appliedFilters).some(arr => arr.length > 0) && (
+            <Button onClick={handleCancel} color="error" sx={{ borderRadius: '12px', ml: 1 }}>
+              Cancel
+            </Button>
+          )}
         </Box>
       </Paper>
       <StockReportKpi />
       <StockReportCharts />
-      <StockReportGrid />
+      <StockReportGrid filters={appliedFilters} />
     </Box>
   )
 }

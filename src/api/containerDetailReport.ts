@@ -6,18 +6,62 @@ import {
   ContainerReportApiResponse,
   CombinedReportApiResponse,
   CancelRunningReportResponse,
+  FilterOptionsResponse,
 } from "../types/Interfaces/interfaces";
 
 export const CONTAINER_DETAIL_REPORT_QUERY_KEY = ["containerDetailReport"] as const;
+
+export interface ContainerReportFilters {
+  warehouse?: string | string[];
+  category?: string | string[];
+  item_number?: string | string[];
+  container_name?: string | string[];
+  sku?: string | string[];
+}
+
+const appendFilter = (params: URLSearchParams, name: string, value: string | string[] | undefined) => {
+  if (!value) return;
+  const val = Array.isArray(value) ? value.filter(v => v !== "" && v !== null && v !== undefined).join(",") : value;
+  if (val) {
+    params.append(name, val);
+  }
+};
 
 export async function fetchContainerDetailReport<T = StockReportApiResponse | ContainerReportApiResponse>(
   table: string,
   page: number,
   pageSize: number,
+  filters: ContainerReportFilters = {},
   signal?: AbortSignal
 ): Promise<T> {
+  const isFilterActive = (val: string | string[] | undefined) => {
+    if (!val) return false;
+    if (Array.isArray(val)) return val.some(v => v !== "" && v !== null && v !== undefined);
+    return val !== "";
+  };
+
+  const hasActiveFilters =
+    isFilterActive(filters.warehouse) ||
+    isFilterActive(filters.category) ||
+    isFilterActive(filters.item_number) ||
+    isFilterActive(filters.container_name) ||
+    isFilterActive(filters.sku);
+
+  const queryParams = new URLSearchParams({ table });
+
+  if (!hasActiveFilters) {
+    queryParams.append("page", String(page));
+    queryParams.append("limit", String(pageSize));
+  }
+
+  appendFilter(queryParams, "warehouse", filters.warehouse);
+  appendFilter(queryParams, "category", filters.category);
+  appendFilter(queryParams, "item_number", filters.item_number);
+  appendFilter(queryParams, "container_name", filters.container_name);
+  appendFilter(queryParams, "sku", filters.sku);
+
   const response = await fetch(
-    `${API_BASE_URL}/container-report/?table=${table}&page=${page}&limit=${pageSize}`, {
+    `${API_BASE_URL}/container-report/?${queryParams.toString()}`, {
     method: "GET",
     signal,
     headers: {
@@ -48,11 +92,12 @@ export async function fetchContainerDetailReport<T = StockReportApiResponse | Co
 export const useContainerDetailReport = <T = StockReportApiResponse | ContainerReportApiResponse>(
   table: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  filters: ContainerReportFilters = {}
 ): UseQueryResult<T, Error> =>
   useQuery<T, Error>({
-    queryKey: [...CONTAINER_DETAIL_REPORT_QUERY_KEY, table, page, pageSize],
-    queryFn: ({ signal }) => fetchContainerDetailReport<T>(table, page, pageSize, signal),
+    queryKey: [...CONTAINER_DETAIL_REPORT_QUERY_KEY, table, page, pageSize, filters],
+    queryFn: ({ signal }) => fetchContainerDetailReport<T>(table, page, pageSize, filters, signal),
     staleTime: 60_000,
     refetchOnReconnect: true,
     refetchOnWindowFocus: false
@@ -68,7 +113,8 @@ export function usePrefetchContainerReport<T = StockReportApiResponse | Containe
   currentPage: number,
   pageSize: number,
   totalPages: number | undefined,
-  prefetchCount = 6
+  prefetchCount = 6,
+  filters: ContainerReportFilters = {}
 ): void {
   const queryClient = useQueryClient();
 
@@ -80,12 +126,12 @@ export function usePrefetchContainerReport<T = StockReportApiResponse | Containe
       if (nextPage > totalPages) break;
 
       queryClient.prefetchQuery<T, Error>({
-        queryKey: [...CONTAINER_DETAIL_REPORT_QUERY_KEY, table, nextPage, pageSize],
-        queryFn: ({ signal }) => fetchContainerDetailReport<T>(table, nextPage, pageSize, signal),
+        queryKey: [...CONTAINER_DETAIL_REPORT_QUERY_KEY, table, nextPage, pageSize, filters],
+        queryFn: ({ signal }) => fetchContainerDetailReport<T>(table, nextPage, pageSize, filters, signal),
         staleTime: 60_000,
       });
     }
-  }, [queryClient, table, currentPage, pageSize, totalPages, prefetchCount]);
+  }, [queryClient, table, currentPage, pageSize, totalPages, prefetchCount, filters]);
 
   useEffect(() => {
     prefetch();
@@ -95,21 +141,24 @@ export function usePrefetchContainerReport<T = StockReportApiResponse | Containe
 // Convenience hooks for specific tables
 export const useStockReport = (
   page: number,
-  pageSize: number
+  pageSize: number,
+  filters: ContainerReportFilters = {}
 ): UseQueryResult<StockReportApiResponse, Error> =>
-  useContainerDetailReport<StockReportApiResponse>("stock", page, pageSize);
+  useContainerDetailReport<StockReportApiResponse>("stock", page, pageSize, filters);
 
 export const useContainerReport = (
   page: number,
-  pageSize: number
+  pageSize: number,
+  filters: ContainerReportFilters = {}
 ): UseQueryResult<ContainerReportApiResponse, Error> =>
-  useContainerDetailReport<ContainerReportApiResponse>("container", page, pageSize);
+  useContainerDetailReport<ContainerReportApiResponse>("container", page, pageSize, filters);
 
 export const useCombinedReport = (
   page: number,
-  pageSize: number
+  pageSize: number,
+  filters: ContainerReportFilters = {}
 ): UseQueryResult<CombinedReportApiResponse, Error> =>
-  useContainerDetailReport<CombinedReportApiResponse>("combined", page, pageSize);
+  useContainerDetailReport<CombinedReportApiResponse>("combined", page, pageSize, filters);
 
 async function deleteRunningReport({ session_id, signal }: { session_id: number; signal?: AbortSignal }): Promise<CancelRunningReportResponse> {
   const formData = new FormData();
@@ -151,3 +200,33 @@ export const useDeleteRunningReport = (): UseMutationResult<CancelRunningReportR
     }
   })
 }
+
+export async function fetchFilterOptions(table: string, signal?: AbortSignal): Promise<FilterOptionsResponse> {
+  const queryParams = new URLSearchParams({
+    table,
+    filter_options: "true"
+  });
+
+  const response = await fetch(`${API_BASE_URL}/container-report/?${queryParams.toString()}`, {
+    method: "GET",
+    signal,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch filter options. Status: ${response.status}`);
+  }
+
+  const data = (await response.json()) as FilterOptionsResponse;
+  return data;
+}
+
+export const useFilterOptions = (table: string): UseQueryResult<FilterOptionsResponse, Error> =>
+  useQuery<FilterOptionsResponse, Error>({
+    queryKey: ["filterOptions", table],
+    queryFn: ({ signal }) => fetchFilterOptions(table, signal),
+    staleTime: 300_000,
+    refetchOnWindowFocus: false
+  });

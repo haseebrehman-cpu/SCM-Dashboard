@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { DataGridPremium, GridPaginationModel } from "@mui/x-data-grid-premium";
 import { useTheme } from "../../hooks/useTheme";
 import { getDataGridStyles } from "../../styles/productionReportStyles";
-import { useCombinedReport, usePrefetchContainerReport } from "../../api/containerDetailReport";
+import { useCombinedReport, usePrefetchContainerReport, ContainerReportFilters } from "../../api/containerDetailReport";
 import { generateCombinedReportColumns } from "../../utils/columnGenerators/combinedReport";
 import { PAGINATION_MODEL } from "../../mockData/combinedReportMock";
 import { CombinedReportRow } from "../../types/combinedReport";
@@ -27,7 +27,11 @@ function mapApiRowToGridRow(apiRow: CombinedReportApiRow, index: number): Combin
   } as CombinedReportRow;
 }
 
-const CombinedReportGrid = () => {
+interface CombinedReportGridProps {
+  filters?: ContainerReportFilters;
+}
+
+const CombinedReportGrid = ({ filters = {} }: CombinedReportGridProps) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(PAGINATION_MODEL);
@@ -35,10 +39,10 @@ const CombinedReportGrid = () => {
   const page = paginationModel.page + 1;
   const pageSize = paginationModel.pageSize ?? 100;
 
-  const { data, isLoading } = useCombinedReport(page, pageSize);
+  const { data, isLoading } = useCombinedReport(page, pageSize, filters);
 
   const totalPages = data?.pagination?.total_pages;
-  usePrefetchContainerReport("combined", page, pageSize, totalPages, 6);
+  usePrefetchContainerReport("combined", page, pageSize, totalPages, 6, filters);
 
   const rows: CombinedReportRow[] = useMemo(() => {
     const list = data?.data ?? [];

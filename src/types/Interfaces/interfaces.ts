@@ -56,6 +56,20 @@ export interface PurchaseOrderReportResponse {
   data: PurchaseOrderData[]
 }
 
+export interface FilterOptionsResponse {
+  success: boolean;
+  table: string;
+  filter_options: {
+    category: string[];
+    item_number: string[];
+    warehouse: string[];
+    container_name?: string[];
+    sku?: string[];
+  };
+  active_filters: Record<string, string[]>;
+  message: string
+}
+
 // Stock report API response (table=stock)
 export interface StockReportApiRow {
   id: number;

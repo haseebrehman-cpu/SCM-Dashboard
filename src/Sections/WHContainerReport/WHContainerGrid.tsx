@@ -3,7 +3,7 @@ import { getDataGridStyles } from "../../styles/productionReportStyles"
 import { useTheme } from "../../hooks/useTheme";
 import { generateWarehouseColumns } from "../../utils/columnGenerators/whContainerReport";
 import { PAGINATION_MODEL } from "../../mockData/whContainersReportMock";
-import { useContainerReport, usePrefetchContainerReport } from "../../api/containerDetailReport";
+import { useContainerReport, usePrefetchContainerReport, ContainerReportFilters } from "../../api/containerDetailReport";
 import { useMemo, useState } from "react";
 import { ContainerReportApiRow } from "../../types/Interfaces/interfaces";
 import { WHContainerReportRow } from "../../types/whContainersReport";
@@ -25,17 +25,21 @@ function mapApiRowToGridRow(apiRow: ContainerReportApiRow): WHContainerReportRow
   };
 }
 
-const WHContainerGrid = () => {
+interface WHContainerGridProps {
+  filters?: ContainerReportFilters;
+}
+
+const WHContainerGrid = ({ filters = {} }: WHContainerGridProps) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(PAGINATION_MODEL);
   const page = paginationModel.page + 1;
   const pageSize = paginationModel.pageSize ?? 100;
 
-  const { data, isLoading } = useContainerReport(page, pageSize);
+  const { data, isLoading } = useContainerReport(page, pageSize, filters);
 
   const totalPages = data?.pagination?.total_pages;
-  usePrefetchContainerReport("container", page, pageSize, totalPages, 6);
+  usePrefetchContainerReport("container", page, pageSize, totalPages, 6, filters);
 
   const rowCount = data?.pagination?.total_records ?? 0;
 

@@ -7,6 +7,7 @@ import {
   ListItemText,
   AutocompleteChangeReason,
   AutocompleteChangeDetails,
+  CircularProgress,
 } from '@mui/material';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
@@ -45,6 +46,7 @@ interface StockFiltersProps {
   handleChange: (value: string[]) => void;
   filterName: string;
   options: string[];
+  loading?: boolean;
 }
 
 // ============================================================================
@@ -61,8 +63,8 @@ const sanitizeStringArray = (arr: string[]): string[] =>
 // Component
 // ============================================================================
 
- const StockFilters = React.memo<StockFiltersProps>(
-  ({ value, handleChange, filterName, options }) => {
+const StockFilters = React.memo<StockFiltersProps>(
+  ({ value, handleChange, filterName, options, loading }) => {
     // Memoized sanitized data
     const sanitizedOptions = useMemo(
       () => sanitizeStringArray(options),
@@ -176,6 +178,7 @@ const sanitizeStringArray = (arr: string[]): string[] =>
           multiple
           size="small"
           options={optionsWithAll}
+          loading={loading}
           disableCloseOnSelect
           getOptionLabel={(option) =>
             option === ALL_OPTION ? 'Select All' : option
@@ -196,6 +199,15 @@ const sanitizeStringArray = (arr: string[]): string[] =>
               {...params}
               label={filterName}
               placeholder={filterName}
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <React.Fragment>
+                    {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                    {params.InputProps.endAdornment}
+                  </React.Fragment>
+                ),
+              }}
             />
           )}
         />
