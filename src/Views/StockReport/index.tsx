@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Button, Paper, Typography } from '@mui/material';
 import StockFilters from '../../Sections/StockReport/StockFilters'
 import StockReportCharts from '../../Sections/StockReport/StockReportCharts'
 import StockReportKpi from '../../Sections/StockReport/StockReportKpi'
@@ -51,6 +51,7 @@ const StockReportView = () => {
               options={item.filterOptions}
             />
           ))}
+          <Button>Apply Filter</Button>
         </Box>
       </Paper>
       <StockReportKpi />

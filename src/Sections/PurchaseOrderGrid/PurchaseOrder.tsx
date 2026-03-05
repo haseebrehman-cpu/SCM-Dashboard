@@ -10,7 +10,7 @@ import { DataGridPremium } from "@mui/x-data-grid-premium";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { usePurchaseOrderReport, usePatchPurchaseOrderReport, useUploadPurchaseOrderFiles, useUploadPurchaseOrderReport } from "../../api/purchaseOrder";
-import toast from "react-hot-toast";
+import toast, { LoaderIcon } from "react-hot-toast";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Button } from "@mui/material";
 import CachedIcon from '@mui/icons-material/Cached';
@@ -40,7 +40,7 @@ export default function PurchaseOrder() {
     updateEditedData,
   } = useInlineEdit();
 
-  const { data: purchaseOrderResponse, isLoading, refetch } = usePurchaseOrderReport();
+  const { data: purchaseOrderResponse, isLoading, refetch, isRefetching } = usePurchaseOrderReport();
   const patchMutation = usePatchPurchaseOrderReport();
   const uploadMutation = useUploadPurchaseOrderFiles();
   const deleteMutation = useDeleteRunningReport()
@@ -149,7 +149,7 @@ export default function PurchaseOrder() {
   const handleConfirmLoadReport = async () => {
     if (sessionId !== null) {
       try {
-        await loadReportMutation.mutateAsync(sessionId);
+        await loadReportMutation.mutateAsync({ session_id: sessionId });
       } catch (error) {
         console.error("Failed to load report:", error);
       }
@@ -159,7 +159,7 @@ export default function PurchaseOrder() {
   const handleCancelLoadReport = async () => {
     if (sessionId !== null) {
       try {
-        await deleteMutation.mutateAsync(sessionId);
+        await deleteMutation.mutateAsync({ session_id: sessionId });
         toast.success("Report loading cancelled.");
       } catch (error) {
         toast.error("Failed to cancel report loading.");
@@ -171,9 +171,11 @@ export default function PurchaseOrder() {
   return (
     <>
       <div className="flex justify-end my-2">
-        <Button onClick={() => handleRefreshApi()} startIcon={<RefreshIcon />} >Refresh Report</Button>
+        <Button onClick={() => handleRefreshApi()} disabled={isRefetching} startIcon={isRefetching ? "" : <RefreshIcon />}>{isRefetching ? <>
+          Refetching &nbsp; <LoaderIcon />
+        </> : "Refresh Report"}</Button>
         <Button
-          disabled={!isArrivalEmpty || sessionId === null}
+          disabled={!isArrivalEmpty || sessionId === null || isRefetching}
           onClick={handleLoadReportClick}
           startIcon={<CachedIcon />}
         >
@@ -205,7 +207,7 @@ export default function PurchaseOrder() {
             onClose={() => setIsDialogOpen(false)}
             onUpload={async (file) => {
               try {
-                await uploadMutation.mutateAsync(file);
+                await uploadMutation.mutateAsync({ file });
               } catch (error) {
                 const message = error instanceof Error ? error.message : "Failed to upload file";
                 toast.error(message);

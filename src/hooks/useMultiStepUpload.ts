@@ -77,9 +77,11 @@ export const useMultiStepUpload = (): UseMultiStepUploadReturn => {
 
     uploadMutation.mutate(
       {
-        last_60_days: file1.files,
-        next_60_days_previous_year: file2.files,
-        open_orders: file3.files,
+        payload: {
+          last_60_days: file1.files,
+          next_60_days_previous_year: file2.files,
+          open_orders: file3.files,
+        }
       },
       {
         onSuccess: (data: LatestUploadSessionResponse) => {

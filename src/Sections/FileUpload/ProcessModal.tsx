@@ -18,7 +18,7 @@ const ProcessModal: React.FC<ProcessModalProps> = ({ showSuccessModal, closeSucc
       toast.error('Session ID is missing. Cannot process files.')
       return
     }
-    processFiles(sessionId, {
+    processFiles({ session_id: sessionId }, {
       onSuccess: () => {
         toast.success('Files processed successfully!')
         closeSuccessModal()

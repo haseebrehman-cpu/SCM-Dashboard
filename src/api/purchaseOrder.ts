@@ -4,9 +4,10 @@ export const API_BASE_URL = import.meta.env.VITE_SCM_API_BASE_URL ?? "/scm/api";
 
 export const PURCHASE_ORDER_REPORT_QUERY_KEY = ["scmPurchaseOrderReport"] as const;
 
-async function fetchPurchaseOrderReport(): Promise<PurchaseOrderReportResponse> {
+async function fetchPurchaseOrderReport(signal?: AbortSignal): Promise<PurchaseOrderReportResponse> {
   const response = await fetch(`${API_BASE_URL}/process-data`, {
     method: "GET",
+    signal,
     headers: {
     },
   });
@@ -16,6 +17,7 @@ async function fetchPurchaseOrderReport(): Promise<PurchaseOrderReportResponse> 
   try {
     data = (await response.json()) as PurchaseOrderReportResponse;
   } catch (error) {
+    if ((error as Error).name === 'AbortError') throw error;
     if (!response.ok) {
       throw new Error(
         "Failed to fetch purchase order report. Server returned an invalid response.",
@@ -34,13 +36,13 @@ async function fetchPurchaseOrderReport(): Promise<PurchaseOrderReportResponse> 
 export const usePurchaseOrderReport = (): UseQueryResult<PurchaseOrderReportResponse, Error> =>
   useQuery<PurchaseOrderReportResponse, Error>({
     queryKey: PURCHASE_ORDER_REPORT_QUERY_KEY,
-    queryFn: fetchPurchaseOrderReport,
+    queryFn: ({ signal }) => fetchPurchaseOrderReport(signal),
     staleTime: 60_000,
     refetchOnWindowFocus: false,
-    refetchOnMount: false
+    refetchOnMount: false,
   })
 
-export const patchPurchaseOrderReportData = async (rowId: number, arrivalDate: string | null): Promise<PurchaseOrderReportResponse> => {
+export const patchPurchaseOrderReportData = async ({ rowId, arrivalDate, signal }: { rowId: number; arrivalDate: string | null; signal?: AbortSignal }): Promise<PurchaseOrderReportResponse> => {
   const requestBody = {
     id: rowId,
     arrival_date: arrivalDate,
@@ -48,6 +50,7 @@ export const patchPurchaseOrderReportData = async (rowId: number, arrivalDate: s
 
   const response = await fetch(`${API_BASE_URL}/process-data/`, {
     method: "PATCH",
+    signal,
     headers: {
       "Content-Type": "application/json",
     },
@@ -60,7 +63,8 @@ export const patchPurchaseOrderReportData = async (rowId: number, arrivalDate: s
 
   try {
     data = JSON.parse(responseText) as PurchaseOrderReportResponse;
-  } catch {
+  } catch (error) {
+    if ((error as Error).name === 'AbortError') throw error;
     throw new Error(`Failed to update purchase order. Server returned an invalid response (status ${response.status}).`);
   }
 
@@ -71,11 +75,11 @@ export const patchPurchaseOrderReportData = async (rowId: number, arrivalDate: s
   return data;
 }
 
-export const usePatchPurchaseOrderReport = (): UseMutationResult<PurchaseOrderReportResponse, Error, { rowId: number, arrivalDate: string | null }, unknown> => {
+export const usePatchPurchaseOrderReport = (): UseMutationResult<PurchaseOrderReportResponse, Error, { rowId: number, arrivalDate: string | null; signal?: AbortSignal }, unknown> => {
   const queryClient = useQueryClient();
 
-  return useMutation<PurchaseOrderReportResponse, Error, { rowId: number, arrivalDate: string | null }, unknown>({
-    mutationFn: ({ rowId, arrivalDate }) => patchPurchaseOrderReportData(rowId, arrivalDate),
+  return useMutation<PurchaseOrderReportResponse, Error, { rowId: number, arrivalDate: string | null; signal?: AbortSignal }, unknown>({
+    mutationFn: (variables) => patchPurchaseOrderReportData(variables),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: PURCHASE_ORDER_REPORT_QUERY_KEY });
     },
@@ -86,13 +90,14 @@ type PurchaseOrderBulkUpdateResponse =
   | PurchaseOrderBulkUpdateSuccessResponse
   | PurchaseOrderBulkUpdateErrorResponse;
 
-async function uploadPurchaseOrderFile(file: File): Promise<PurchaseOrderBulkUpdateSuccessResponse> {
+async function uploadPurchaseOrderFile({ file, signal }: { file: File; signal?: AbortSignal }): Promise<PurchaseOrderBulkUpdateSuccessResponse> {
   const formData = new FormData();
   formData.append("file", file);
 
   const response = await fetch(`${API_BASE_URL}/bulk-update/`, {
     method: "POST",
     body: formData,
+    signal,
   });
 
   let data: PurchaseOrderBulkUpdateResponse;
@@ -100,6 +105,7 @@ async function uploadPurchaseOrderFile(file: File): Promise<PurchaseOrderBulkUpd
   try {
     data = (await response.json()) as PurchaseOrderBulkUpdateResponse;
   } catch (error) {
+    if ((error as Error).name === 'AbortError') throw error;
     if (!response.ok) {
       throw new Error(
         "Failed to upload file. Server returned an invalid response.",
@@ -118,10 +124,10 @@ async function uploadPurchaseOrderFile(file: File): Promise<PurchaseOrderBulkUpd
   return data;
 }
 
-export const useUploadPurchaseOrderFiles = (): UseMutationResult<PurchaseOrderBulkUpdateSuccessResponse, Error, File> => {
+export const useUploadPurchaseOrderFiles = (): UseMutationResult<PurchaseOrderBulkUpdateSuccessResponse, Error, { file: File; signal?: AbortSignal }> => {
   const queryClient = useQueryClient();
 
-  return useMutation<PurchaseOrderBulkUpdateSuccessResponse, Error, File>({
+  return useMutation<PurchaseOrderBulkUpdateSuccessResponse, Error, { file: File; signal?: AbortSignal }>({
     mutationFn: uploadPurchaseOrderFile,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: PURCHASE_ORDER_REPORT_QUERY_KEY });
@@ -130,19 +136,23 @@ export const useUploadPurchaseOrderFiles = (): UseMutationResult<PurchaseOrderBu
   })
 }
 
-export async function postUploadPurchaseOrderReport(session_id: number): Promise<PurchaseOrderBulkUpdateSuccessResponse> {
+export async function postUploadPurchaseOrderReport(session_id: number, signal?: AbortSignal): Promise<PurchaseOrderBulkUpdateSuccessResponse> {
   const formData = new FormData();
   formData.append("session_id", String(session_id));
 
   const response = await fetch(`${API_BASE_URL}/container-report/`, {
     method: "POST",
     body: formData,
+    signal,
   });
 
   let data: PurchaseOrderBulkUpdateResponse;
   try {
     data = (await response.json()) as PurchaseOrderBulkUpdateResponse;
   } catch (error) {
+    if ((error as Error).name === 'AbortError') {
+      throw error;
+    }
     if (!response.ok) {
       throw new Error(
         "Failed to upload file. Server returned an invalid response.",
@@ -161,11 +171,13 @@ export async function postUploadPurchaseOrderReport(session_id: number): Promise
   return data;
 }
 
-export const useUploadPurchaseOrderReport = (): UseMutationResult<PurchaseOrderBulkUpdateSuccessResponse, Error, number> => {
+// Load Report Mutation
+
+export const useUploadPurchaseOrderReport = (): UseMutationResult<PurchaseOrderBulkUpdateSuccessResponse, Error, { session_id: number; signal?: AbortSignal }> => {
   const queryClient = useQueryClient();
 
-  return useMutation<PurchaseOrderBulkUpdateSuccessResponse, Error, number>({
-    mutationFn: postUploadPurchaseOrderReport,
+  return useMutation<PurchaseOrderBulkUpdateSuccessResponse, Error, { session_id: number; signal?: AbortSignal }>({
+    mutationFn: ({ session_id, signal }) => postUploadPurchaseOrderReport(session_id, signal),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: PURCHASE_ORDER_REPORT_QUERY_KEY });
     },

@@ -2,7 +2,7 @@ import WHContainerKPI from "../../Sections/WHContainerReport/WHContainerKPI"
 import ContainerLoadAnalysis from "../../Sections/WHContainerReport/ContainerLoadAnalysis"
 import WHContainerGrid from "../../Sections/WHContainerReport/WHContainerGrid"
 import { useState } from "react"
-import { Box, Paper, Typography } from "@mui/material"
+import { Box, Button, Paper, Typography } from "@mui/material"
 import StockFilters from "../../Sections/StockReport/StockFilters"
 
 const filtersArray = [
@@ -43,7 +43,7 @@ const WHContainerReportView = () => {
   };
   return (
     <Box>
-      <Paper sx={{ p: 2, mb: 3, display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+      <Paper sx={{ p: 2, mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography>Filter Options:</Typography>
         <Box sx={{ display: 'flex' }}>
           {filtersArray.map((item) => (
@@ -55,6 +55,7 @@ const WHContainerReportView = () => {
               options={item.filterOptions}
             />
           ))}
+          <Button>Apply Filter</Button>
         </Box>
       </Paper>
       <WHContainerKPI />

@@ -13,11 +13,13 @@ export const CONTAINER_DETAIL_REPORT_QUERY_KEY = ["containerDetailReport"] as co
 export async function fetchContainerDetailReport<T = StockReportApiResponse | ContainerReportApiResponse>(
   table: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  signal?: AbortSignal
 ): Promise<T> {
   const response = await fetch(
     `${API_BASE_URL}/container-report/?table=${table}&page=${page}&limit=${pageSize}`, {
     method: "GET",
+    signal,
     headers: {
       "Content-Type": "application/json",
     },
@@ -29,6 +31,7 @@ export async function fetchContainerDetailReport<T = StockReportApiResponse | Co
   try {
     data = (await response.json()) as T;
   } catch (error) {
+    if ((error as Error).name === 'AbortError') throw error;
     if (!response.ok) {
       throw new Error("Failed to fetch report. Server returned an invalid response.");
     }
@@ -49,7 +52,7 @@ export const useContainerDetailReport = <T = StockReportApiResponse | ContainerR
 ): UseQueryResult<T, Error> =>
   useQuery<T, Error>({
     queryKey: [...CONTAINER_DETAIL_REPORT_QUERY_KEY, table, page, pageSize],
-    queryFn: () => fetchContainerDetailReport<T>(table, page, pageSize),
+    queryFn: ({ signal }) => fetchContainerDetailReport<T>(table, page, pageSize, signal),
     staleTime: 60_000,
     refetchOnReconnect: true,
     refetchOnWindowFocus: false
@@ -78,7 +81,7 @@ export function usePrefetchContainerReport<T = StockReportApiResponse | Containe
 
       queryClient.prefetchQuery<T, Error>({
         queryKey: [...CONTAINER_DETAIL_REPORT_QUERY_KEY, table, nextPage, pageSize],
-        queryFn: () => fetchContainerDetailReport<T>(table, nextPage, pageSize),
+        queryFn: ({ signal }) => fetchContainerDetailReport<T>(table, nextPage, pageSize, signal),
         staleTime: 60_000,
       });
     }
@@ -108,13 +111,14 @@ export const useCombinedReport = (
 ): UseQueryResult<CombinedReportApiResponse, Error> =>
   useContainerDetailReport<CombinedReportApiResponse>("combined", page, pageSize);
 
-async function deleteRunningReport(session_id: number): Promise<CancelRunningReportResponse> {
+async function deleteRunningReport({ session_id, signal }: { session_id: number; signal?: AbortSignal }): Promise<CancelRunningReportResponse> {
   const formData = new FormData();
   formData.append("session_id", String(session_id));
 
   const response = await fetch(`${API_BASE_URL}/container-report/`, {
     method: "DELETE",
-    body: formData
+    body: formData,
+    signal
   });
 
   let data: CancelRunningReportResponse;
@@ -122,6 +126,7 @@ async function deleteRunningReport(session_id: number): Promise<CancelRunningRep
   try {
     data = (await response.json()) as CancelRunningReportResponse;
   } catch (error) {
+    if ((error as Error).name === 'AbortError') throw error;
     if (!response.ok) {
       throw new Error(
         'Failed to delete the running report'
@@ -136,10 +141,10 @@ async function deleteRunningReport(session_id: number): Promise<CancelRunningRep
   return data
 }
 
-export const useDeleteRunningReport = (): UseMutationResult<CancelRunningReportResponse, Error, number> => {
+export const useDeleteRunningReport = (): UseMutationResult<CancelRunningReportResponse, Error, { session_id: number; signal?: AbortSignal }> => {
   const queryClient = useQueryClient();
 
-  return useMutation<CancelRunningReportResponse, Error, number>({
+  return useMutation<CancelRunningReportResponse, Error, { session_id: number; signal?: AbortSignal }>({
     mutationFn: deleteRunningReport,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: CONTAINER_DETAIL_REPORT_QUERY_KEY })

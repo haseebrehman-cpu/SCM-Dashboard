@@ -176,7 +176,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
             Delete Upload Session
           </h2>
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            'Are you sure you want to delete this upload session?
+            Are you sure you want to delete this upload session?
           </p>
           <div className="flex justify-end gap-3 pt-2">
             <button
@@ -195,7 +195,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
               disabled={deleteMutation.isPending || !selectedSessionId}
               onClick={() => {
                 if (!selectedSessionId) return;
-                deleteMutation.mutate(selectedSessionId, {
+                deleteMutation.mutate({ sessionId: selectedSessionId }, {
                   onSuccess: () => {
                     setIsDeleteModalOpen(false);
                     setSelectedSessionId(null);
