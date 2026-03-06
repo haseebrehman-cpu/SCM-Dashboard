@@ -80,7 +80,7 @@ const StockReportView = () => {
           )}
         </Box>
       </Paper>
-      <StockReportKpi />
+      <StockReportKpi filters={appliedFilters} />
       <StockReportCharts />
       <StockReportGrid filters={appliedFilters} />
     </Box>

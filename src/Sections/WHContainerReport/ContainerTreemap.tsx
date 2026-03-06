@@ -1,14 +1,9 @@
 import React from 'react'
 import EChart from '../../components/Charts';
 import { EChartsOption, TreemapSeriesOption } from 'echarts';
-import { containerLoadData } from '../../mockData/containerLoadAnalysisMock';
 import { ChartBaseProps } from '../../types/charts';
-
-interface TreemapNode {
-  name: string;
-  value?: number;
-  children?: TreemapNode[];
-}
+import { Skeleton } from '@mui/material';
+import { InTransitVolumeData } from '../../types/Interfaces/interfaces';
 
 interface TreemapFormatterParams {
   name: string;
@@ -20,24 +15,63 @@ interface TreemapFormatterParams {
   }[];
 }
 
-const ContainerTreemap: React.FC<ChartBaseProps> = React.memo(({ isDark, commonTooltip }) => {
+interface CategoryNode {
+  name: string;
+  value: number;
+}
+
+interface RegionNode {
+  name: string;
+  children: CategoryNode[];
+}
+
+interface ContainerAggregation {
+  name: string;
+  children: Record<string, RegionNode>;
+}
+
+interface ContainerTreemapProps extends ChartBaseProps {
+  data?: InTransitVolumeData[];
+  isLoading?: boolean;
+}
+
+const ContainerTreemap: React.FC<ContainerTreemapProps> = React.memo(({ isDark, commonTooltip, data = [], isLoading }) => {
   const option: EChartsOption = React.useMemo(() => {
-    // Group data by Container Number
-    const groupedData = containerLoadData.reduce((acc, curr) => {
-      if (!acc[curr.containerNumber]) {
-        acc[curr.containerNumber] = {
-          name: curr.containerNumber,
+    // Group data by Container Name -> Region -> Category
+    const aggregated = data.reduce<Record<string, ContainerAggregation>>((acc, curr) => {
+      const { container_name, container_region, category_name, total_intransit_quantity } = curr;
+
+      if (!acc[container_name]) {
+        acc[container_name] = {
+          name: container_name,
+          children: {}
+        };
+      }
+
+      const containerNode = acc[container_name];
+      const regionChildren = containerNode.children;
+
+      if (!regionChildren[container_region]) {
+        regionChildren[container_region] = {
+          name: container_region,
           children: []
         };
       }
-      acc[curr.containerNumber].children?.push({
-        name: curr.categoryName,
-        value: curr.value
-      });
-      return acc;
-    }, {} as Record<string, TreemapNode>);
 
-    const data = Object.values(groupedData);
+      const regionNode = regionChildren[container_region];
+      regionNode.children.push({
+        name: category_name,
+        value: total_intransit_quantity
+      });
+
+      return acc;
+    }, {});
+
+    // Convert objects to arrays for ECharts treemap
+    const treemapData = Object.values(aggregated).map(container => ({
+      name: container.name,
+      children: Object.values(container.children)
+    }));
 
     const series: TreemapSeriesOption[] = [
       {
@@ -50,7 +84,7 @@ const ContainerTreemap: React.FC<ChartBaseProps> = React.memo(({ isDark, commonT
         leafDepth: 1,
         visualDimension: 0,
         visualMin: 0,
-        visualMax: 2000,
+        visualMax: data.length > 0 ? Math.max(...data.map(d => d.total_intransit_quantity)) : 2000,
         breadcrumb: {
           show: true,
           bottom: 0,
@@ -115,7 +149,7 @@ const ContainerTreemap: React.FC<ChartBaseProps> = React.memo(({ isDark, commonT
             }
           }
         ],
-        data: data
+        data: treemapData
       }
     ];
 
@@ -173,10 +207,13 @@ const ContainerTreemap: React.FC<ChartBaseProps> = React.memo(({ isDark, commonT
       },
       series: series
     };
-  }, [isDark, commonTooltip]);
+  }, [isDark, commonTooltip, data]);
+
+  if (isLoading) {
+    return <Skeleton variant="rectangular" height={550} width="100%" sx={{ borderRadius: 1 }} />;
+  }
 
   return <EChart option={option} height={550} width="100%" />;
 });
 
-export default ContainerTreemap
-
+export default ContainerTreemap;

@@ -4,6 +4,7 @@ import {
   TopSellingItemsResponse,
   RegionalSummaryResponse,
   CategoryDistributionResponse,
+  StockKpisResponse,
 } from "../types/Interfaces/interfaces";
 
 export const STOCK_REPORT_CHARTS_QUERY_KEY = ["stockReportCharts"] as const;
@@ -14,8 +15,18 @@ export interface ChartFilters {
   item_number?: string | string[];
 }
 
-async function fetchStockChartData<T>(chart: string, signal?: AbortSignal): Promise<T> {
+async function fetchStockChartData<T>(chart: string, filters?: ChartFilters, signal?: AbortSignal): Promise<T> {
   const queryParams = new URLSearchParams({ chart });
+
+  if (filters) {
+    Object.entries(filters).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((v) => queryParams.append(key, v));
+      } else if (value) {
+        queryParams.append(key, value);
+      }
+    });
+  }
 
   const response = await fetch(`${API_BASE_URL}/charts/stock/?${queryParams.toString()}`, {
     method: "GET",
@@ -33,26 +44,34 @@ async function fetchStockChartData<T>(chart: string, signal?: AbortSignal): Prom
   return data;
 }
 
-export const useTopSellingChart = (): UseQueryResult<TopSellingItemsResponse, Error> =>
+export const useTopSellingChart = (filters?: ChartFilters): UseQueryResult<TopSellingItemsResponse, Error> =>
   useQuery<TopSellingItemsResponse, Error>({
-    queryKey: [...STOCK_REPORT_CHARTS_QUERY_KEY, "top_selling"],
-    queryFn: ({ signal }) => fetchStockChartData<TopSellingItemsResponse>("top_selling", signal),
+    queryKey: [...STOCK_REPORT_CHARTS_QUERY_KEY, "top_selling", filters],
+    queryFn: ({ signal }) => fetchStockChartData<TopSellingItemsResponse>("top_selling", filters, signal),
     staleTime: 300_000,
     refetchOnWindowFocus: false,
   });
 
-export const useRegionalSummaryChart = (): UseQueryResult<RegionalSummaryResponse, Error> =>
+export const useRegionalSummaryChart = (filters?: ChartFilters): UseQueryResult<RegionalSummaryResponse, Error> =>
   useQuery<RegionalSummaryResponse, Error>({
-    queryKey: [...STOCK_REPORT_CHARTS_QUERY_KEY, "regional_summary"],
-    queryFn: ({ signal }) => fetchStockChartData<RegionalSummaryResponse>("regional_summary", signal),
+    queryKey: [...STOCK_REPORT_CHARTS_QUERY_KEY, "regional_summary", filters],
+    queryFn: ({ signal }) => fetchStockChartData<RegionalSummaryResponse>("regional_summary", filters, signal),
     staleTime: 300_000,
     refetchOnWindowFocus: false,
   });
 
-export const useCategoryDistributionChart = (): UseQueryResult<CategoryDistributionResponse, Error> =>
+export const useCategoryDistributionChart = (filters?: ChartFilters): UseQueryResult<CategoryDistributionResponse, Error> =>
   useQuery<CategoryDistributionResponse, Error>({
-    queryKey: [...STOCK_REPORT_CHARTS_QUERY_KEY, "category_distribution"],
-    queryFn: ({ signal }) => fetchStockChartData<CategoryDistributionResponse>("category_distribution", signal),
+    queryKey: [...STOCK_REPORT_CHARTS_QUERY_KEY, "category_distribution", filters],
+    queryFn: ({ signal }) => fetchStockChartData<CategoryDistributionResponse>("category_distribution", filters, signal),
+    staleTime: 300_000,
+    refetchOnWindowFocus: false,
+  });
+
+export const useStockKpis = (filters?: ChartFilters): UseQueryResult<StockKpisResponse, Error> =>
+  useQuery<StockKpisResponse, Error>({
+    queryKey: [...STOCK_REPORT_CHARTS_QUERY_KEY, "kpis", filters],
+    queryFn: ({ signal }) => fetchStockChartData<StockKpisResponse>("kpis", filters, signal),
     staleTime: 300_000,
     refetchOnWindowFocus: false,
   });

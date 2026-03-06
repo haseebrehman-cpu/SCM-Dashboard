@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTheme } from '../../hooks/useTheme';
+import { Skeleton } from '@mui/material';
 
 export interface KpiInfo {
   metric: string;
@@ -13,9 +14,10 @@ export interface KpiInfo {
 
 interface KpiCardsProps {
   kpiInfo: KpiInfo;
+  loading?: boolean;
 }
 
-const KpiCards: React.FC<KpiCardsProps> = ({ kpiInfo }) => {
+const KpiCards: React.FC<KpiCardsProps> = ({ kpiInfo, loading }) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const { metric, value, icon, bgColor, textColor, des } = kpiInfo;
@@ -39,7 +41,7 @@ const KpiCards: React.FC<KpiCardsProps> = ({ kpiInfo }) => {
           <h3
             className={`${isDark ? "text-white" : "text-gray-900"} 
               font-bold`}
-          >{value}</h3>
+          > {loading ? <Skeleton width={100} height={20} /> : value}</h3>
         </div>
         <div className={`p-3 rounded-xl ${bgColor} ${textColor}`}>
           <span className="text-xl">{icon}</span>

@@ -27,7 +27,7 @@ const TopSellingItemsChart: React.FC<TopSellingItemsChartProps> = React.memo(({ 
       left: 'left',
       textStyle: { color: isDark ? '#f3f4f6' : '#111827', fontSize: 18, fontWeight: 700 },
       subtextStyle: { color: isDark ? '#9ca3af' : '#6b7280', fontSize: 11 },
-      top: 10
+      top: 1
     },
     tooltip: {
       ...commonTooltip,
@@ -110,7 +110,7 @@ const TopSellingItemsChart: React.FC<TopSellingItemsChartProps> = React.memo(({ 
     },
     series: [
       {
-        name: 'Sold Quantity',
+        name: 'Last 60 Days Sales',
         type: 'bar',
         barGap: '30%',
         barWidth: '35%',
@@ -121,7 +121,7 @@ const TopSellingItemsChart: React.FC<TopSellingItemsChartProps> = React.memo(({ 
             borderRadius: [0, 3, 3, 0],
             shadowColor: isDark ? 'rgba(99, 102, 241, 0.3)' : 'rgba(59, 130, 246, 0.2)',
             shadowOffsetX: 0,
-            shadowOffsetY: 2
+            shadowOffsetY: 2,
           }
         })),
         label: {

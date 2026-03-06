@@ -83,8 +83,10 @@ export interface RegionalSummaryResponse {
 }
 
 export interface CategoryDistributionItem {
-  category_name: string;
+  item_number: string;
+  warehouse_count: number;
   total_available: number;
+  total_sold_quantity: number;
 }
 
 export interface CategoryDistributionResponse {
@@ -92,6 +94,33 @@ export interface CategoryDistributionResponse {
   chart: "category_distribution";
   total_records: number;
   data: CategoryDistributionItem[];
+}
+
+export interface StockKpisData {
+  total_stock: number;
+  total_sold: number;
+  abandoned_items_count: number;
+  sku_count: number;
+}
+
+export interface StockKpisResponse {
+  success: boolean;
+  chart: "kpis";
+  data: StockKpisData;
+}
+
+export interface InTransitVolumeData {
+  container_name: string;
+  category_name: string;
+  container_region: string;
+  total_intransit_quantity: number;
+}
+
+export interface InTransitVolumeResponse {
+  success: boolean;
+  chart: string;
+  total_records: number;
+  data: InTransitVolumeData[];
 }
 
 export interface FilterOptionsResponse {

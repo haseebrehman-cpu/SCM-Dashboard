@@ -1,13 +1,30 @@
-import React from 'react'
+import React from 'react';
 import EChart from '../../components/Charts';
 import { EChartsOption, BarSeriesOption } from 'echarts';
-import { containerLoadData } from '../../mockData/containerLoadAnalysisMock';
 import { ChartBaseProps } from '../../types/charts';
+import { Skeleton } from '@mui/material';
+import { InTransitVolumeData } from '../../types/Interfaces/interfaces';
 
-const ContainerStackedBar: React.FC<ChartBaseProps> = React.memo(({ isDark, colors, commonTooltip, commonGrid }) => {
+interface ContainerStackedBarProps extends ChartBaseProps {
+  data?: InTransitVolumeData[];
+  isLoading?: boolean;
+}
+
+interface BarTooltipParams {
+  marker: string;
+  seriesName: string;
+  value: number;
+  axisValue: string;
+}
+
+const ContainerStackedBar: React.FC<ContainerStackedBarProps> = ({ isDark, colors, commonTooltip, commonGrid, data = [], isLoading }) => {
   const option: EChartsOption = React.useMemo(() => {
-    const containers = Array.from(new Set(containerLoadData.map(d => d.containerNumber)));
-    const categories = Array.from(new Set(containerLoadData.map(d => d.categoryName)));
+    // Map container to its region for easy lookup
+    const containerRegionMap = new Map<string, string>();
+    data.forEach(d => containerRegionMap.set(d.container_name, d.container_region));
+
+    const containers = Array.from(new Set(data.map(d => d.container_name)));
+    const categories = Array.from(new Set(data.map(d => d.category_name)));
 
     const series: BarSeriesOption[] = categories.map((category, index) => {
       const isTop = index === categories.length - 1;
@@ -19,8 +36,8 @@ const ContainerStackedBar: React.FC<ChartBaseProps> = React.memo(({ isDark, colo
         emphasis: { focus: 'series' },
         barWidth: '40%',
         data: containers.map(container => {
-          const item = containerLoadData.find(d => d.containerNumber === container && d.categoryName === category);
-          return item ? item.value : 0;
+          const item = data.find(d => d.container_name === container && d.category_name === category);
+          return item ? item.total_intransit_quantity : 0;
         }),
         itemStyle: {
           color: colors.palette[index % colors.palette.length],
@@ -77,6 +94,21 @@ const ContainerStackedBar: React.FC<ChartBaseProps> = React.memo(({ isDark, colo
           color: isDark ? '#f3f4f6' : '#111827',
           fontSize: 12,
           fontFamily: 'Inter, sans-serif'
+        },
+        formatter: (params: unknown) => {
+          const tooltipParams = params as BarTooltipParams[];
+          const containerName = tooltipParams[0].axisValue;
+          const region = containerRegionMap.get(containerName) || 'Unknown';
+          let res = `<div style="font-weight: 700; margin-bottom: 8px;">${containerName} (${region})</div>`;
+          tooltipParams.forEach((item) => {
+            if (item.value > 0) {
+              res += `<div style="display: flex; justify-content: space-between; gap: 20px;">
+                <span>${item.marker} ${item.seriesName}</span>
+                <span style="font-weight: 700;">${item.value.toLocaleString()}</span>
+              </div>`;
+            }
+          });
+          return res;
         }
       },
       legend: {
@@ -99,7 +131,7 @@ const ContainerStackedBar: React.FC<ChartBaseProps> = React.memo(({ isDark, colo
           type: 'inside',
           xAxisIndex: [0],
           start: 0,
-          end: 100
+          end: 50
         },
         {
           type: 'slider',
@@ -110,7 +142,9 @@ const ContainerStackedBar: React.FC<ChartBaseProps> = React.memo(({ isDark, colo
           borderColor: 'transparent',
           fillerColor: isDark ? 'rgba(99, 102, 241, 0.2)' : 'rgba(99, 102, 241, 0.1)',
           handleStyle: { color: colors.primary },
-          textStyle: { color: isDark ? '#9ca3af' : '#6b7280' }
+          textStyle: { color: isDark ? '#9ca3af' : '#6b7280' },
+          start: 0,
+          end: 50
         }
       ],
       grid: {
@@ -130,7 +164,11 @@ const ContainerStackedBar: React.FC<ChartBaseProps> = React.memo(({ isDark, colo
           fontSize: 11,
           fontWeight: 500,
           margin: 15,
-          fontFamily: 'Inter, sans-serif'
+          fontFamily: 'Inter, sans-serif',
+          formatter: (value: string) => {
+            const region = containerRegionMap.get(value);
+            return region ? `${value}\n(${region})` : value;
+          }
         },
         axisLine: { lineStyle: { color: isDark ? '#374151' : '#e5e7eb' } },
         axisTick: { show: false }
@@ -162,9 +200,14 @@ const ContainerStackedBar: React.FC<ChartBaseProps> = React.memo(({ isDark, colo
       },
       series: series
     };
-  }, [isDark, colors, commonTooltip, commonGrid]);
+  }, [isDark, colors, commonTooltip, commonGrid, data]);
+
+  if (isLoading) {
+    return <Skeleton variant="rectangular" height={550} width="100%" sx={{ borderRadius: 1 }} />;
+  }
 
   return <EChart option={option} height={550} width="100%" />;
-});
+};
+
 
 export default ContainerStackedBar

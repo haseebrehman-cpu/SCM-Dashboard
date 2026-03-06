@@ -1,23 +1,47 @@
 import React from 'react';
 import EChart from '../../components/Charts';
 import { EChartsOption } from 'echarts';
-import { regionalCategoryData } from '../../mockData/regionalCategoryPreferenceMock';
 import { ChartBaseProps } from '../../types/charts';
+import { InTransitVolumeData } from '../../types/Interfaces/interfaces';
+import { Skeleton } from '@mui/material';
 
 interface HeatmapDataParams {
   data: [number, number, number | string];
 }
 
-const RegionalCategoryPreference: React.FC<ChartBaseProps> = React.memo(({ isDark, colors, commonTooltip, commonGrid }) => {
-  const option: EChartsOption = React.useMemo(() => {
-    const regions = Array.from(new Set(regionalCategoryData.map(d => d.region)));
-    const categories = Array.from(new Set(regionalCategoryData.map(d => d.category)));
+interface RegionalCategoryPreferenceProps extends ChartBaseProps {
+  data?: InTransitVolumeData[];
+  isLoading?: boolean;
+}
 
-    const data: [number, number, number | string][] = regionalCategoryData.map(item => [
-      regions.indexOf(item.region),
-      categories.indexOf(item.category),
-      item.value || '-'
-    ]);
+const RegionalCategoryPreference: React.FC<RegionalCategoryPreferenceProps> = React.memo(({ isDark, colors, commonTooltip, commonGrid, data = [], isLoading }) => {
+  const option: EChartsOption = React.useMemo(() => {
+    // Process and aggregate data by Region and Category
+    const aggregatedMap = new Map<string, number>();
+    const regionSet = new Set<string>();
+    const categorySet = new Set<string>();
+
+    data.forEach(item => {
+      const region = item.container_region || 'Unknown';
+      const category = item.category_name || 'Other';
+      const key = `${region}|${category}`;
+      aggregatedMap.set(key, (aggregatedMap.get(key) || 0) + item.total_intransit_quantity);
+      regionSet.add(region);
+      categorySet.add(category);
+    });
+
+    const regions = Array.from(regionSet).sort();
+    const categories = Array.from(categorySet).sort();
+
+    const heatmapData: [number, number, number | string][] = [];
+    regions.forEach((region, rIdx) => {
+      categories.forEach((category, cIdx) => {
+        const val = aggregatedMap.get(`${region}|${category}`);
+        heatmapData.push([rIdx, cIdx, val !== undefined ? val : '-']);
+      });
+    });
+
+    const maxVal = Math.max(...Array.from(aggregatedMap.values()), 1);
 
     return {
       title: {
@@ -78,7 +102,7 @@ const RegionalCategoryPreference: React.FC<ChartBaseProps> = React.memo(({ isDar
         ...commonGrid,
         top: 100,
         bottom: 120,
-        left: '4%', // Increased to provide room for labels and name
+        left: '4%',
         right: '5%',
         containLabel: true
       },
@@ -109,7 +133,7 @@ const RegionalCategoryPreference: React.FC<ChartBaseProps> = React.memo(({ isDar
         data: categories,
         name: 'Product Category',
         nameLocation: 'middle',
-        nameGap: 140, // Significantly increased to move text further left
+        nameGap: 140,
         nameTextStyle: {
           color: isDark ? '#9ca3af' : '#6b7280',
           fontSize: 13,
@@ -130,9 +154,9 @@ const RegionalCategoryPreference: React.FC<ChartBaseProps> = React.memo(({ isDar
         {
           type: 'inside',
           xAxisIndex: [0],
-          yAxisIndex: [0], // Enable mouse wheel/pinch zoom for both axes
+          yAxisIndex: [0],
           start: 0,
-          end: 100
+          end: 30 // Default state for mouse/pinch zoom
         },
         {
           type: 'slider',
@@ -140,6 +164,8 @@ const RegionalCategoryPreference: React.FC<ChartBaseProps> = React.memo(({ isDar
           xAxisIndex: [0],
           bottom: 50,
           height: 20,
+          start: 0,
+          end: 100, // Show all regions
           borderColor: 'transparent',
           fillerColor: isDark ? 'rgba(99, 102, 241, 0.2)' : 'rgba(99, 102, 241, 0.1)',
           handleStyle: { color: colors.primary },
@@ -148,9 +174,11 @@ const RegionalCategoryPreference: React.FC<ChartBaseProps> = React.memo(({ isDar
         {
           type: 'slider',
           show: true,
-          yAxisIndex: [0], // Vertical slider for massive category lists
+          yAxisIndex: [0],
           left: 10,
           width: 20,
+          start: 0,
+          end: 50, // Show half categories
           borderColor: 'transparent',
           fillerColor: isDark ? 'rgba(99, 102, 241, 0.2)' : 'rgba(99, 102, 241, 0.1)',
           handleStyle: { color: colors.primary },
@@ -159,7 +187,7 @@ const RegionalCategoryPreference: React.FC<ChartBaseProps> = React.memo(({ isDar
       ],
       visualMap: {
         min: 0,
-        max: 1200,
+        max: maxVal,
         calculable: true,
         orient: 'horizontal',
         left: 'center',
@@ -182,11 +210,11 @@ const RegionalCategoryPreference: React.FC<ChartBaseProps> = React.memo(({ isDar
         {
           name: 'Category Preference',
           type: 'heatmap',
-          data: data,
-          progressive: 1000, // Renders in chunks of 1000 for 5000+ categories
-          animation: false,  // Disable animation for better big-data performance
+          data: heatmapData,
+          progressive: 1000,
+          animation: false,
           label: {
-            show: data.length < 500, // Only show numeric labels if dataset is small
+            show: heatmapData.length < 500,
             formatter: (params: unknown) => {
               const p = params as HeatmapDataParams;
               return p.data[2].toString();
@@ -206,10 +234,13 @@ const RegionalCategoryPreference: React.FC<ChartBaseProps> = React.memo(({ isDar
         }
       ]
     };
-  }, [isDark, colors, commonTooltip, commonGrid]);
+  }, [isDark, colors, commonTooltip, commonGrid, data]);
+
+  if (isLoading) {
+    return <Skeleton variant="rectangular" height={600} width="100%" sx={{ borderRadius: 1 }} />;
+  }
 
   return <EChart option={option} height={600} width="100%" />;
 });
 
 export default RegionalCategoryPreference;
-

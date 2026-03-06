@@ -13,6 +13,7 @@ interface PieFormatterParams {
   value: number;
   percent: number;
   color: string;
+  data: CategoryDistributionItem;
 }
 
 const AbandonedItemsChart: React.FC<AbandonedItemsChartProps> = React.memo(({ isDark, colors, commonTooltip, data }) => {
@@ -21,8 +22,8 @@ const AbandonedItemsChart: React.FC<AbandonedItemsChartProps> = React.memo(({ is
 
   const option: EChartsOption = React.useMemo(() => ({
     title: {
-      text: 'Stock Distribution By Category',
-      subtext: 'Categories with available stock',
+      text: 'Top 20 Abandoned Items by Available Inventory',
+      subtext: 'Items with available stock and details',
       left: 'left',
       top: 'top',
       textStyle: { color: isDark ? '#f3f4f6' : '#111827', fontSize: 18, fontWeight: 700 },
@@ -33,12 +34,14 @@ const AbandonedItemsChart: React.FC<AbandonedItemsChartProps> = React.memo(({ is
       ...commonTooltip,
       formatter: (p: unknown) => {
         const params = p as PieFormatterParams;
-        return `<div class="font-semibold mb-1">${params.name}</div>
-                 <div class="flex items-center gap-2">
-                   <span class="w-2 h-2 rounded-full" style="background-color:${params.color}"></span>
-                   <span class="text-sm">WH Stock:</span>
-                   <span class="text-sm">${params.value.toLocaleString()}</span>
-                   <span class="text-xs text-gray-500">(${params.percent}%)</span>
+        return `<div class="font-semibold mb-1 text-base">${params.name}</div>
+                 <div class="flex flex-col gap-1">
+                   <div class="flex items-center gap-2">
+                     <span class="w-2 h-2 rounded-full" style="background-color:${params.color}"></span>
+                     <span class="text-sm">Available Stock:</span>
+                     <span class="text-sm font-bold text-blue-500">${params.value.toLocaleString()}</span>
+                   </div>
+                   <div class="text-xs text-gray-500 ml-4">Last 60 Days Sales: ${params.data.total_sold_quantity.toLocaleString()}</div>
                  </div>`;
       }
     },
@@ -46,7 +49,7 @@ const AbandonedItemsChart: React.FC<AbandonedItemsChartProps> = React.memo(({ is
       type: 'scroll',
       show: true,
       orient: 'vertical',
-      right: -5,
+      right: -25,
       top: 60,
       bottom: 20,
       itemGap: 10,
@@ -62,6 +65,7 @@ const AbandonedItemsChart: React.FC<AbandonedItemsChartProps> = React.memo(({ is
       right: 10,
       feature: {
         saveAsImage: { show: true, title: 'Save' },
+        restore: { title: 'Restore' }
       },
       iconStyle: { borderColor: isDark ? '#9ca3af' : '#6b7280' }
     },
@@ -90,8 +94,9 @@ const AbandonedItemsChart: React.FC<AbandonedItemsChartProps> = React.memo(({ is
         },
         labelLine: { show: false },
         data: filteredData.map((item, index) => ({
+          ...item,
           value: item.total_available,
-          name: item.category_name,
+          name: item.item_number,
           itemStyle: { color: colors.palette[index % colors.palette.length] }
         }))
       }

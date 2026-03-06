@@ -5,9 +5,17 @@ import { ChartColors, ChartGrid, ChartTooltip } from '../../types/charts';
 import ContainerTreemap from './ContainerTreemap';
 import RegionalCategoryPreference from './RegionalCategoryPreference';
 
-const ContainerLoadAnalysis: React.FC = () => {
+import { useInTransitVolumeChart } from '../../api/warehouseContainerReportChart';
+
+interface ContainerLoadAnalysisProps {
+  filters?: { [key: string]: string[] };
+}
+
+const ContainerLoadAnalysis: React.FC<ContainerLoadAnalysisProps> = ({ filters }) => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
+
+  const { data: inTransitVolumeData, isLoading: isInTransitLoading } = useInTransitVolumeChart(filters);
 
   const colors: ChartColors = React.useMemo(() => ({
     primary: '#6366f1',
@@ -46,6 +54,8 @@ const ContainerLoadAnalysis: React.FC = () => {
             colors={colors}
             commonTooltip={commonTooltip}
             commonGrid={commonGrid}
+            data={inTransitVolumeData?.data}
+            isLoading={isInTransitLoading}
           />
         </div>
 
@@ -55,6 +65,8 @@ const ContainerLoadAnalysis: React.FC = () => {
             isDark={isDark}
             colors={colors}
             commonTooltip={commonTooltip}
+            data={inTransitVolumeData?.data}
+            isLoading={isInTransitLoading}
           />
         </div>
       </div>
@@ -66,6 +78,8 @@ const ContainerLoadAnalysis: React.FC = () => {
           colors={colors}
           commonTooltip={commonTooltip}
           commonGrid={commonGrid}
+          data={inTransitVolumeData?.data}
+          isLoading={isInTransitLoading}
         />
       </div>
     </div>
