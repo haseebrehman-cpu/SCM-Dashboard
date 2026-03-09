@@ -85,7 +85,7 @@ const WHContainerReportView = () => {
           )}
         </Box>
       </Paper>
-      <WHContainerKPI />
+      <WHContainerKPI filters={appliedFilters} />
       <ContainerLoadAnalysis filters={appliedFilters} />
       <WHContainerGrid filters={appliedFilters} />
     </Box>

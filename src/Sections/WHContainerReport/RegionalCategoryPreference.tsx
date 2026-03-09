@@ -240,7 +240,7 @@ const RegionalCategoryPreference: React.FC<RegionalCategoryPreferenceProps> = Re
     return <Skeleton variant="rectangular" height={600} width="100%" sx={{ borderRadius: 1 }} />;
   }
 
-  return <EChart option={option} height={600} width="100%" />;
+  return <EChart option={option} height={650} width="100%" />;
 });
 
 export default RegionalCategoryPreference;

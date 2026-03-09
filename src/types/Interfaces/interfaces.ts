@@ -109,6 +109,19 @@ export interface StockKpisResponse {
   data: StockKpisData;
 }
 
+export interface ContainerKpisData {
+  total_containers: number;
+  intransit_containers: number;
+  delivered_containers: number;
+  total_intransit_quantity: number;
+}
+
+export interface ContainerKpisResponse {
+  success: boolean;
+  chart: "kpis";
+  data: ContainerKpisData;
+}
+
 export interface InTransitVolumeData {
   container_name: string;
   category_name: string;

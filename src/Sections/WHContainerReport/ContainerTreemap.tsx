@@ -84,7 +84,7 @@ const ContainerTreemap: React.FC<ContainerTreemapProps> = React.memo(({ isDark, 
         leafDepth: 1,
         visualDimension: 0,
         visualMin: 0,
-        visualMax: data.length > 0 ? Math.max(...data.map(d => d.total_intransit_quantity)) : 2000,
+        visualMax: data.length > 0 ? Math.max(...data.map(d => d.total_intransit_quantity)) : 0,
         breadcrumb: {
           show: true,
           bottom: 0,

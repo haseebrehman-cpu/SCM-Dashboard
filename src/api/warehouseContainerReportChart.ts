@@ -1,7 +1,7 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { API_BASE_URL } from "./purchaseOrder";
 import {
-  InTransitVolumeResponse,
+  InTransitVolumeResponse, ContainerKpisResponse,
 } from "../types/Interfaces/interfaces";
 
 export const WAREHOUSE_CONTAINER_REPORT_CHARTS_QUERY_KEY = ["warehouseContainerReportCharts"] as const;
@@ -42,10 +42,19 @@ async function fetchContainerChartData<T>(chart: string, filters?: ChartFilters,
   return data;
 }
 
+
 export const useInTransitVolumeChart = (filters?: ChartFilters): UseQueryResult<InTransitVolumeResponse, Error> =>
   useQuery<InTransitVolumeResponse, Error>({
     queryKey: [...WAREHOUSE_CONTAINER_REPORT_CHARTS_QUERY_KEY, "intransit_volume", filters],
     queryFn: ({ signal }) => fetchContainerChartData<InTransitVolumeResponse>("intransit_volume", filters, signal),
+    staleTime: 300_000,
+    refetchOnWindowFocus: false,
+  });
+
+export const useWarehouseKpi = (filters?: ChartFilters): UseQueryResult<ContainerKpisResponse, Error> =>
+  useQuery<ContainerKpisResponse, Error>({
+    queryKey: [...WAREHOUSE_CONTAINER_REPORT_CHARTS_QUERY_KEY, "kpis", filters],
+    queryFn: ({ signal }) => fetchContainerChartData<ContainerKpisResponse>("kpis", filters, signal),
     staleTime: 300_000,
     refetchOnWindowFocus: false,
   });
