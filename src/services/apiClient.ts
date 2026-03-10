@@ -53,7 +53,7 @@ export class ApiClient {
     // Otherwise fallback to the timeout signal
     let combinedSignal: AbortSignal = controller.signal;
     
-    // Proper feature detection without 'any' or 'unknown' casts
+    // Proper feature detection without 'any' or 'unknown' castss
     type AbortSignalWithAny = typeof AbortSignal & { 
       any: (signals: AbortSignal[]) => AbortSignal 
     };
