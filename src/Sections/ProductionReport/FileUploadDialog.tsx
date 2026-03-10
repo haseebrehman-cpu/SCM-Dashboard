@@ -105,7 +105,8 @@ export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({ isOpen, onCl
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Please upload your production report file (CSV)
-          </p>
+          </p >
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">While uploading make sure the date format is DD-MM-YYYY</p>
         </div>
 
         <div className="mb-6">

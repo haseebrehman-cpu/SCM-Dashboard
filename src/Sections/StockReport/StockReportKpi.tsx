@@ -13,7 +13,7 @@ const StockReportKpi = ({ filters }: StockReportKpiProps) => {
   const kpiCards = [
     {
       metric: "SKU Count", //How many products do we carry?
-      value: kpiData?.sku_count.toLocaleString() || "0",
+      value: kpiData?.sku_count || "0",
       change: "",
       icon: "📦",
       bgColor: "bg-blue-50",
@@ -22,7 +22,7 @@ const StockReportKpi = ({ filters }: StockReportKpiProps) => {
     },
     {
       metric: "Total Quantity Sold", //How many items are sold?
-      value: kpiData?.total_sold.toLocaleString() || "0",
+      value: kpiData?.total_sold || "0",
       change: "",
       icon: "📊",
       bgColor: "bg-green-50",
@@ -31,7 +31,7 @@ const StockReportKpi = ({ filters }: StockReportKpiProps) => {
     },
     {
       metric: "Total Warehouse Stock",  //How many total items do we have?
-      value: kpiData?.total_stock.toLocaleString() || "0",
+      value: kpiData?.total_stock || "0",
       change: "",
       icon: "📉",
       bgColor: "bg-red-50",
@@ -40,7 +40,7 @@ const StockReportKpi = ({ filters }: StockReportKpiProps) => {
     },
     {
       metric: "Abundant Items Count", //How many abundant items we have?
-      value: kpiData?.abandoned_items_count.toLocaleString() || "0",
+      value: kpiData?.abandoned_items_count || "0",
       change: "",
       icon: "📉",
       bgColor: "bg-red-50",
@@ -62,7 +62,7 @@ const StockReportKpi = ({ filters }: StockReportKpiProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       {kpiCards.map((item, index) => (
-        <KpiCards key={index} kpiInfo={item} loading={isLoading}/>
+        <KpiCards key={index} kpiInfo={item} loading={isLoading} />
       ))}
     </div>
   )

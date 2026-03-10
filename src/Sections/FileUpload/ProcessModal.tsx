@@ -161,6 +161,7 @@ const ProcessModal: React.FC<ProcessModalProps> = ({ showSuccessModal, closeSucc
 
           <h2 className="text-xl font-bold text-gray-900 dark:text-white/90 mb-2">
             {getTitle()}
+
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">
             {getDescription()}

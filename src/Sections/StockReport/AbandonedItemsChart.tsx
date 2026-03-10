@@ -39,9 +39,9 @@ const AbandonedItemsChart: React.FC<AbandonedItemsChartProps> = React.memo(({ is
                    <div class="flex items-center gap-2">
                      <span class="w-2 h-2 rounded-full" style="background-color:${params.color}"></span>
                      <span class="text-sm">Available Stock:</span>
-                     <span class="text-sm font-bold text-blue-500">${params.value.toLocaleString()}</span>
+                     <span class="text-sm font-bold text-blue-500">${params.value}</span>
                    </div>
-                   <div class="text-xs text-gray-500 ml-4">Last 60 Days Sales: ${params.data.total_sold_quantity.toLocaleString()}</div>
+                   <div class="text-xs text-gray-500 ml-4">Last 60 Days Sales: ${params.data.total_sold_quantity}</div>
                  </div>`;
       }
     },
