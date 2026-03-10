@@ -52,11 +52,15 @@ export class ApiClient {
     // Merge signals if AbortSignal.any is available (Chrome 116+, Node 20+)
     // Otherwise fallback to the timeout signal
     let combinedSignal: AbortSignal = controller.signal;
-    const abortSignalStatic = AbortSignal as unknown as { any?: (signals: AbortSignal[]) => AbortSignal };
     
-    if (typeof abortSignalStatic.any === "function") {
+    // Proper feature detection without 'any' or 'unknown' casts
+    type AbortSignalWithAny = typeof AbortSignal & { 
+      any: (signals: AbortSignal[]) => AbortSignal 
+    };
+
+    if ("any" in AbortSignal && typeof (AbortSignal as Partial<AbortSignalWithAny>).any === "function") {
       const signals = [controller.signal, externalSignal].filter((s): s is AbortSignal => !!s);
-      combinedSignal = abortSignalStatic.any(signals);
+      combinedSignal = (AbortSignal as AbortSignalWithAny).any(signals);
     }
 
     const headers = new Headers(customHeaders);
