@@ -130,7 +130,7 @@ const TopSellingItemsChart: React.FC<TopSellingItemsChartProps> = React.memo(({ 
           color: isDark ? '#e5e7eb' : '#374151',
           formatter: (p: unknown) => {
             const params = p as FormatterParams;
-            return typeof params.value === 'number' ? params.value : String(params.value);
+            return String(params.value);
           },
           fontWeight: 600,
           fontSize: 11,
@@ -158,7 +158,7 @@ const TopSellingItemsChart: React.FC<TopSellingItemsChartProps> = React.memo(({ 
           color: isDark ? '#e5e7eb' : '#374151',
           formatter: (p: unknown) => {
             const params = p as FormatterParams;
-            return typeof params.value === 'number' ? params.value : String(params.value);
+            return String(params.value);
           },
           fontWeight: 600,
           fontSize: 11,

@@ -4,7 +4,7 @@ import { Skeleton } from '@mui/material';
 
 export interface KpiInfo {
   metric: string;
-  value: string;
+  value: string | number;
   change: string;
   icon: string;
   bgColor: string;
