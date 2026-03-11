@@ -51,7 +51,7 @@ export const DateEditor: React.FC<DateEditorProps> = ({ value, onChange, isDark,
     <div style={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
       <ThemeProvider theme={theme}>
         <DatePicker
-          format="dd-MM-yyyy"
+          format="dd/MM/yyyy"
           value={value ? parseISO(value) : null}
           maxDate={max ? parseISO(max) : undefined}
           minDate={minDate ? parseISO(minDate) : undefined}

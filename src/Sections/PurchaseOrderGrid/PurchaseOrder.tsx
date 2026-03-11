@@ -54,6 +54,9 @@ export default function PurchaseOrder() {
     updateEditedData({ arrivalDate });
   }, [isEditing, updateEditedData]);
 
+  console.log(editedData?.arrivalDate);
+
+
   const handleSave = useCallback(async () => {
     if (editingRowId !== null) {
       setUpdatingRowId(editingRowId);
@@ -247,8 +250,8 @@ export default function PurchaseOrder() {
             slotProps={{
               toolbar: {
                 printOptions: { disableToolbarButton: true },
-                excelOptions: { disableToolbarButton: true },
-                csvOptions: { disableToolbarButton: false },
+                excelOptions: { disableToolbarButton: true, fileName: "PurchaseOrder" },
+                csvOptions: { disableToolbarButton: false, fileName: "Purchase_Order_SCM Dashboard" },
               }
             }}
           />

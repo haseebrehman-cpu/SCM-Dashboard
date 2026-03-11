@@ -1,8 +1,6 @@
 import { GridColDef } from "@mui/x-data-grid";
 import Badge from "../../components/ui/badge/Badge";
-import { format, parseISO } from 'date-fns';
-
-import { EditableFields, DeliveryStatus } from '../../types/purchaseOrder';
+import { EditableFields } from '../../types/purchaseOrder';
 import { PurchaseOrderData } from "../../types/Interfaces/interfaces";
 import { DateEditor } from '../../Sections/PurchaseOrderGrid/DateEditor';
 import { ActionButtons } from '../../Sections/PurchaseOrderGrid/ActionButtons';
@@ -25,10 +23,40 @@ const renderDateHeader = (title: string, isDark: boolean) => (
       {title}
     </span>
     <span style={{ fontSize: '0.5rem', opacity: 0.7, fontWeight: 400, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>
-      (DD-MM-YYYY)
+      (DD/MM/YYYY)
     </span>
   </div>
 );
+
+const formatDate = (value: string | null | undefined) => {
+  if (!value) return '';
+
+  // Standardize delimiters and split, removing any zero-width characters
+  const cleanValue = value.toString().trim().replace(/[\u200B\u200C\u200D\uFEFF]/g, '');
+  const parts = cleanValue.includes('-') ? cleanValue.split('-') : cleanValue.split('/');
+
+  if (parts.length === 3) {
+    let day, month, year;
+
+    if (parts[0].length === 4) {
+      // YYYY-MM-DD
+      [year, month, day] = parts;
+    } else {
+      // DD-MM-YYYY
+      [day, month, year] = parts;
+    }
+
+    const d = parseInt(day, 10).toString().padStart(2, '0');
+    const m = parseInt(month, 10).toString().padStart(2, '0');
+    const y = year.toString();
+
+    // Prepend a single space to force Excel to treat this as a string (General) 
+    // instead of auto-converting it to a Date object.
+    return ` ${d}/${m}/${y}`;
+  }
+
+  return cleanValue;
+};
 
 
 export const generatePurchaseOrderColumns = ({
@@ -78,9 +106,9 @@ export const generatePurchaseOrderColumns = ({
       width: 150,
       sortable: true,
       filterable: false,
+      valueFormatter: (value: string | null | undefined) => formatDate(value),
       renderHeader: () => renderDateHeader("Departure Date", isDark),
-      valueFormatter: (value) => value ? format(parseISO(value), 'dd-MM-yyyy') : '',
-      renderCell: (params) => <span>{params.value ? format(parseISO(params.value), 'dd-MM-yyyy') : null}</span>,
+      renderCell: (params) => <span>{params.value?.toString().trim()}</span>,
     },
     {
       field: "arrival_date",
@@ -88,8 +116,8 @@ export const generatePurchaseOrderColumns = ({
       width: 180,
       sortable: true,
       filterable: false,
+      valueFormatter: (value: string | null | undefined) => formatDate(value),
       renderHeader: () => renderDateHeader("Arrival Date", isDark),
-      valueFormatter: (value) => value ? format(parseISO(value), 'dd-MM-yyyy') : '',
       renderCell: (params) => {
         if (isEditing(params.row.id) && editedData) {
           return (
@@ -103,7 +131,7 @@ export const generatePurchaseOrderColumns = ({
             />
           );
         }
-        return <span>{params.value ? format(parseISO(params.value), 'dd-MM-yyyy') : null}</span>;
+        return <span>{params.value?.toString().trim()}</span>;
       },
     },
     {
@@ -112,28 +140,25 @@ export const generatePurchaseOrderColumns = ({
       width: 150,
       sortable: true,
       filterable: true,
-      renderCell: (params) => {
-        const arrivalDate = params.row.arrival_date;
-
-        let deliveryStatus: DeliveryStatus = "InTransit";
+      valueGetter: (_value, row) => {
+        const arrivalDate = row.arrival_date;
 
         if (arrivalDate) {
           const arrival = new Date(arrivalDate + 'T00:00:00');
-
           const today = new Date();
           today.setHours(0, 0, 0, 0);
 
           if (arrival <= today) {
-            deliveryStatus = "Delivered";
+            return "Delivered";
           }
         }
-
-        return (
-          <Badge size="sm" color={deliveryStatus === "Delivered" ? "success" : "warning"}>
-            {params.row.arrival_date ? (deliveryStatus === "Delivered" ? "Delivered" : "In Transit") : "In Transit"}
-          </Badge>
-        );
+        return "In Transit";
       },
+      renderCell: (params) => (
+        <Badge size="sm" color={params.value === "Delivered" ? "success" : "warning"}>
+          {params.value}
+        </Badge>
+      ),
     },
     {
       field: "modified_by",
@@ -148,6 +173,7 @@ export const generatePurchaseOrderColumns = ({
       width: 120,
       sortable: false,
       filterable: false,
+      disableExport: true,
       renderCell: (params) => {
         const isCurrentRowUpdating = params.row.id === updatingRowId && isUpdatingDate;
 
