@@ -1,5 +1,7 @@
 import { GridColDef } from "@mui/x-data-grid";
 import Badge from "../../components/ui/badge/Badge";
+import { format, parseISO } from 'date-fns';
+
 import { EditableFields, DeliveryStatus } from '../../types/purchaseOrder';
 import { PurchaseOrderData } from "../../types/Interfaces/interfaces";
 import { DateEditor } from '../../Sections/PurchaseOrderGrid/DateEditor';
@@ -23,7 +25,7 @@ const renderDateHeader = (title: string, isDark: boolean) => (
       {title}
     </span>
     <span style={{ fontSize: '0.5rem', opacity: 0.7, fontWeight: 400, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>
-      (YYYY-MM-DD)
+      (DD-MM-YYYY)
     </span>
   </div>
 );
@@ -77,6 +79,8 @@ export const generatePurchaseOrderColumns = ({
       sortable: true,
       filterable: false,
       renderHeader: () => renderDateHeader("Departure Date", isDark),
+      valueFormatter: (value) => value ? format(parseISO(value), 'dd-MM-yyyy') : '',
+      renderCell: (params) => <span>{params.value ? format(parseISO(params.value), 'dd-MM-yyyy') : null}</span>,
     },
     {
       field: "arrival_date",
@@ -85,6 +89,7 @@ export const generatePurchaseOrderColumns = ({
       sortable: true,
       filterable: false,
       renderHeader: () => renderDateHeader("Arrival Date", isDark),
+      valueFormatter: (value) => value ? format(parseISO(value), 'dd-MM-yyyy') : '',
       renderCell: (params) => {
         if (isEditing(params.row.id) && editedData) {
           return (
@@ -98,7 +103,7 @@ export const generatePurchaseOrderColumns = ({
             />
           );
         }
-        return <span>{params.value ?? null}</span>;
+        return <span>{params.value ? format(parseISO(params.value), 'dd-MM-yyyy') : null}</span>;
       },
     },
     {

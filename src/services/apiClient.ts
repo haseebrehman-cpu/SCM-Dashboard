@@ -1,5 +1,3 @@
-// src/services/apiClient.ts
-
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -43,7 +41,7 @@ export class ApiClient {
     const fullUrl = `${this.baseURL}${cleanUrl}`;
 
     const { timeout, signal: externalSignal, headers: customHeaders, ...fetchOptions } = options || {};
-    
+
     // Create timeout controller
     const controller = new AbortController();
     const timeoutMs = timeout ?? this.timeout;
@@ -52,10 +50,10 @@ export class ApiClient {
     // Merge signals if AbortSignal.any is available (Chrome 116+, Node 20+)
     // Otherwise fallback to the timeout signal
     let combinedSignal: AbortSignal = controller.signal;
-    
+
     // Proper feature detection without 'any' or 'unknown' castss
-    type AbortSignalWithAny = typeof AbortSignal & { 
-      any: (signals: AbortSignal[]) => AbortSignal 
+    type AbortSignalWithAny = typeof AbortSignal & {
+      any: (signals: AbortSignal[]) => AbortSignal
     };
 
     if ("any" in AbortSignal && typeof (AbortSignal as Partial<AbortSignalWithAny>).any === "function") {
@@ -166,7 +164,7 @@ export class ApiClient {
   ): Promise<TResponse> {
     // Explicitly destructure to avoid manual header spreading which can fail with Headers objects
     const { headers, ...otherOptions } = options ?? {};
-    
+
     return this.request<TResponse, FormData>("POST", url, formData, {
       ...otherOptions,
       headers,
@@ -175,16 +173,16 @@ export class ApiClient {
 
   // Special method for long-running requests (explicitly 2 minutes)
   async getLongRunning<TResponse>(url: string, options?: RequestOptions): Promise<TResponse> {
-    return this.get<TResponse>(url, { 
-      ...options, 
+    return this.get<TResponse>(url, {
+      ...options,
       timeout: 2 * 60 * 1000 // 2 minutes
     });
   }
 }
 
-// Create default instance with 2 minute timeout
+//this is the default instance with 2 minute timeout
 export const apiClient = new ApiClient({
-  timeout: 2 * 60 * 1000, // 2 minutes default
+  timeout: 2 * 60 * 1000,
 });
 
 export default apiClient;
