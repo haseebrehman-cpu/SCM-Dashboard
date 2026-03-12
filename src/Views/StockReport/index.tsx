@@ -8,13 +8,13 @@ import { useFilterOptions } from '../../api/containerDetailReport';
 import toast from 'react-hot-toast';
 
 const StockReportView = () => {
-  const { data: filterOptionsData, isLoading } = useFilterOptions("stock");
-
   const [filters, setFilters] = useState<{ [key: string]: string[] }>({
     warehouse: [],
     category: [],
     item_number: []
   });
+
+  const { data: filterOptionsData, isLoading } = useFilterOptions("stock", filters);
 
   const [appliedFilters, setAppliedFilters] = useState<{ [key: string]: string[] }>({});
 
@@ -73,7 +73,7 @@ const StockReportView = () => {
             />
           ))}
           <Button onClick={handleApplyFilter} sx={{ borderRadius: '12px', ml: 1 }}>Apply Filter</Button>
-          {Object.values(appliedFilters).some(arr => arr.length > 0) && (
+          {Object.values(filters).some(arr => arr.length > 0) && (
             <Button onClick={handleCancel} color="error" sx={{ borderRadius: '12px', ml: 1 }}>
               Cancel
             </Button>

@@ -7,14 +7,14 @@ import StockFilters from "../../Sections/StockReport/StockFilters"
 import { useFilterOptions } from "../../api/containerDetailReport"
 
 const WHContainerReportView = () => {
-  const { data: filterOptionsData, isLoading } = useFilterOptions("container");
-
   const [filters, setFilters] = useState<{ [key: string]: string[] }>({
     warehouse: [],
     category: [],
     container_name: [],
     sku: []
   });
+
+  const { data: filterOptionsData, isLoading } = useFilterOptions("container", filters);
 
   const [appliedFilters, setAppliedFilters] = useState<{ [key: string]: string[] }>({});
 
@@ -78,7 +78,7 @@ const WHContainerReportView = () => {
             />
           ))}
           <Button onClick={handleApplyFilter}>Apply Filter</Button>
-          {Object.values(appliedFilters).some(arr => arr.length > 0) && (
+          {Object.values(filters).some(arr => arr.length > 0) && (
             <Button onClick={handleCancel} color="error" sx={{ borderRadius: '12px', ml: 1 }}>
               Cancel
             </Button>

@@ -201,11 +201,17 @@ export const useDeleteRunningReport = (): UseMutationResult<CancelRunningReportR
   })
 }
 
-export async function fetchFilterOptions(table: string, signal?: AbortSignal): Promise<FilterOptionsResponse> {
+export async function fetchFilterOptions(table: string, filters: ContainerReportFilters = {}, signal?: AbortSignal): Promise<FilterOptionsResponse> {
   const queryParams = new URLSearchParams({
     table,
     filter_options: "true"
   });
+
+  appendFilter(queryParams, "warehouse", filters.warehouse);
+  appendFilter(queryParams, "category", filters.category);
+  appendFilter(queryParams, "item_number", filters.item_number);
+  appendFilter(queryParams, "container_name", filters.container_name);
+  appendFilter(queryParams, "sku", filters.sku);
 
   const response = await fetch(`${API_BASE_URL}/container-report/?${queryParams.toString()}`, {
     method: "GET",
@@ -223,10 +229,10 @@ export async function fetchFilterOptions(table: string, signal?: AbortSignal): P
   return data;
 }
 
-export const useFilterOptions = (table: string): UseQueryResult<FilterOptionsResponse, Error> =>
+export const useFilterOptions = (table: string, filters: ContainerReportFilters = {}): UseQueryResult<FilterOptionsResponse, Error> =>
   useQuery<FilterOptionsResponse, Error>({
-    queryKey: ["filterOptions", table],
-    queryFn: ({ signal }) => fetchFilterOptions(table, signal),
+    queryKey: ["filterOptions", table, filters],
+    queryFn: ({ signal }) => fetchFilterOptions(table, filters, signal),
     staleTime: 300_000,
     refetchOnWindowFocus: false
   });
