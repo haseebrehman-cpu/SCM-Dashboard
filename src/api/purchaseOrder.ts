@@ -12,23 +12,21 @@ async function fetchPurchaseOrderReport(signal?: AbortSignal): Promise<PurchaseO
     },
   });
 
+  const responseText = await response.text();
   let data: PurchaseOrderReportResponse;
 
   try {
-    data = (await response.json()) as PurchaseOrderReportResponse;
+    data = JSON.parse(responseText) as PurchaseOrderReportResponse;
   } catch (error) {
     if ((error as Error).name === 'AbortError') throw error;
     if (!response.ok) {
-      throw new Error(
-        "Failed to fetch purchase order report. Server returned an invalid response.",
-      );
+      throw new Error(responseText || response.statusText);
     }
     throw error;
   }
+
   if (!response.ok || data.success === false) {
-    const message =
-      `Failed to fetch purchase order report. Server responded with status ${response.status}.`;
-    throw new Error(message);
+    throw new Error(data.message || responseText || response.statusText);
   }
   return data;
 }
@@ -58,18 +56,20 @@ export const patchPurchaseOrderReportData = async ({ rowId, arrivalDate, signal 
   });
 
   const responseText = await response.text();
-
   let data: PurchaseOrderReportResponse;
 
   try {
     data = JSON.parse(responseText) as PurchaseOrderReportResponse;
   } catch (error) {
     if ((error as Error).name === 'AbortError') throw error;
-    throw new Error(`Failed to update purchase order. Server returned an invalid response (status ${response.status}).`);
+    if (!response.ok) {
+      throw new Error(responseText || response.statusText);
+    }
+    throw error;
   }
 
   if (!response.ok || data.success === false) {
-    throw new Error(`Failed to update purchase order. Server responded with status ${response.status}.`);
+    throw new Error(data.message || responseText || response.statusText);
   }
 
   return data;
@@ -100,25 +100,22 @@ async function uploadPurchaseOrderFile({ file, signal }: { file: File; signal?: 
     signal,
   });
 
+  const responseText = await response.text();
   let data: PurchaseOrderBulkUpdateResponse;
 
   try {
-    data = (await response.json()) as PurchaseOrderBulkUpdateResponse;
+    data = JSON.parse(responseText) as PurchaseOrderBulkUpdateResponse;
   } catch (error) {
     if ((error as Error).name === 'AbortError') throw error;
     if (!response.ok) {
-      throw new Error(
-        "Failed to upload file. Server returned an invalid response.",
-      );
+      throw new Error(responseText || response.statusText);
     }
     throw error;
   }
 
   if (!response.ok || data.success === false) {
-    const message =
-      (data as PurchaseOrderBulkUpdateErrorResponse).message ||
-      `Failed to upload file. Server responded with status ${response.status}.`;
-    throw new Error(message);
+    const message = (data as PurchaseOrderBulkUpdateErrorResponse).message;
+    throw new Error(message || responseText || response.statusText);
   }
 
   return data;
@@ -146,33 +143,28 @@ export async function postUploadPurchaseOrderReport(session_id: number, signal?:
     signal,
   });
 
+  const responseText = await response.text();
   let data: PurchaseOrderBulkUpdateResponse;
+
   try {
-    data = (await response.json()) as PurchaseOrderBulkUpdateResponse;
+    data = JSON.parse(responseText) as PurchaseOrderBulkUpdateResponse;
   } catch (error) {
-    if ((error as Error).name === 'AbortError') {
-      throw error;
-    }
+    if ((error as Error).name === 'AbortError') throw error;
     if (!response.ok) {
-      throw new Error(
-        "Failed to upload file. Server returned an invalid response.",
-      );
+      throw new Error(responseText || response.statusText);
     }
     throw error;
   }
 
   if (!response.ok || data.success === false) {
-    const message =
-      (data as PurchaseOrderBulkUpdateErrorResponse).message ||
-      `Failed to upload file. Server responded with status ${response.status}.`;
-    throw new Error(message);
+    const message = (data as PurchaseOrderBulkUpdateErrorResponse).message;
+    throw new Error(message || responseText || response.statusText);
   }
 
   return data;
 }
 
 // Load Report Mutation
-
 export const useUploadPurchaseOrderReport = (): UseMutationResult<PurchaseOrderBulkUpdateSuccessResponse, Error, { session_id: number; signal?: AbortSignal }> => {
   const queryClient = useQueryClient();
 

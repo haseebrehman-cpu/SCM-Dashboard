@@ -1,5 +1,4 @@
 import { GridColDef } from "@mui/x-data-grid";
-import Badge from "../../components/ui/badge/Badge";
 import { Warehouse, MonthData } from '../../types/productionReport';
 import { MONTHS_DATA } from '../../constants/productionReport';
 
@@ -32,21 +31,23 @@ export const getMonthsToShow = (): MonthData[] => {
  * Generates base columns (non-dynamic columns)
  */
 const generateBaseColumns = (): GridColDef[] => [
-  {
-    field: "itemRangeStatus",
-    headerName: "Item Range Status",
-    width: 150,
-    sortable: true,
-    filterable: true,
-    renderCell: (params) => {
-      const status = params.value as "Active" | "Inactive" | "Pending";
-      const colorMap = { Active: "success", Inactive: "error", Pending: "warning" } as const;
-      return <Badge size="sm" color={colorMap[status]}>Retail</Badge>;
-    },
-  },
+  // {
+  //   field: "itemRangeStatus",
+  //   headerName: "Item Range Status",
+  //   width: 150,
+  //   sortable: true,
+  //   filterable: true,
+  //   renderCell: (params) => {
+  //     const status = params.value as "Active" | "Inactive" | "Pending";
+  //     const colorMap = { Active: "success", Inactive: "error", Pending: "warning" } as const;
+  //     return <Badge size="sm" color={colorMap[status]}>Retail</Badge>;
+  //   },
+  // },
   { field: "categoryName", headerName: "Category Name", width: 140, sortable: true, filterable: true },
   { field: "itemNumber", headerName: "Item Number", width: 130, sortable: true, filterable: true },
+  { field: "itemNumberOld", headerName: "Item Number Old", width: 130, sortable: true, filterable: true },
   { field: "itemTitle", headerName: "Item Title", flex: 1, minWidth: 200, sortable: true, filterable: true },
+  { field: "uk_factory", headerName: "UK Factory", flex: 1, minWidth: 200, sortable: true, filterable: true },
 ];
 
 /**
@@ -55,7 +56,6 @@ const generateBaseColumns = (): GridColDef[] => [
 const generateMonthColumns = (
   month: MonthData,
   warehouse: Warehouse,
-  containerCount: number,
   isDark: boolean,
   currentYear: number
 ): GridColDef[] => {
@@ -63,27 +63,27 @@ const generateMonthColumns = (
   const currentMonthNumber = new Date().getMonth() + 1;
 
   // 1. Remaining Opening - Only for January
-  if (month.monthCode === "January") {
-    columns.push({
-      field: `${month.monthCode}Opening`,
-      headerName: `${warehouse} ${month.prefix} ${currentYear} Remaining Opening`,
-      width: 250,
-      sortable: true,
-      filterable: false,
-      headerAlign: "center",
-      align: "center",
-      renderCell: (params) => (
-        <span style={{ fontWeight: 600, color: isDark ? '#fbbf24' : '#d97706' }}>
-          {params.value ?? '0'}
-        </span>
-      ),
-    });
-  }
+  // if (month.monthCode === "January") {
+  //   columns.push({
+  //     field: `${month.monthCode}Opening`,
+  //     headerName: `${warehouse} ${month.prefix} ${currentYear} Remaining Opening`,
+  //     width: 250,
+  //     sortable: true,
+  //     filterable: false,
+  //     headerAlign: "center",
+  //     align: "center",
+  //     renderCell: (params) => (
+  //       <span style={{ fontWeight: 600, color: isDark ? '#fbbf24' : '#d97706' }}>
+  //         {params.value ?? '0'}
+  //       </span>
+  //     ),
+  //   });
+  // }
 
   // 2. Forecasted Order
   columns.push({
     field: `${month.monthCode}`,
-    headerName: `${warehouse} ${month.prefix} ${currentYear} Forecasted Order`,
+    headerName: `Forecasted Order-${currentYear}-${month.prefix}`,
     width: 250,
     sortable: true,
     filterable: false,
@@ -97,33 +97,33 @@ const generateMonthColumns = (
   });
 
   // 3. Containers
-  for (let i = 1; i <= containerCount; i++) {
-    columns.push({
-      field: `${month.monthCode}Container${i}`,
-      headerName: `${month.prefix}-CTN${i}`,
-      width: 100,
-      sortable: true,
-      filterable: false,
-      headerAlign: "center",
-      align: "center",
-      renderHeader: () => (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1.2 }}>
-          <span style={{
-            fontWeight: 600,
-            fontSize: '0.75rem',
-            color: isDark ? 'rgba(255,255,255,0.9)' : 'rgb(31 41 55)'
-          }}>
-            {month.prefix}-CTN{i}
-          </span>
-        </div>
-      ),
-    });
-  }
+  // for (let i = 1; i <= containerCount; i++) {
+  //   columns.push({
+  //     field: `${month.monthCode}Container${i}`,
+  //     headerName: `${month.prefix}-CTN${i}`,
+  //     width: 100,
+  //     sortable: true,
+  //     filterable: false,
+  //     headerAlign: "center",
+  //     align: "center",
+  //     renderHeader: () => (
+  //       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1.2 }}>
+  //         <span style={{
+  //           fontWeight: 600,
+  //           fontSize: '0.75rem',
+  //           color: isDark ? 'rgba(255,255,255,0.9)' : 'rgb(31 41 55)'
+  //         }}>
+  //           {month.prefix}-CTN{i}
+  //         </span>
+  //       </div>
+  //     ),
+  //   });
+  // }
 
   // 4. Factory Total Dispatch
   columns.push({
     field: `${month.monthCode}TotalDispatch`,
-    headerName: `${warehouse} ${month.prefix} ${currentYear} Factory Total Dispatch`,
+    headerName: `Factory Total ${currentYear}-${month.prefix} Dispatch`,
     width: 270,
     sortable: true,
     filterable: false,
@@ -146,7 +146,7 @@ const generateMonthColumns = (
   // 5. Remaining after this month
   columns.push({
     field: `${month.monthCode}warehouseRemYear`,
-    headerName: `${warehouse} ${month.prefix} ${currentYear} Remaining`,
+    headerName: `${warehouse}   Remaining ${currentYear}-${month.prefix}`,
     width: 220,
     sortable: true,
     filterable: false,
@@ -180,17 +180,17 @@ const getQuarterEndColumn = (
   const quarterEndConfig: Record<string, { condition: boolean; date: string; field: string }> = {
     April: {
       condition: currentMonthNumber < 4,
-      date: `30-04-${currentYear}`,
+      date: `${currentYear}-04`,
       field: 'closedRemApril'
     },
     August: {
       condition: currentMonthNumber < 8,
-      date: `31-08-${currentYear}`,
+      date: `${currentYear}-08`,
       field: 'closedRemAugust'
     },
     December: {
       condition: currentMonthNumber <= 12,
-      date: `31-12-${currentYear}`,
+      date: `${currentYear}-12`,
       field: 'closedRemDecember'
     },
   };
@@ -225,7 +225,6 @@ const getQuarterEndColumn = (
  */
 export const generateProductionColumns = ({
   selectedWarehouse,
-  containerCount,
   isDark,
   currentYear,
 }: ColumnGeneratorParams): GridColDef[] => {
@@ -238,7 +237,6 @@ export const generateProductionColumns = ({
     const monthColumns = generateMonthColumns(
       month,
       selectedWarehouse,
-      containerCount,
       isDark,
       currentYear
     );

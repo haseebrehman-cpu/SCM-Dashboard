@@ -26,6 +26,8 @@ const generateWarehouseData = (): ProductionReportRow[] => {
     itemRangeStatus: statuses[Math.floor(Math.random() * statuses.length)],
     categoryName: categories[Math.floor(Math.random() * categories.length)],
     itemNumber: `ITM-${String(1000 + index).padStart(5, "0")}`,
+    itemNumberOld: `ITM-${String(1000 + index).padStart(7, "0")}`,
+    uk_factory: `Factory UK`,
     itemTitle: `Product Item ${index + 1} - ${categories[Math.floor(Math.random() * categories.length)]} Item`,
     warehouseRemYear: Math.floor(Math.random() * 500) + 50,
     jan: Math.floor(Math.random() * 200),
