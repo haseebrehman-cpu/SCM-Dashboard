@@ -23,7 +23,7 @@ const renderDateHeader = (title: string, isDark: boolean) => (
       {title}
     </span>
     <span style={{ fontSize: '0.5rem', opacity: 0.7, fontWeight: 400, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>
-      (DD/MM/YYYY)
+      (YYYY/MM/DD)
     </span>
   </div>
 );
@@ -132,6 +132,29 @@ export const generatePurchaseOrderColumns = ({
           );
         }
         return <span>{params.value?.toString().trim()}</span>;
+      },
+    },
+    {
+      field: "delivery_days",
+      headerName: "Delivery Days",
+      width: 130,
+      sortable: true,
+      filterable: true,
+      valueGetter: (_value, row) => {
+        if (row.departure_date && row.arrival_date) {
+          const departureBoundary = row.departure_date.includes(' ') ? row.departure_date.split(' ')[0] : row.departure_date;
+          const arrivalBoundary = row.arrival_date.includes(' ') ? row.arrival_date.split(' ')[0] : row.arrival_date;
+
+          const departure = new Date(departureBoundary + 'T00:00:00');
+          const arrival = new Date(arrivalBoundary + 'T00:00:00');
+
+          if (!isNaN(departure.getTime()) && !isNaN(arrival.getTime())) {
+            const diffTime = arrival.getTime() - departure.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays >= 0 ? `${diffDays} Days` : "Invalid Dates";
+          }
+        }
+        return "N/A";
       },
     },
     {

@@ -157,7 +157,7 @@ export default function PurchaseOrder() {
         console.error("Failed to load report:", error);
       }
     }
-  } 
+  }
 
   const handleCancelLoadReport = async () => {
     if (sessionId !== null) {
@@ -170,22 +170,6 @@ export default function PurchaseOrder() {
       }
     }
   }
-
-
-  function reverseArray(arr: number[]) {
-    const arrayToBeReversed = [];
-    for (let i = arr.length - 1; i >= 0; i--) {
-      arrayToBeReversed.push(arr[i])
-    }
-    return arrayToBeReversed
-  }
-  const arr = [1, 2, 3, 4, 5];
-  console.log(reverseArray(arr));
-
-  const reversed = arr.reduce<number[]>((acc, curr) => [curr, ...acc], []);
-  console.log(reversed);
-
-
 
   return (
     <>
@@ -226,7 +210,9 @@ export default function PurchaseOrder() {
             onClose={() => setIsDialogOpen(false)}
             onUpload={async (file) => {
               try {
-                await uploadMutation.mutateAsync({ file });
+                await uploadMutation.mutateAsync({ file })
+                console.log(file);
+
               } catch (error) {
                 const message = error instanceof Error ? error.message : "Failed to upload file";
                 toast.error(message);
