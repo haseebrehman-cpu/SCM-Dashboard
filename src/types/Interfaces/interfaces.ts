@@ -366,3 +366,21 @@ export interface FileUploadStepProps {
   showNextButton?: boolean;
   isLastStep?: boolean;
 }
+export interface ProductionRemainingRow {
+  id?: number;
+  warehouse_region: string;
+  category_name: string;
+  item_number: string;
+  item_number_old: string | null;
+  item_title: string;
+  [key: string]: string | number | null | undefined;
+}
+
+export interface ProductionRemainingApiResponse {
+  success: boolean;
+  warehouse_region: string;
+  table: string;
+  total_records: number;
+  message: string;
+  data: ProductionRemainingRow[];
+}

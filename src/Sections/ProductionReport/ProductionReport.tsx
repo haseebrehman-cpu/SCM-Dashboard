@@ -1,14 +1,14 @@
 import { DataGridPremium } from "@mui/x-data-grid-premium";
 import { useTheme } from "../../hooks/useTheme";
 import { useState, useMemo } from "react";
-import { SelectChangeEvent } from "@mui/material";
+import { SelectChangeEvent, LinearProgress, Box } from "@mui/material";
 import { FileUploadDialog } from "./FileUploadDialog";
 import { Warehouse } from '../../types/productionReport';
-import { warehouseData, warehouseContainers } from '../../mockData/productionReportMock';
 import { PAGINATION_MODEL } from '../../constants/productionReport';
 import { generateProductionColumns } from '../../utils/columnGenerators/productionReport';
 import { getDataGridStyles } from '../../styles/productionReportStyles';
 import { ProductionReportHeader } from './ProductionReportHeader';
+import { useProductionRemainingReport } from "../../api/productionRemainingReport";
 
 export default function ProductionReport() {
   const { theme } = useTheme();
@@ -22,17 +22,33 @@ export default function ProductionReport() {
     setSelectedWarehouse(event.target.value as Warehouse);
   };
 
-  const tableData = warehouseData[selectedWarehouse];
-  const containerNumbers = warehouseContainers[selectedWarehouse];
+  const { data: reportResponse, isLoading, isError, error } = useProductionRemainingReport(selectedWarehouse);
+
+  console.log("--- Production Report Debug ---");
+  console.log("Selected Warehouse:", selectedWarehouse);
+  console.log("Is Loading:", isLoading);
+  console.log("Is Error:", isError);
+  if (isError) console.error("API Error:", error);
+  if (reportResponse) console.log("Report Response:", reportResponse);
+  console.log("-------------------------------");
+
+
+  const tableDataWithId = useMemo(() =>
+    (reportResponse?.data || []).map((row, index) => ({
+      ...row,
+      id: `${row.item_number}-${index}`
+    })),
+    [reportResponse]
+  );
 
   const columns = useMemo(() =>
     generateProductionColumns({
       selectedWarehouse,
-      containerCount: containerNumbers.length,
       isDark,
       currentYear,
+      data: reportResponse?.data,
     }),
-    [selectedWarehouse, containerNumbers.length, isDark, currentYear]
+    [selectedWarehouse, isDark, currentYear, reportResponse?.data]
   );
 
   return (
@@ -56,22 +72,29 @@ export default function ProductionReport() {
           />
         )}
 
+        {isLoading && (
+          <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
+            <LinearProgress />
+          </Box>
+        )}
+
         <DataGridPremium
           label="Production Remaining Report"
-          rows={tableData}
+          rows={tableDataWithId}
           columns={columns}
           initialState={{ pagination: { paginationModel: PAGINATION_MODEL } }}
           pageSizeOptions={[100, 500, 1000, 1500]}
           pagination
           disableRowSelectionOnClick
           sx={getDataGridStyles(isDark, "auto")}
+          loading={isLoading}
           rowBufferPx={100}
           showToolbar
           slotProps={{
             toolbar: {
               printOptions: { disableToolbarButton: true },
-              excelOptions: { disableToolbarButton: true }, 
-              csvOptions: { disableToolbarButton: false }, 
+              excelOptions: { disableToolbarButton: true },
+              csvOptions: { disableToolbarButton: false },
             }
           }}
         />
