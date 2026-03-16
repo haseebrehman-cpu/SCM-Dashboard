@@ -44,7 +44,7 @@ const AppSidebar: React.FC = () => {
         isHovered={isHovered}
         isMobileOpen={isMobileOpen}
       />
-      <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+      <div className="flex flex-col flex-1 overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
           <div className="flex flex-col gap-4">
             <div>
@@ -76,14 +76,14 @@ const AppSidebar: React.FC = () => {
                   />
                 ))}
               </ul>
-              {isExpanded || isHovered ?
-                <h1 className="flex items-end px-6 py-4 h-full" style={{ color: isDark ? "white" : "#000", marginTop: '150px' }} >A solution by &nbsp;<span className="font-bold">AI Team</span></h1>
-                : ""
-              }
+
             </div>
           </div>
         </nav>
       </div>
+      {isExpanded || isHovered ? (
+        <h1 className="flex items-center px-6 py-4 shrink-0" style={{ color: isDark ? "white" : "#000" }}>A solution by &nbsp;<span className="font-bold">AI Team</span></h1>
+      ) : null}
     </aside>
   );
 };
