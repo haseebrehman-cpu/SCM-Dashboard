@@ -22,16 +22,7 @@ export default function ProductionReport() {
     setSelectedWarehouse(event.target.value as Warehouse);
   };
 
-  const { data: reportResponse, isLoading, isError, error } = useProductionRemainingReport(selectedWarehouse);
-
-  console.log("--- Production Report Debug ---");
-  console.log("Selected Warehouse:", selectedWarehouse);
-  console.log("Is Loading:", isLoading);
-  console.log("Is Error:", isError);
-  if (isError) console.error("API Error:", error);
-  if (reportResponse) console.log("Report Response:", reportResponse);
-  console.log("-------------------------------");
-
+  const { data: reportResponse, isLoading } = useProductionRemainingReport(selectedWarehouse);
 
   const tableDataWithId = useMemo(() =>
     (reportResponse?.data || []).map((row, index) => ({

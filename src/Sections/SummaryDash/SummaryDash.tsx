@@ -10,6 +10,8 @@ import { getDataGridStyles } from '../../styles/productionReportStyles';
 import { ProductionReportHeader } from "../ProductionReport/ProductionReportHeader";
 import ArchieveDialog from "./ArchieveDialog";
 import { DataGridPremium } from "@mui/x-data-grid-premium";
+import { Warehouse } from "../../types/common";
+import { SelectChangeEvent } from "@mui/material";
 
 /**
  * Summary Dashboard Grid Component
@@ -20,7 +22,11 @@ const SummaryDashGrid: React.FC = React.memo(() => {
   const isDark = theme === "dark";
   const [rows, setRows] = useState<SummaryDashboardRow[]>(() => generateSummaryDashboardData(DEFAULT_ROW_COUNT));
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>("UK");
 
+  const handleWarehouseChange = (event: SelectChangeEvent<Warehouse>) => {
+    setSelectedWarehouse(event.target.value as Warehouse);
+  };
 
   const {
     editingRowId,
@@ -51,9 +57,11 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     <>
       <div className="flex justify-end my-4">
         <ProductionReportHeader
+          selectedWarehouse={selectedWarehouse}
           isDark={isDark}
+          onWarehouseChange={handleWarehouseChange}
           isArchieved={true}
-          isSelectWarehouse={false}
+          isSelectWarehouse={true}
           isShowUpload={false}
           onArchieveCLick={() => setIsDialogOpen(true)}
         />
