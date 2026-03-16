@@ -4,14 +4,15 @@ import {
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
   GridToolbarDensitySelector,
-  GridToolbarExport,
   GridToolbarQuickFilter,
+  useGridApiContext,
 } from "@mui/x-data-grid-premium";
 import { useTheme } from "../../hooks/useTheme";
-import { useState, useMemo, useCallback } from "react";
-import { SelectChangeEvent, LinearProgress, Box, Button, Typography } from "@mui/material";
+import { useState, useMemo, useCallback, useRef } from "react";
+import { SelectChangeEvent, LinearProgress, Box, Button, Typography, Menu, MenuItem } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
-import { FileUploadDialog } from "./FileUploadDialog";  
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { FileUploadDialog } from "./FileUploadDialog";
 import { Warehouse } from '../../types/productionReport';
 import { PAGINATION_MODEL } from '../../constants/productionReport';
 import { generateProductionColumns } from '../../utils/columnGenerators/productionReport';
@@ -20,7 +21,6 @@ import { ProductionReportHeader } from './ProductionReportHeader';
 import { useProductionRemainingReport } from "../../api/productionRemainingReport";
 import { ProductionRemainingRow } from "../../types/Interfaces/interfaces";
 
-// ─── Forecast CSV helpers ────────────────────────────────────────────────────
 
 const FORECAST_FIXED_KEYS: (keyof ProductionRemainingRow)[] = [
   "category_name",
@@ -31,17 +31,14 @@ const FORECAST_FIXED_KEYS: (keyof ProductionRemainingRow)[] = [
 function downloadForecastCSV(data: ProductionRemainingRow[]) {
   if (!data || data.length === 0) return;
 
-  // Collect all FORECASTED Order keys from the first row
   const forecastedKeys = Object.keys(data[0]).filter((k) =>
     k.startsWith("FORECASTED Order")
   );
 
   const allKeys = [...FORECAST_FIXED_KEYS, ...forecastedKeys];
 
-  // Build header row
   const header = allKeys.map((k) => `"${String(k).replace(/_/g, " ")}"`).join(",");
 
-  // Build data rows
   const rows = data.map((row) =>
     allKeys
       .map((k) => {
@@ -77,9 +74,62 @@ interface ForecastToolbarProps {
   onDownloadForecast: () => void;
 }
 
+function ExportDropdown({ onDownloadForecast }: ForecastToolbarProps) {
+  const apiRef = useGridApiContext();
+  const anchorRef = useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState(false);
+
+  const handleExportCSV = () => {
+    apiRef.current.exportDataAsCsv();
+    setOpen(false);
+  };
+
+  const handleExportForecast = () => {
+    onDownloadForecast();
+    setOpen(false);
+  };
+
+  return (
+    <>
+      <Button
+        ref={anchorRef}
+        size="small"
+        startIcon={<DownloadIcon />}
+        endIcon={<ArrowDropDownIcon />}
+        onClick={() => setOpen((prev) => !prev)}
+        sx={{
+          fontSize: "0.8125rem",
+          textTransform: "none",
+          color: "#465FFF",
+          fontWeight: 500,
+        }}
+      >
+        Export Report
+      </Button>
+      <Menu
+        anchorEl={anchorRef.current}
+        open={open}
+        onClose={() => setOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
+        slotProps={{ paper: { elevation: 3, sx: { minWidth: 200, borderRadius: 2, mt: 0.5 } } }}
+      >
+        <MenuItem onClick={handleExportCSV} sx={{ fontSize: "0.875rem", gap: 1 }}>
+          <DownloadIcon fontSize="small" />
+          Export as CSV
+        </MenuItem>
+        <MenuItem onClick={handleExportForecast} sx={{ fontSize: "0.875rem", gap: 1 }}>
+          <DownloadIcon fontSize="small" />
+          Export Forecast Data
+        </MenuItem>
+      </Menu>
+    </>
+  );
+}
+
 function ForecastToolbar({ onDownloadForecast }: ForecastToolbarProps) {
   return (
-    <GridToolbarContainer sx={{ display: "flex", alignItems: "center", width: "100%" }}>
+    <GridToolbarContainer sx={{ display: "flex", alignItems: "center", width: "100%" , color: 'white'}}>
       <Typography
         variant="subtitle1"
         sx={{ fontWeight: 600, fontSize: "0.9rem", mr: 1, whiteSpace: "nowrap" }}
@@ -92,24 +142,7 @@ function ForecastToolbar({ onDownloadForecast }: ForecastToolbarProps) {
       <GridToolbarColumnsButton />
       <GridToolbarFilterButton />
       <GridToolbarDensitySelector />
-      <GridToolbarExport
-        csvOptions={{ disableToolbarButton: false }}
-        printOptions={{ disableToolbarButton: true }}
-        excelOptions={{ disableToolbarButton: true }}
-      />
-      <Button
-        size="small"
-        startIcon={<DownloadIcon />}
-        onClick={onDownloadForecast}
-        sx={{
-          fontSize: "0.8125rem",
-          textTransform: "none",
-          color: "inherit",
-          fontWeight: 500,
-        }}
-      >
-        Download Forecast
-      </Button>
+      <ExportDropdown onDownloadForecast={onDownloadForecast} />
       <GridToolbarQuickFilter />
     </GridToolbarContainer>
   );
