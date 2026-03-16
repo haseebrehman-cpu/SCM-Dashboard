@@ -4,11 +4,8 @@ import { Outlet } from "react-router";
 import AppHeader from "./AppHeader";
 import Backdrop from "./Backdrop";
 import AppSidebar from "./AppSidebar";
-import { useTheme } from "../hooks/useTheme";
 
 const LayoutContent: React.FC = () => {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
 
   return (
@@ -25,7 +22,6 @@ const LayoutContent: React.FC = () => {
         <div className="p-4 md:p-6 w-full max-w-full overflow-hidden">
           <Outlet />
         </div>
-        <h1 className="flex items-end px-6 py-4" style={{ color: isDark ? "white" : "#000" }} >A solution by &nbsp;<span className="font-bold">AI Team</span></h1>
       </div>
     </div>
   );

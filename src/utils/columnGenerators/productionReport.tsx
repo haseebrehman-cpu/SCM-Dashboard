@@ -11,7 +11,6 @@ interface ColumnGeneratorParams {
 
 // The column which are common for all the warehouses
 const generateBaseColumns = (): GridColDef[] => [
-  // { field: "warehouse_region", headerName: "Warehouse Region", width: 140, sortable: true, filterable: true },
   { field: "category_name", headerName: "Category Name", width: 140, sortable: true, filterable: true },
   { field: "item_number", headerName: "Item Number", width: 130, sortable: true, filterable: true },
   // { field: "item_number_old", headerName: "Item Number Old", width: 130, sortable: true, filterable: true },
@@ -31,7 +30,7 @@ export const generateProductionColumns = ({
 
   const firstRow = data[0];
   const dynamicKeys = Object.keys(firstRow).filter(
-    (key) => !["category_name", "item_number", "item_number_old", "item_title", "id"].includes(key)
+    (key) => !["category_name", "item_number", "item_number_old", "item_title", "id", "warehouse_region"].includes(key)
   );
 
   const dynamicColumns: GridColDef[] = dynamicKeys.map((key) => {

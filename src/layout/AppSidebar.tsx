@@ -6,12 +6,14 @@ import { navItems } from "../config/navigation";
 import { useSubmenu } from "../hooks/useSubmenu";
 import { SidebarHeader } from "../components/sidebar/SidebarHeader";
 import { SidebarMenuItem } from "../components/sidebar/SidebarMenuItem";
+import { useTheme } from "../hooks/useTheme";
 
 
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
-
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const isActive = useCallback(
     (path: string) => location.pathname === path,
     [location.pathname]
@@ -53,7 +55,7 @@ const AppSidebar: React.FC = () => {
                   }`}
               >
                 {isExpanded || isHovered || isMobileOpen ? (
-                  "Menu"
+                  " "
                 ) : (
                   <HorizontaLDots className="size-6" />
                 )}
@@ -74,6 +76,10 @@ const AppSidebar: React.FC = () => {
                   />
                 ))}
               </ul>
+              {isExpanded || isHovered ?
+                <h1 className="flex items-end px-6 py-4 h-full" style={{ color: isDark ? "white" : "#000", marginTop: '150px' }} >A solution by &nbsp;<span className="font-bold">AI Team</span></h1>
+                : ""
+              }
             </div>
           </div>
         </nav>

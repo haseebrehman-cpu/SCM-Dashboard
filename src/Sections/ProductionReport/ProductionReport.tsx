@@ -1,7 +1,16 @@
-import { DataGridPremium } from "@mui/x-data-grid-premium";
+import {
+  DataGridPremium,
+  GridToolbarContainer,
+  GridToolbarColumnsButton,
+  GridToolbarFilterButton,
+  GridToolbarDensitySelector,
+  GridToolbarExport,
+  GridToolbarQuickFilter,
+} from "@mui/x-data-grid-premium";
 import { useTheme } from "../../hooks/useTheme";
-import { useState, useMemo } from "react";
-import { SelectChangeEvent, LinearProgress, Box } from "@mui/material";
+import { useState, useMemo, useCallback } from "react";
+import { SelectChangeEvent, LinearProgress, Box, Button, Typography } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 import { FileUploadDialog } from "./FileUploadDialog";
 import { Warehouse } from '../../types/productionReport';
 import { PAGINATION_MODEL } from '../../constants/productionReport';
@@ -9,6 +18,102 @@ import { generateProductionColumns } from '../../utils/columnGenerators/producti
 import { getDataGridStyles } from '../../styles/productionReportStyles';
 import { ProductionReportHeader } from './ProductionReportHeader';
 import { useProductionRemainingReport } from "../../api/productionRemainingReport";
+import { ProductionRemainingRow } from "../../types/Interfaces/interfaces";
+
+// ─── Forecast CSV helpers ────────────────────────────────────────────────────
+
+const FORECAST_FIXED_KEYS: (keyof ProductionRemainingRow)[] = [
+  "category_name",
+  "item_number",
+  "warehouse_region",
+];
+
+function downloadForecastCSV(data: ProductionRemainingRow[]) {
+  if (!data || data.length === 0) return;
+
+  // Collect all FORECASTED Order keys from the first row
+  const forecastedKeys = Object.keys(data[0]).filter((k) =>
+    k.startsWith("FORECASTED Order")
+  );
+
+  const allKeys = [...FORECAST_FIXED_KEYS, ...forecastedKeys];
+
+  // Build header row
+  const header = allKeys.map((k) => `"${String(k).replace(/_/g, " ")}"`).join(",");
+
+  // Build data rows
+  const rows = data.map((row) =>
+    allKeys
+      .map((k) => {
+        const val = (row as Record<string, unknown>)[k];
+        const str = val == null ? "" : String(val);
+        // Quote if the value contains a comma, quote, or newline
+        return str.includes(",") || str.includes('"') || str.includes("\n")
+          ? `"${str.replace(/"/g, '""')}"`
+          : str;
+      })
+      .join(",")
+  );
+
+  const csvContent = [header, ...rows].join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `forecast_${new Date().toISOString().slice(0, 10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+declare module "@mui/x-data-grid" {
+  interface ToolbarPropsOverrides {
+    onDownloadForecast: () => void;
+  }
+}
+
+interface ForecastToolbarProps {
+  onDownloadForecast: () => void;
+}
+
+function ForecastToolbar({ onDownloadForecast }: ForecastToolbarProps) {
+  return (
+    <GridToolbarContainer sx={{ display: "flex", alignItems: "center", width: "100%" }}>
+      <Typography
+        variant="subtitle1"
+        sx={{ fontWeight: 600, fontSize: "0.9rem", mr: 1, whiteSpace: "nowrap" }}
+      >
+        Production Remaining Report
+      </Typography>
+
+      <Box sx={{ flex: 1 }} />
+
+      <GridToolbarColumnsButton />
+      <GridToolbarFilterButton />
+      <GridToolbarDensitySelector />
+      <GridToolbarExport
+        csvOptions={{ disableToolbarButton: false }}
+        printOptions={{ disableToolbarButton: true }}
+        excelOptions={{ disableToolbarButton: true }}
+      />
+      <Button
+        size="small"
+        startIcon={<DownloadIcon />}
+        onClick={onDownloadForecast}
+        sx={{
+          fontSize: "0.8125rem",
+          textTransform: "none",
+          color: "inherit",
+          fontWeight: 500,
+        }}
+      >
+        Download Forecast
+      </Button>
+      <GridToolbarQuickFilter />
+    </GridToolbarContainer>
+  );
+}
 
 export default function ProductionReport() {
   const { theme } = useTheme();
@@ -41,6 +146,10 @@ export default function ProductionReport() {
     }),
     [selectedWarehouse, isDark, currentYear, reportResponse?.data]
   );
+
+  const handleDownloadForecast = useCallback(() => {
+    downloadForecastCSV(reportResponse?.data ?? []);
+  }, [reportResponse?.data]);
 
   return (
     <>
@@ -81,12 +190,11 @@ export default function ProductionReport() {
           loading={isLoading}
           rowBufferPx={100}
           showToolbar
+          slots={{ toolbar: ForecastToolbar }}
           slotProps={{
             toolbar: {
-              printOptions: { disableToolbarButton: true },
-              excelOptions: { disableToolbarButton: true },
-              csvOptions: { disableToolbarButton: false },
-            }
+              onDownloadForecast: handleDownloadForecast,
+            },
           }}
         />
       </div>
