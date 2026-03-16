@@ -14,7 +14,7 @@ const generateBaseColumns = (): GridColDef[] => [
   // { field: "warehouse_region", headerName: "Warehouse Region", width: 140, sortable: true, filterable: true },
   { field: "category_name", headerName: "Category Name", width: 140, sortable: true, filterable: true },
   { field: "item_number", headerName: "Item Number", width: 130, sortable: true, filterable: true },
-  { field: "item_number_old", headerName: "Item Number Old", width: 130, sortable: true, filterable: true },
+  // { field: "item_number_old", headerName: "Item Number Old", width: 130, sortable: true, filterable: true },
   { field: "item_title", headerName: "Item Title", minWidth: 250, sortable: true, filterable: true },
 ];
 
