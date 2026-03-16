@@ -30,7 +30,9 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({
     >
       <Link to="/">
         {isVisible ? (
-          isDark ? <img src={getAssetPath("logos/Dark.svg")} alt="Logo" width={150} height={100} /> : <img src={getAssetPath("logos/Light.svg")} alt="Logo" width={100} height={100} />
+          isDark ? <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <img src={getAssetPath("logos/Dark1.svg")} alt="Logo" width={120} height={100} /> <p style={{ color: isDark ? "white" : "black", fontSize: '15px' }}>Supply Chain Management</p> </div> : <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <img src={getAssetPath("logos/Light1.svg")} alt="Logo" width={120} height={100} /> <p style={{ color: isDark ? "white" : "black", fontSize: '15px'  }}>Supply Chain Management</p> </div>
         ) : (
           isDark ? <img src={getAssetPath("logos/Dark1.svg")} alt="Logo" width={150} height={100} /> : <img src={getAssetPath("logos/Light1.svg")} alt="Logo" width={100} height={100} />
         )}
