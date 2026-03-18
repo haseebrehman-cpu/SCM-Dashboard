@@ -1,10 +1,12 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useUploadTodayCheck } from '../../hooks/useUploadTodayCheck';
 import { ArrowRightIcon, CheckCircleIcon } from '../../icons';
 import Button from '../../components/ui/button/Button';
 import { UploadZone } from '../../components/FileUpload/UploadZone';
 import { FILE_ACCEPT_TYPES, STEP_CONFIG } from '../../constants/fileUpload';
 import { FileUploadStepProps } from '../../types/Interfaces/interfaces';
+import { FormControlLabel, FormGroup, Switch } from '@mui/material';
 
 export const FileUploadStep: React.FC<FileUploadStepProps> = ({
   stepNumber,
@@ -22,7 +24,8 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
   isLastStep = false,
 }) => {
   const stepConfig = STEP_CONFIG[stepNumber];
-  // const { uploadedToday, errorMessage: todayUploadErrorMessage } = useUploadTodayCheck();
+  const [multiUploadAllowed, setMultiUploadAllowed] = useState(true);
+  const { uploadedToday, errorMessage: todayUploadErrorMessage } = useUploadTodayCheck();
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -36,7 +39,7 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
 
   const isPreviousStepComplete = stepNumber === 1 || (previousFile?.status === 'completed');
   const isDisabled = isUploading || !!file || !isPreviousStepComplete
-  //  || uploadedToday;
+    || (uploadedToday && !multiUploadAllowed);
 
   const dropzone = useDropzone({
     onDrop,
@@ -52,6 +55,18 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
 
   return (
     <div className="space-y-2">
+
+      <FormGroup>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={multiUploadAllowed}
+              onChange={(e) => setMultiUploadAllowed(e.target.checked)}
+            />
+          }
+          label={<span className="text-sm font-medium text-gray-900 dark:text-white ">Multi-Upload Allowed</span>}
+        />
+      </FormGroup>
       <div className="mb-2">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
           {stepConfig.title}
@@ -60,8 +75,7 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
           {stepConfig.description}
         </p>
       </div>
-      {/* 
-      {uploadedToday && (
+      {uploadedToday && !multiUploadAllowed && (
         <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
           <p className="text-sm font-semibold text-yellow-900 dark:text-yellow-100">
             ⚠️ File for Today already exists
@@ -70,7 +84,7 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
             {todayUploadErrorMessage}
           </p>
         </div>
-      )} */}
+      )}
 
       <UploadZone
         dropzone={dropzone}
