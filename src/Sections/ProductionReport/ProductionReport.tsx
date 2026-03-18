@@ -18,9 +18,8 @@ import { PAGINATION_MODEL } from '../../constants/productionReport';
 import { generateProductionColumns } from '../../utils/columnGenerators/productionReport';
 import { getDataGridStyles } from '../../styles/productionReportStyles';
 import { ProductionReportHeader } from './ProductionReportHeader';
-import { useProductionRemainingReport } from "../../api/productionRemainingReport";
+import { useProductionRemainingReport, useUploadForecastedFile } from "../../api/productionRemainingReport";
 import { ProductionRemainingRow } from "../../types/Interfaces/interfaces";
-
 
 const FORECAST_FIXED_KEYS: (keyof ProductionRemainingRow)[] = [
   "category_name",
@@ -161,6 +160,16 @@ export default function ProductionReport() {
   };
 
   const { data: reportResponse, isLoading } = useProductionRemainingReport(selectedWarehouse);
+  const uploadMutation = useUploadForecastedFile();
+
+  const handleFileUpload = async (file: File) => {
+    const controller = new AbortController();
+    await uploadMutation.mutateAsync({
+      file,
+      warehouse_region: selectedWarehouse,
+      signal: controller.signal
+    });
+  };
 
   const tableDataWithId = useMemo(() =>
     (reportResponse?.data || []).map((row, index) => ({
@@ -202,6 +211,7 @@ export default function ProductionReport() {
           <FileUploadDialog
             isOpen={isDialogOpen}
             onClose={() => setIsDialogOpen(false)}
+            onUpload={handleFileUpload}
           />
         )}
 

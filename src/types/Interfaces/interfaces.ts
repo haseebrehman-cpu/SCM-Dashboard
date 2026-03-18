@@ -388,11 +388,27 @@ export interface ProductionRemainingApiResponse {
 export interface ProductionRemainingLoadResponse {
   success: boolean;
   message: string;
-  details: {
+  details?: {
     session_id: number;
     csv_suffix: string;
     row_counts: Record<string, number>;
     saved_files: string[];
     saved_tables: string[];
+  };
+}
+
+
+export interface ProductionRemainingUploadFileResponse {
+  success: boolean;
+  message: string;
+  summary?: {
+    input_rows: number;
+    bad_rows: number;
+    forecast_columns: string[];
+    invalid_cells: number;
+    duplicates_removed: number;
+    upsert_cells: number;
+    failed_cells: number;
+    updated_by: string | null;
   };
 }

@@ -21,7 +21,7 @@ export default function App() {
   return (
     <>
       <FileUploadProvider>
-        <Router basename="/scm">
+        <Router basename="/scm/">
           <ScrollToTop />
           <Routes>
               {/* Dashboard Layout */}
