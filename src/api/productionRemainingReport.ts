@@ -60,9 +60,8 @@ async function uploadForecastedFile({ file, warehouse_region, signal }: { file: 
   });
 
   const response = await fetch(`${API_BASE_URL}/production-remaining/?${queryParams.toString()}`, {
-    method: "POST",
-    body: formData
-    ,
+    method: "PATCH",
+    body: formData,
     signal
   });
 
