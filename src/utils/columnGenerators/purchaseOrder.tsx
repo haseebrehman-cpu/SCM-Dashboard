@@ -32,7 +32,7 @@ const formatDate = (value: string | null | undefined) => {
   if (!value) return '';
 
   // Standardize delimiters and split, removing any zero-width characters
-  const cleanValue = value.toString().trim().replace(/[\u200B\u200C\u200D\uFEFF]/g, '');
+  const cleanValue = value.toString().trim().replace(/\u200B|\u200C|\u200D|\uFEFF/g, '');
   const parts = cleanValue.includes('-') ? cleanValue.split('-') : cleanValue.split('/');
 
   if (parts.length === 3) {

@@ -9,14 +9,15 @@ import { ProductionReportHeader } from "../ProductionReport/ProductionReportHead
 import { DataGridPremium } from "@mui/x-data-grid-premium";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { usePurchaseOrderReport, usePatchPurchaseOrderReport, useUploadPurchaseOrderFiles, useUploadPurchaseOrderReport } from "../../api/purchaseOrder";
+import { usePurchaseOrderReport, usePatchPurchaseOrderReport, useUploadPurchaseOrderFiles, useUploadPurchaseOrderReport, usePostProductionLoadReport } from "../../api/purchaseOrder";
 import toast, { LoaderIcon } from "react-hot-toast";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Button } from "@mui/material";
 import CachedIcon from '@mui/icons-material/Cached';
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 import { useDeleteRunningReport } from "../../api/containerDetailReport";
-import LoadReportProgressDialog from "./LoadReportProgressDialog";
+import LoadReportProgressDialog, { LoadStatus } from "./LoadReportProgressDialog";
+import { WAREHOUSE_OPTIONS } from '../../constants/productionReport';
 
 export default function PurchaseOrder() {
   const { theme } = useTheme();
@@ -29,6 +30,12 @@ export default function PurchaseOrder() {
   const latestSessionId = useLatestSessionId();
   const sessionId = latestSessionId;
   const loadReportMutation = useUploadPurchaseOrderReport();
+  const postProductionLoadReportMutation = usePostProductionLoadReport();
+
+  const [loadStatus, setLoadStatus] = useState<LoadStatus>('idle');
+  const [loadProgress, setLoadProgress] = useState(0);
+  const [currentLoadStep, setCurrentLoadStep] = useState(0);
+  const [loadErrorMessage, setLoadErrorMessage] = useState<string | undefined>();
 
   const {
     editingRowId,
@@ -54,9 +61,6 @@ export default function PurchaseOrder() {
     updateEditedData({ arrivalDate });
   }, [isEditing, updateEditedData]);
 
-  console.log(editedData?.arrivalDate);
-
-
   const handleSave = useCallback(async () => {
     if (editingRowId !== null) {
       setUpdatingRowId(editingRowId);
@@ -69,7 +73,6 @@ export default function PurchaseOrder() {
             arrivalDate: editedData.arrivalDate === "" ? null : editedData.arrivalDate,
           });
         }
-
         saveEdit("test@mail.com");
         toast.success('Record Updated Successfully!');
       } catch (error) {
@@ -139,6 +142,7 @@ export default function PurchaseOrder() {
     }
     return count;
   };
+  
   const emptyItemCount = countEmptyItems(arrivalDates);
 
   const handleLoadReportClick = () => {
@@ -146,16 +150,51 @@ export default function PurchaseOrder() {
       toast.error("No upload session found. Please upload a file first.");
       return;
     }
+    // Reset process state
+    setLoadStatus('idle');
+    setLoadProgress(0);
+    setCurrentLoadStep(0);
+    setLoadErrorMessage(undefined);
     setIsLoadReportDialogOpen(true);
   }
 
   const handleConfirmLoadReport = async () => {
-    if (sessionId !== null) {
-      try {
+    if (sessionId === null) return;
+
+    setLoadStatus('loading');
+    setLoadErrorMessage(undefined);
+
+    let currentTaskName = "Initial Report Generation";
+
+    try {
+      let step = currentLoadStep;
+
+      // Step 0: Initial report generation
+      if (step === 0) {
         await loadReportMutation.mutateAsync({ session_id: sessionId });
-      } catch (error) {
-        console.error("Failed to load report:", error);
+        step = 1;
+        setCurrentLoadStep(1);
+        setLoadProgress(20);
       }
+
+      // Steps 1 to 4: Warehouse regions (total 5 steps)
+      for (let i = step - 1; i < WAREHOUSE_OPTIONS.length; i++) {
+        currentTaskName = `Report for ${WAREHOUSE_OPTIONS[i].label}`;
+        await postProductionLoadReportMutation.mutateAsync({
+          warehouse_region: WAREHOUSE_OPTIONS[i].value,
+          session_id: sessionId,
+        });
+        const nextStep = i + 2;
+        setCurrentLoadStep(nextStep);
+        setLoadProgress(20 + (i + 1) * 20);
+      }
+
+      setLoadStatus('success');
+    } catch (error) {
+      setLoadStatus('error');
+      const apiError = error instanceof Error ? error.message : "An unknown error occurred";
+      setLoadErrorMessage(`${currentTaskName} failed: ${apiError}. Click Retry to continue the process.`);
+      console.error("Failed to load report:", error);
     }
   }
 
@@ -227,12 +266,12 @@ export default function PurchaseOrder() {
             isOpen={isLoadReportDialogOpen}
             onClose={() => setIsLoadReportDialogOpen(false)}
             onConfirm={handleConfirmLoadReport}
+            onRetry={handleConfirmLoadReport}
             onCancel={handleCancelLoadReport}
             isDark={isDark}
-            isPending={loadReportMutation.isPending}
-            isSuccess={loadReportMutation.isSuccess}
-            isError={loadReportMutation.isError}
-            errorMessage={loadReportMutation.error?.message}
+            status={loadStatus}
+            progress={loadProgress}
+            errorMessage={loadErrorMessage}
           />
         )}
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Modal } from '../../components/ui/modal'
 import { Button } from '@mui/material'
 import { LinearProgress, Box, Typography } from '@mui/material'
@@ -6,17 +6,17 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 
-type LoadStatus = 'idle' | 'loading' | 'success' | 'error'
+export type LoadStatus = 'idle' | 'loading' | 'success' | 'error'
 
 interface LoadReportProgressDialogProps {
   isOpen: boolean
   onClose: () => void
   onConfirm: () => Promise<void>
+  onRetry: () => Promise<void>
   onCancel: () => void
   isDark: boolean
-  isPending: boolean
-  isSuccess: boolean
-  isError: boolean
+  status: LoadStatus
+  progress: number
   errorMessage?: string
 }
 
@@ -24,54 +24,14 @@ const LoadReportProgressDialog: React.FC<LoadReportProgressDialogProps> = ({
   isOpen,
   onClose,
   onConfirm,
+  onRetry,
   onCancel,
   isDark,
-  isPending,
-  isSuccess,
-  isError,
+  status,
+  progress: loadingPercentage,
   errorMessage,
 }) => {
-  const [loadingPercentage, setLoadingPercentage] = useState(0)
-  const [status, setStatus] = useState<LoadStatus>('idle')
-
-  // Determine status from props
-  useEffect(() => {
-    if (isPending) {
-      setStatus('loading')
-    } else if (isSuccess && status === 'loading') {
-      setLoadingPercentage(100)
-      setStatus('success')
-    } else if (isError && status === 'loading') {
-      setStatus('error')
-    }
-  }, [isPending, isSuccess, isError, status])
-
-  // Simulate progress while loading
-  useEffect(() => {
-    if (status === 'loading') {
-      const intervalId = setInterval(() => {
-        setLoadingPercentage((prev) => {
-          if (prev >= 95) return 95
-          const randomIncrement = Math.floor(Math.random() * 5) + 1
-          return Math.min(prev + randomIncrement, 95)
-        })
-      }, Math.floor(Math.random() * 3000) + 500)
-
-      return () => clearInterval(intervalId)
-    }
-  }, [status])
-
-  // Reset state when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      setLoadingPercentage(0)
-      setStatus('idle')
-    }
-  }, [isOpen])
-
   const handleConfirm = async () => {
-    setStatus('loading')
-    setLoadingPercentage(0)
     await onConfirm()
   }
 
@@ -166,7 +126,7 @@ const LoadReportProgressDialog: React.FC<LoadReportProgressDialogProps> = ({
           </p>
 
           {/* Progress Section */}
-          {(status === 'loading' || status === 'success') && (
+          {(status === 'loading' || status === 'success' || status === 'error') && (
             <Box sx={{ width: '100%', mb: 3 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography
@@ -268,6 +228,23 @@ const LoadReportProgressDialog: React.FC<LoadReportProgressDialogProps> = ({
               }}
             >
               Cancel
+            </Button>
+          )}
+
+          {status === 'error' && (
+            <Button
+              variant="contained"
+              size="medium"
+              onClick={onRetry}
+              sx={{
+                backgroundColor: '#465fff',
+                color: '#fff',
+                '&:hover': {
+                  backgroundColor: '#3641f5',
+                },
+              }}
+            >
+              Retry
             </Button>
           )}
 

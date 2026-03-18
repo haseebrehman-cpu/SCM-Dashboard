@@ -222,6 +222,7 @@ export default function ProductionReport() {
           sx={getDataGridStyles(isDark, "auto")}
           loading={isLoading}
           rowBufferPx={100}
+          // disableColumnFilter
           showToolbar
           slots={{ toolbar: ForecastToolbar }}
           slotProps={{

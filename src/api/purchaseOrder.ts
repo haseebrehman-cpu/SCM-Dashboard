@@ -1,5 +1,5 @@
 import { UseQueryResult, useQuery, useMutation, UseMutationResult, useQueryClient } from "@tanstack/react-query";
-import { PurchaseOrderReportResponse, PurchaseOrderBulkUpdateErrorResponse, PurchaseOrderBulkUpdateSuccessResponse } from "../types/Interfaces/interfaces";
+import { PurchaseOrderReportResponse, PurchaseOrderBulkUpdateErrorResponse, PurchaseOrderBulkUpdateSuccessResponse, ProductionRemainingLoadResponse } from "../types/Interfaces/interfaces";
 export const API_BASE_URL = import.meta.env.VITE_SCM_API_BASE_URL ?? "/scm/api";
 
 export const PURCHASE_ORDER_REPORT_QUERY_KEY = ["scmPurchaseOrderReport"] as const;
@@ -131,6 +131,53 @@ export const useUploadPurchaseOrderFiles = (): UseMutationResult<PurchaseOrderBu
     },
 
   })
+}
+
+export async function postProductionRemainingLoadReport(warehouse_region: string, session_id: number, signal?: AbortSignal): Promise<ProductionRemainingLoadResponse> {
+  const formData = new FormData();
+  formData.append("session_id", String(session_id));
+
+  const queryParams = new URLSearchParams({
+    warehouse_region,
+  });
+
+  const response = await fetch(`${API_BASE_URL}/production-remaining/?${queryParams.toString()}`, {
+    method: "POST",
+    body: formData,
+    signal,
+  });
+
+  const responseText = await response.text();
+  let data: ProductionRemainingLoadResponse;
+
+  try {
+    data = JSON.parse(responseText) as ProductionRemainingLoadResponse;
+  } catch (error) {
+    if ((error as Error).name === 'AbortError') throw error;
+    if (!response.ok) {
+      throw new Error(responseText || response.statusText);
+    }
+    throw error;
+  }
+
+  if (!response.ok || data.success === false) {
+    const message = (data as PurchaseOrderBulkUpdateErrorResponse).message;
+    throw new Error(message || responseText || response.statusText);
+  }
+
+  return data;
+}
+
+export const usePostProductionLoadReport = (): UseMutationResult<ProductionRemainingLoadResponse, Error, { warehouse_region: string; session_id: number; signal?: AbortSignal }> => {
+  const queryClient = useQueryClient();
+
+  return useMutation<ProductionRemainingLoadResponse, Error, { warehouse_region: string; session_id: number; signal?: AbortSignal }>({
+    mutationFn: ({ warehouse_region, session_id, signal }) =>
+      postProductionRemainingLoadReport(warehouse_region, session_id, signal),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: PURCHASE_ORDER_REPORT_QUERY_KEY });
+    },
+  });
 }
 
 export async function postUploadPurchaseOrderReport(session_id: number, signal?: AbortSignal): Promise<PurchaseOrderBulkUpdateSuccessResponse> {

@@ -384,3 +384,15 @@ export interface ProductionRemainingApiResponse {
   message: string;
   data: ProductionRemainingRow[];
 }
+
+export interface ProductionRemainingLoadResponse {
+  success: boolean;
+  message: string;
+  details: {
+    session_id: number;
+    csv_suffix: string;
+    row_counts: Record<string, number>;
+    saved_files: string[];
+    saved_tables: string[];
+  };
+}
