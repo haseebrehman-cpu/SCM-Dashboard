@@ -60,6 +60,7 @@ export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({ isOpen, onCl
   );
 
   const handleRemoveFile = () => {
+    if (isUploading) return;
     if (file?.previews) {
       file.previews.forEach((previewUrl) => URL.revokeObjectURL(previewUrl));
     }
@@ -78,7 +79,8 @@ export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({ isOpen, onCl
     disabled: isUploading || (file?.status === 'completed'),
   });
 
-  const handleClose = () => {
+  const handleClose = (force = false) => {
+    if (!force && isUploading) return;
     handleRemoveFile();
     onClose();
   };
@@ -89,15 +91,21 @@ export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({ isOpen, onCl
     setIsUploading(true);
     try {
       await onUpload(file.files[0]);
-      handleClose();
+      handleClose(true);
       toast.success('File uploaded successfully');
+    } catch (error) {
+      console.error('Upload failed:', error);
     } finally {
       setIsUploading(false);
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose}>
+    <Modal
+      isOpen={isOpen}
+      onClose={() => handleClose(false)}
+      showCloseButton={!isUploading}
+    >
       <div className="flex flex-col  max-w-3xl w-[800px] mx-auto p-10">
         <div className="mb-4 text-center">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -122,7 +130,7 @@ export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({ isOpen, onCl
         <div className="flex justify-end gap-3">
           <Button
             variant="outline"
-            onClick={handleClose}
+            onClick={() => handleClose(false)}
             disabled={isUploading}
           >
             Cancel
