@@ -365,6 +365,10 @@ export interface FileUploadStepProps {
   showBackButton?: boolean;
   showNextButton?: boolean;
   isLastStep?: boolean;
+  uploadedToday: boolean;
+  todayUploadErrorMessage: string | null;
+  restrictDailyUpload: boolean;
+  setRestrictDailyUpload: (value: boolean) => void;
 }
 export interface ProductionRemainingRow {
   id?: number;

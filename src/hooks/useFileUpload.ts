@@ -62,9 +62,10 @@ export const useFileUpload = () => {
   const [file2, setFile2] = useState<UploadedFile | null>(null);
   const [file3, setFile3] = useState<UploadedFile | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [restrictDailyUpload, setRestrictDailyUpload] = useState(true);
 
   // Check if an upload has already been made today
-  const { uploadedToday, errorMessage: todayUploadErrorMessage } = useUploadTodayCheck();
+  const { uploadedToday, errorMessage: todayUploadErrorMessage } = useUploadTodayCheck(restrictDailyUpload);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return "0 Bytes";
@@ -125,5 +126,7 @@ export const useFileUpload = () => {
     handleRemoveFile,
     uploadedToday,
     todayUploadErrorMessage,
+    restrictDailyUpload,
+    setRestrictDailyUpload,
   };
 };

@@ -21,6 +21,10 @@ const FileUpload: React.FC = () => {
     formatFileSize,
     registerFiles,
     handleRemoveFile,
+    uploadedToday,
+    todayUploadErrorMessage,
+    restrictDailyUpload,
+    setRestrictDailyUpload,
   } = useFileUpload();
 
   const {
@@ -91,6 +95,10 @@ const FileUpload: React.FC = () => {
               onRemove={handleRemoveFile1}
               onNext={() => handleNext(1, file1)}
               showBackButton={false}
+              uploadedToday={uploadedToday}
+              todayUploadErrorMessage={todayUploadErrorMessage}
+              restrictDailyUpload={restrictDailyUpload}
+              setRestrictDailyUpload={setRestrictDailyUpload}
             />
           )}
 
@@ -106,6 +114,10 @@ const FileUpload: React.FC = () => {
               onNext={() => handleNext(2, file2)}
               onBack={handleBack}
               showBackButton={true}
+              uploadedToday={uploadedToday}
+              todayUploadErrorMessage={todayUploadErrorMessage}
+              restrictDailyUpload={restrictDailyUpload}
+              setRestrictDailyUpload={setRestrictDailyUpload}
             />
           )}
 
@@ -124,6 +136,10 @@ const FileUpload: React.FC = () => {
               onBack={handleBack}
               showBackButton={true}
               isLastStep={true}
+              uploadedToday={uploadedToday}
+              todayUploadErrorMessage={todayUploadErrorMessage}
+              restrictDailyUpload={restrictDailyUpload}
+              setRestrictDailyUpload={setRestrictDailyUpload}
             />
           )}
         </div>

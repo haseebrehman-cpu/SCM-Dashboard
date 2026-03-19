@@ -37,7 +37,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
             )}
           </div>
           <div className={`ml-3 ${currentStep >= 1 ? 'text-gray-900 dark:text-white' : 'text-gray-400'}`}>
-            <p className="text-sm font-medium">Last 60 days (Current Date)</p>
+            <p className="text-sm font-medium">Last 60 days (Current Year)</p>
             {file1Status === 'completed' && (
               <p className="text-xs text-green-600 dark:text-green-400">Uploaded</p>
             )}
