@@ -9,7 +9,7 @@ import { Modal } from '../../components/ui/modal';
 import { FileLogsDetailPanel } from './FileLogsDetailPanel';
 import { IconButton } from '@mui/material';
 import { TrashBinIcon } from '../../icons';
-import NotStartedIcon from '@mui/icons-material/NotStarted';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 /**
  * FileLogsGrid Component
  * Displays upload sessions in a hierarchical grid with expandable detail rows.
@@ -146,7 +146,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
               }}
               disabled={params?.row?.process_data === true || processMutation.isPending}
             >
-              <NotStartedIcon sx={{ color: params?.row?.process_data === true ? "" : 'green' }}
+              <PlayCircleOutlineIcon sx={{ color: params?.row?.process_data === true ? "" : 'green' }}
               />
             </IconButton>
           </>
