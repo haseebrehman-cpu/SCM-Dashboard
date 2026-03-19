@@ -144,9 +144,10 @@ const FileLogsGrid: React.FC = React.memo(() => {
                   },
                 });
               }}
-              disabled={!params?.row?.process_data || processMutation.isPending}
+              disabled={params?.row?.process_data === true || processMutation.isPending}
             >
-              <NotStartedIcon />
+              <NotStartedIcon sx={{ color: params?.row?.process_data === true ? "" : 'green' }}
+              />
             </IconButton>
           </>
         ),
