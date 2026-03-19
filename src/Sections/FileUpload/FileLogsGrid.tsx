@@ -3,12 +3,13 @@ import { DataGridPremium, GridColDef } from "@mui/x-data-grid-premium";
 import { useTheme } from '../../hooks/useTheme';
 import { getDataGridStyles } from '../../styles/productionReportStyles';
 import React from 'react';
-import { useDeleteFileUploads, useLatestUploadSession } from '../../api/scmFileUpload';
+import { useDeleteFileUploads, useLatestUploadSession, useProcessScmFiles } from '../../api/scmFileUpload';
+import toast from 'react-hot-toast';
 import { Modal } from '../../components/ui/modal';
 import { FileLogsDetailPanel } from './FileLogsDetailPanel';
 import { IconButton } from '@mui/material';
 import { TrashBinIcon } from '../../icons';
-
+import NotStartedIcon from '@mui/icons-material/NotStarted';
 /**
  * FileLogsGrid Component
  * Displays upload sessions in a hierarchical grid with expandable detail rows.
@@ -21,6 +22,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
 
   const { data, isLoading, refetch } = useLatestUploadSession();
   const deleteMutation = useDeleteFileUploads();
+  const processMutation = useProcessScmFiles();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedSessionId, setSelectedSessionId] = useState<number | null>(null);
 
@@ -35,6 +37,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
       status: session.session.status === 'Success' ? 'Success' : 'Failed',
       message: session.session.message,
       uploadedBy: session.session.uploaded_by,
+      process_data: session.session.process_data,
       sessionData: session, // Stored full session data for detail panel
     }));
   }, [data]);
@@ -114,17 +117,38 @@ const FileLogsGrid: React.FC = React.memo(() => {
         align: 'center',
         headerAlign: 'center',
         renderCell: (params) => (
-          <IconButton
-            size="small"
-            title="Delete Session"
-            onClick={(e) => {
-              e.stopPropagation();
-              setSelectedSessionId(params.row.id);
-              setIsDeleteModalOpen(true);
-            }}
-          >
-            <TrashBinIcon className="w-4 h-4" />
-          </IconButton>
+          <>
+            <IconButton
+              size="small"
+              title="Delete Session"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedSessionId(params.row.id);
+                setIsDeleteModalOpen(true);
+              }}
+            >
+              <TrashBinIcon className="w-4 h-4" />
+            </IconButton>
+            <IconButton
+              size="small"
+              title="Process Files"
+              onClick={(e) => {
+                e.stopPropagation();
+                processMutation.mutate({ session_id: params.row.id }, {
+                  onSuccess: () => {
+                    toast.success('Files processed successfully!');
+                    refetch();
+                  },
+                  onError: (err) => {
+                    toast.error(err.message || 'Failed to process files');
+                  },
+                });
+              }}
+              disabled={!params?.row?.process_data || processMutation.isPending}
+            >
+              <NotStartedIcon />
+            </IconButton>
+          </>
         ),
       },
     ];
@@ -136,7 +160,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
         <DataGridPremium
           rows={rows}
           columns={columns}
-          loading={isLoading || deleteMutation.isPending}
+          loading={isLoading || deleteMutation.isPending || processMutation.isPending}
           pageSizeOptions={[10, 25, 50, 100]}
           initialState={{
             pagination: {
@@ -144,7 +168,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
             },
           }}
           pagination
-          checkboxSelection
+          // checkboxSelection
           keepNonExistentRowsSelected
           rowBufferPx={100}
           sx={getDataGridStyles(isDark, "auto")}

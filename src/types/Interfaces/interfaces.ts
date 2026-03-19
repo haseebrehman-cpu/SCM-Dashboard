@@ -19,6 +19,7 @@ export interface SessionInfo {
   status: string;
   message: string;
   uploaded_by: string;
+  process_data: boolean;
 }
 
 export interface SessionWithFiles {
