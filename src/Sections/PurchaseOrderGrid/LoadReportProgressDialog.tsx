@@ -18,6 +18,7 @@ interface LoadReportProgressDialogProps {
   status: LoadStatus
   progress: number
   errorMessage?: string
+  showRetry?: boolean
 }
 
 const LoadReportProgressDialog: React.FC<LoadReportProgressDialogProps> = ({
@@ -30,6 +31,7 @@ const LoadReportProgressDialog: React.FC<LoadReportProgressDialogProps> = ({
   status,
   progress: loadingPercentage,
   errorMessage,
+  showRetry = true,
 }) => {
   const handleConfirm = async () => {
     await onConfirm()
@@ -231,7 +233,7 @@ const LoadReportProgressDialog: React.FC<LoadReportProgressDialogProps> = ({
             </Button>
           )}
 
-          {status === 'error' && (
+          {status === 'error' && showRetry && (
             <Button
               variant="contained"
               size="medium"

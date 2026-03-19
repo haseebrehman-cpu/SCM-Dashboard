@@ -275,6 +275,7 @@ export default function PurchaseOrder() {
             status={loadStatus}
             progress={loadProgress}
             errorMessage={loadErrorMessage}
+            showRetry={currentLoadStep >= 1}
           />
         )}
 
