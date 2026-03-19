@@ -51,7 +51,7 @@ export async function fetchContainerDetailReport<T = StockReportApiResponse | Co
 
   if (!hasActiveFilters) {
     queryParams.append("page", String(page));
-    queryParams.append("limit", String(pageSize));
+    queryParams.append("page_size", String(pageSize));
   }
 
   appendFilter(queryParams, "warehouse", filters.warehouse);

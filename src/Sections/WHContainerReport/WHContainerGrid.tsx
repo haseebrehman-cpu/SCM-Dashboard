@@ -67,6 +67,7 @@ const WHContainerGrid = ({ filters = {} }: WHContainerGridProps) => {
         sx={getDataGridStyles(isDark, "auto")}
         rowBufferPx={100}
         showToolbar
+        virtualizeColumnsWithAutoRowHeight
         slotProps={{
           toolbar: {
             printOptions: { disableToolbarButton: true },
