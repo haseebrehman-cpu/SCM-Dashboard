@@ -19,6 +19,9 @@ async function fetchPurchaseOrderReport(signal?: AbortSignal): Promise<PurchaseO
     data = JSON.parse(responseText) as PurchaseOrderReportResponse;
   } catch (error) {
     if ((error as Error).name === 'AbortError') throw error;
+    if (response.status === 524) {
+      throw new Error("Cloudflare 524: Server Timeout. The server is taking too long to respond. Please try again later.");
+    }
     if (!response.ok) {
       throw new Error(responseText || response.statusText);
     }
@@ -62,6 +65,9 @@ export const patchPurchaseOrderReportData = async ({ rowId, arrivalDate, signal 
     data = JSON.parse(responseText) as PurchaseOrderReportResponse;
   } catch (error) {
     if ((error as Error).name === 'AbortError') throw error;
+    if (response.status === 524) {
+      throw new Error("Cloudflare 524: Server Timeout. The server is taking too long to respond. Please try again later.");
+    }
     if (!response.ok) {
       throw new Error(responseText || response.statusText);
     }
@@ -107,6 +113,9 @@ async function uploadPurchaseOrderFile({ file, signal }: { file: File; signal?: 
     data = JSON.parse(responseText) as PurchaseOrderBulkUpdateResponse;
   } catch (error) {
     if ((error as Error).name === 'AbortError') throw error;
+    if (response.status === 524) {
+      throw new Error("Cloudflare 524: Server Timeout. The server is taking too long to respond. Please try again later.");
+    }
     if (!response.ok) {
       throw new Error(responseText || response.statusText);
     }
@@ -154,6 +163,9 @@ export async function postProductionRemainingLoadReport(warehouse_region: string
     data = JSON.parse(responseText) as ProductionRemainingLoadResponse;
   } catch (error) {
     if ((error as Error).name === 'AbortError') throw error;
+    if (response.status === 524) {
+      throw new Error("Cloudflare 524: Server Timeout. The server is taking too long to respond. Please try again later.");
+    }
     if (!response.ok) {
       throw new Error(responseText || response.statusText);
     }
@@ -197,6 +209,9 @@ export async function postUploadPurchaseOrderReport(session_id: number, signal?:
     data = JSON.parse(responseText) as PurchaseOrderBulkUpdateResponse;
   } catch (error) {
     if ((error as Error).name === 'AbortError') throw error;
+    if (response.status === 524) {
+      throw new Error("Cloudflare 524: Server Timeout. The server is taking too long to respond. Please try again later.");
+    }
     if (!response.ok) {
       throw new Error(responseText || response.statusText);
     }

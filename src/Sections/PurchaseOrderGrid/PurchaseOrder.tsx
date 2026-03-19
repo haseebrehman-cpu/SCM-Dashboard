@@ -77,7 +77,8 @@ export default function PurchaseOrder() {
         toast.success('Record Updated Successfully!');
       } catch (error) {
         console.error('Failed to save data:', error);
-        toast.error('Failed to save data');
+        const message = error instanceof Error ? error.message : 'Failed to save data';
+        toast.error(message);
       } finally {
         setIsUpdatingDate(false);
         setUpdatingRowId(null);
@@ -107,10 +108,12 @@ export default function PurchaseOrder() {
       if (result.isSuccess) {
         toast.success("Data Refetched Successfully!")
       } else if (result.isError) {
-        toast.error("Failed to refetch data. Please try again.");
+        const message = result.error instanceof Error ? result.error.message : "Failed to refetch data. Please try again.";
+        toast.error(message);
       }
     } catch (error) {
-      toast.error("An error occurred while refetching data.");
+      const message = error instanceof Error ? error.message : "An error occurred while refetching data.";
+      toast.error(message);
       console.error("Refetch error:", error);
     }
   }
