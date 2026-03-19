@@ -7,6 +7,7 @@ import { generateStockReportColumns } from "../../utils/columnGenerators/stockRe
 import { useStockReport, usePrefetchContainerReport, ContainerReportFilters } from "../../api/containerDetailReport";
 import { StockReportRow } from "../../types/stockReport";
 import { StockReportApiRow } from "../../types/Interfaces/interfaces";
+import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 
 function mapApiRowToGridRow(apiRow: StockReportApiRow): StockReportRow {
   return {
@@ -29,14 +30,15 @@ const StockReportGrid = ({ filters = {} }: StockReportGridProps) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(PAGINATION_MODEL);
+  const sessionId = useLatestSessionId();
 
   const page = paginationModel?.page + 1;
   const pageSize = paginationModel?.pageSize ?? 100;
 
-  const { data, isLoading } = useStockReport(page, pageSize, filters);
+  const { data, isLoading } = useStockReport(page, pageSize, sessionId, filters);
 
   const totalPages = data?.pagination?.total_pages;
-  usePrefetchContainerReport("stock", page, pageSize, totalPages, 6, filters);
+  usePrefetchContainerReport("stock", page, pageSize, sessionId, totalPages, 6, filters);
 
   const rows: StockReportRow[] = useMemo(
     () => (data?.data ?? []).map(mapApiRowToGridRow),

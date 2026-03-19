@@ -6,15 +6,17 @@ import StockReportKpi from '../../Sections/StockReport/StockReportKpi'
 import StockReportGrid from '../../Sections/StockReport/StockReportGrid';
 import { useFilterOptions } from '../../api/containerDetailReport';
 import toast from 'react-hot-toast';
+import { useLatestSessionId } from '../../hooks/useLatestSessionId';
 
 const StockReportView = () => {
+  const sessionId = useLatestSessionId();
   const [filters, setFilters] = useState<{ [key: string]: string[] }>({
     warehouse: [],
     category: [],
     item_number: []
   });
 
-  const { data: filterOptionsData, isLoading } = useFilterOptions("stock", filters);
+  const { data: filterOptionsData, isLoading } = useFilterOptions("stock", sessionId, filters);
 
   const [appliedFilters, setAppliedFilters] = useState<{ [key: string]: string[] }>({});
 

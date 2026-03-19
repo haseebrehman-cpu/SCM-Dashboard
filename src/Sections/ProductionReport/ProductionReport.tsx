@@ -20,6 +20,7 @@ import { getDataGridStyles } from '../../styles/productionReportStyles';
 import { ProductionReportHeader } from './ProductionReportHeader';
 import { useProductionRemainingReport, useUploadForecastedFile } from "../../api/productionRemainingReport";
 import { ProductionRemainingRow } from "../../types/Interfaces/interfaces";
+import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 
 const FORECAST_FIXED_KEYS: (keyof ProductionRemainingRow)[] = [
   "category_name",
@@ -151,6 +152,7 @@ export default function ProductionReport() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const currentYear = new Date().getFullYear();
+  const sessionId = useLatestSessionId();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>("UK");
@@ -159,7 +161,7 @@ export default function ProductionReport() {
     setSelectedWarehouse(event.target.value as Warehouse);
   };
 
-  const { data: reportResponse, isLoading } = useProductionRemainingReport(selectedWarehouse);
+  const { data: reportResponse, isLoading } = useProductionRemainingReport(selectedWarehouse, sessionId);
   const uploadMutation = useUploadForecastedFile();
 
   const handleFileUpload = async (file: File) => {
@@ -167,6 +169,7 @@ export default function ProductionReport() {
     await uploadMutation.mutateAsync({
       file,
       warehouse_region: selectedWarehouse,
+      session_id: sessionId,
       signal: controller.signal
     });
   };

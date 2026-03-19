@@ -7,6 +7,7 @@ import { generateCombinedReportColumns } from "../../utils/columnGenerators/comb
 import { PAGINATION_MODEL } from "../../mockData/combinedReportMock";
 import { CombinedReportRow } from "../../types/combinedReport";
 import { CombinedReportApiRow } from "../../types/Interfaces/interfaces";
+import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 
 function mapApiRowToGridRow(apiRow: CombinedReportApiRow, index: number): CombinedReportRow {
   const {
@@ -35,14 +36,15 @@ const CombinedReportGrid = ({ filters = {} }: CombinedReportGridProps) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(PAGINATION_MODEL);
+  const sessionId = useLatestSessionId();
 
   const page = paginationModel.page + 1;
   const pageSize = paginationModel.pageSize ?? 100;
 
-  const { data, isLoading } = useCombinedReport(page, pageSize, filters);
+  const { data, isLoading } = useCombinedReport(page, pageSize, sessionId, filters);
 
   const totalPages = data?.pagination?.total_pages;
-  usePrefetchContainerReport("combined", page, pageSize, totalPages, 6, filters);
+  usePrefetchContainerReport("combined", page, pageSize, sessionId, totalPages, 6, filters);
 
   const rows: CombinedReportRow[] = useMemo(() => {
     const list = data?.data ?? [];

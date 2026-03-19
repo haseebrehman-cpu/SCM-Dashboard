@@ -31,6 +31,7 @@ export async function fetchContainerDetailReport<T = StockReportApiResponse | Co
   table: string,
   page: number,
   pageSize: number,
+  session_id: number,
   filters: ContainerReportFilters = {},
   signal?: AbortSignal
 ): Promise<T> {
@@ -52,6 +53,7 @@ export async function fetchContainerDetailReport<T = StockReportApiResponse | Co
   if (!hasActiveFilters) {
     queryParams.append("page", String(page));
     queryParams.append("page_size", String(pageSize));
+    queryParams.append("session_id", String(session_id))
   }
 
   appendFilter(queryParams, "warehouse", filters.warehouse);
@@ -93,14 +95,16 @@ export const useContainerDetailReport = <T = StockReportApiResponse | ContainerR
   table: string,
   page: number,
   pageSize: number,
+  session_id: number | null,
   filters: ContainerReportFilters = {}
 ): UseQueryResult<T, Error> =>
   useQuery<T, Error>({
-    queryKey: [...CONTAINER_DETAIL_REPORT_QUERY_KEY, table, page, pageSize, filters],
-    queryFn: ({ signal }) => fetchContainerDetailReport<T>(table, page, pageSize, filters, signal),
+    queryKey: [...CONTAINER_DETAIL_REPORT_QUERY_KEY, table, page, pageSize, session_id, filters],
+    queryFn: ({ signal }) => fetchContainerDetailReport<T>(table, page, pageSize, session_id!, filters, signal),
     staleTime: 60_000,
     refetchOnReconnect: true,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    enabled: session_id !== null && session_id !== undefined,
   });
 
 /**
@@ -112,6 +116,7 @@ export function usePrefetchContainerReport<T = StockReportApiResponse | Containe
   table: string,
   currentPage: number,
   pageSize: number,
+  session_id: number | null,
   totalPages: number | undefined,
   prefetchCount = 6,
   filters: ContainerReportFilters = {}
@@ -119,19 +124,19 @@ export function usePrefetchContainerReport<T = StockReportApiResponse | Containe
   const queryClient = useQueryClient();
 
   const prefetch = useCallback(() => {
-    if (totalPages === undefined) return;
+    if (totalPages === undefined || session_id === null || session_id === undefined) return;
 
     for (let i = 1; i <= prefetchCount; i++) {
       const nextPage = currentPage + i;
       if (nextPage > totalPages) break;
 
       queryClient.prefetchQuery<T, Error>({
-        queryKey: [...CONTAINER_DETAIL_REPORT_QUERY_KEY, table, nextPage, pageSize, filters],
-        queryFn: ({ signal }) => fetchContainerDetailReport<T>(table, nextPage, pageSize, filters, signal),
+        queryKey: [...CONTAINER_DETAIL_REPORT_QUERY_KEY, table, nextPage, pageSize, session_id, filters],
+        queryFn: ({ signal }) => fetchContainerDetailReport<T>(table, nextPage, pageSize, session_id, filters, signal),
         staleTime: 60_000,
       });
     }
-  }, [queryClient, table, currentPage, pageSize, totalPages, prefetchCount, filters]);
+  }, [queryClient, table, currentPage, pageSize, session_id, totalPages, prefetchCount, filters]);
 
   useEffect(() => {
     prefetch();
@@ -142,23 +147,26 @@ export function usePrefetchContainerReport<T = StockReportApiResponse | Containe
 export const useStockReport = (
   page: number,
   pageSize: number,
+  session_id: number | null,
   filters: ContainerReportFilters = {}
 ): UseQueryResult<StockReportApiResponse, Error> =>
-  useContainerDetailReport<StockReportApiResponse>("stock", page, pageSize, filters);
+  useContainerDetailReport<StockReportApiResponse>("stock", page, pageSize, session_id, filters);
 
 export const useContainerReport = (
   page: number,
   pageSize: number,
+  session_id: number | null,
   filters: ContainerReportFilters = {}
 ): UseQueryResult<ContainerReportApiResponse, Error> =>
-  useContainerDetailReport<ContainerReportApiResponse>("container", page, pageSize, filters);
+  useContainerDetailReport<ContainerReportApiResponse>("container", page, pageSize, session_id, filters);
 
 export const useCombinedReport = (
   page: number,
   pageSize: number,
+  session_id: number | null,
   filters: ContainerReportFilters = {}
 ): UseQueryResult<CombinedReportApiResponse, Error> =>
-  useContainerDetailReport<CombinedReportApiResponse>("combined", page, pageSize, filters);
+  useContainerDetailReport<CombinedReportApiResponse>("combined", page, pageSize, session_id, filters);
 
 async function deleteRunningReport({ session_id, signal }: { session_id: number; signal?: AbortSignal }): Promise<CancelRunningReportResponse> {
   const formData = new FormData();
@@ -201,11 +209,15 @@ export const useDeleteRunningReport = (): UseMutationResult<CancelRunningReportR
   })
 }
 
-export async function fetchFilterOptions(table: string, filters: ContainerReportFilters = {}, signal?: AbortSignal): Promise<FilterOptionsResponse> {
+export async function fetchFilterOptions(table: string, session_id: number | null, filters: ContainerReportFilters = {}, signal?: AbortSignal): Promise<FilterOptionsResponse> {
   const queryParams = new URLSearchParams({
     table,
     filter_options: "true"
   });
+
+  if (session_id !== null && session_id !== undefined) {
+    queryParams.append("session_id", String(session_id))
+  }
 
   appendFilter(queryParams, "warehouse", filters.warehouse);
   appendFilter(queryParams, "category", filters.category);
@@ -229,10 +241,11 @@ export async function fetchFilterOptions(table: string, filters: ContainerReport
   return data;
 }
 
-export const useFilterOptions = (table: string, filters: ContainerReportFilters = {}): UseQueryResult<FilterOptionsResponse, Error> =>
+export const useFilterOptions = (table: string, session_id: number | null, filters: ContainerReportFilters = {}): UseQueryResult<FilterOptionsResponse, Error> =>
   useQuery<FilterOptionsResponse, Error>({
-    queryKey: ["filterOptions", table, filters],
-    queryFn: ({ signal }) => fetchFilterOptions(table, filters, signal),
+    queryKey: ["filterOptions", table, session_id, filters],
+    queryFn: ({ signal }) => fetchFilterOptions(table, session_id, filters, signal),
     staleTime: 300_000,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    enabled: session_id !== null && session_id !== undefined,
   });

@@ -39,8 +39,6 @@ export const usePurchaseOrderReport = (): UseQueryResult<PurchaseOrderReportResp
     queryKey: PURCHASE_ORDER_REPORT_QUERY_KEY,
     queryFn: ({ signal }) => fetchPurchaseOrderReport(signal),
     staleTime: 60_000,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
   })
 
 export const patchPurchaseOrderReportData = async ({ rowId, arrivalDate, signal }: { rowId: number; arrivalDate: string | null; signal?: AbortSignal }): Promise<PurchaseOrderReportResponse> => {

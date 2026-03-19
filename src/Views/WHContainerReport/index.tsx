@@ -5,8 +5,10 @@ import { useState } from "react"
 import { Box, Button, Paper, Typography } from "@mui/material"
 import StockFilters from "../../Sections/StockReport/StockFilters"
 import { useFilterOptions } from "../../api/containerDetailReport"
+import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 
 const WHContainerReportView = () => {
+  const sessionId = useLatestSessionId();
   const [filters, setFilters] = useState<{ [key: string]: string[] }>({
     warehouse: [],
     category: [],
@@ -14,7 +16,7 @@ const WHContainerReportView = () => {
     sku: []
   });
 
-  const { data: filterOptionsData, isLoading } = useFilterOptions("container", filters);
+  const { data: filterOptionsData, isLoading } = useFilterOptions("container", sessionId, filters);
 
   const [appliedFilters, setAppliedFilters] = useState<{ [key: string]: string[] }>({});
 

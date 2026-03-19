@@ -7,6 +7,7 @@ import { useContainerReport, usePrefetchContainerReport, ContainerReportFilters 
 import { useMemo, useState } from "react";
 import { ContainerReportApiRow } from "../../types/Interfaces/interfaces";
 import { WHContainerReportRow } from "../../types/whContainersReport";
+import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 
 function mapApiRowToGridRow(apiRow: ContainerReportApiRow): WHContainerReportRow {
   return {
@@ -33,13 +34,14 @@ const WHContainerGrid = ({ filters = {} }: WHContainerGridProps) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(PAGINATION_MODEL);
+  const sessionId = useLatestSessionId();
   const page = paginationModel.page + 1;
   const pageSize = paginationModel.pageSize ?? 100;
 
-  const { data, isLoading } = useContainerReport(page, pageSize, filters);
+  const { data, isLoading } = useContainerReport(page, pageSize, sessionId, filters);
 
   const totalPages = data?.pagination?.total_pages;
-  usePrefetchContainerReport("container", page, pageSize, totalPages, 6, filters);
+  usePrefetchContainerReport("container", page, pageSize, sessionId, totalPages, 6, filters);
 
   const rowCount = data?.pagination?.total_records ?? 0;
 

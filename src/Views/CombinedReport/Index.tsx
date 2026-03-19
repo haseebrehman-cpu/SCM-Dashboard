@@ -3,9 +3,11 @@ import { Box, Paper, Typography, Button } from '@mui/material';
 import CombinedReportGrid from '../../Sections/CombinedReport/CombinedReport'
 import StockFilters from '../../Sections/StockReport/StockFilters'
 import { useFilterOptions } from '../../api/containerDetailReport';
+import { useLatestSessionId } from '../../hooks/useLatestSessionId';
 
 const CombinedReportView = () => {
-  const { data: filterOptionsData, isLoading } = useFilterOptions("combined");
+  const sessionId = useLatestSessionId();
+  const { data: filterOptionsData, isLoading } = useFilterOptions("combined", sessionId);
 
   const [filters, setFilters] = useState<{ [key: string]: string[] }>({
     warehouse: [],

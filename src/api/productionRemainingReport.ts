@@ -6,11 +6,16 @@ export const PRODUCTION_REMAINING_REPORT_QUERY_KEY = ["productionRemainingReport
 
 export async function fetchProductionRemainingReport(
   warehouse_region: string,
+  session_id: number | null,
   signal?: AbortSignal
 ): Promise<ProductionRemainingApiResponse> {
   const queryParams = new URLSearchParams({
     warehouse_region,
   });
+
+  if (session_id !== null && session_id !== undefined) {
+    queryParams.append("session_id", String(session_id));
+  }
 
   const url = `${API_BASE_URL}/production-remaining/?${queryParams.toString()}`;
   console.log("Fetching Production Remaining Report from:", url);
@@ -30,7 +35,6 @@ export async function fetchProductionRemainingReport(
   }
 
   const data = (await response.json()) as ProductionRemainingApiResponse;
-  console.log("API Success Data:", data);
 
   if (data.success === false) {
     throw new Error(data.message || "API returned success: false");
@@ -40,24 +44,28 @@ export async function fetchProductionRemainingReport(
 }
 
 export const useProductionRemainingReport = (
-  warehouse_region: string
+  warehouse_region: string,
+  session_id: number | null
 ): UseQueryResult<ProductionRemainingApiResponse, Error> =>
   useQuery<ProductionRemainingApiResponse, Error>({
-    queryKey: [...PRODUCTION_REMAINING_REPORT_QUERY_KEY, warehouse_region],
-    queryFn: ({ signal }) => fetchProductionRemainingReport(warehouse_region, signal),
+    queryKey: [...PRODUCTION_REMAINING_REPORT_QUERY_KEY, warehouse_region, session_id],
+    queryFn: ({ signal }) => fetchProductionRemainingReport(warehouse_region, session_id, signal),
     staleTime: 60_000,
-    refetchOnWindowFocus: false,
-    enabled: !!warehouse_region,
+    enabled: !!warehouse_region && session_id !== null && session_id !== undefined,
   });
 
 
-async function uploadForecastedFile({ file, warehouse_region, signal }: { file: File; warehouse_region: string; signal?: AbortSignal }): Promise<ProductionRemainingUploadFileResponse> {
+async function uploadForecastedFile({ file, warehouse_region, session_id, signal }: { file: File; warehouse_region: string; session_id: number | null; signal?: AbortSignal }): Promise<ProductionRemainingUploadFileResponse> {
   const formData = new FormData();
   formData.append("file", file);
 
   const queryParams = new URLSearchParams({
     warehouse_region,
   });
+
+  if (session_id !== null && session_id !== undefined) {
+    queryParams.append("session_id", String(session_id));
+  }
 
   const response = await fetch(`${API_BASE_URL}/production-remaining/?${queryParams.toString()}`, {
     method: "PATCH",
@@ -85,10 +93,10 @@ async function uploadForecastedFile({ file, warehouse_region, signal }: { file: 
   return data;
 }
 
-export const useUploadForecastedFile = (): UseMutationResult<ProductionRemainingUploadFileResponse, Error, { file: File; warehouse_region: string; signal: AbortSignal }> => {
+export const useUploadForecastedFile = (): UseMutationResult<ProductionRemainingUploadFileResponse, Error, { file: File; warehouse_region: string; session_id: number | null; signal?: AbortSignal }> => {
   const queryClient = useQueryClient();
 
-  return useMutation<ProductionRemainingUploadFileResponse, Error, { file: File; warehouse_region: string; signal: AbortSignal }>({
+  return useMutation<ProductionRemainingUploadFileResponse, Error, { file: File; warehouse_region: string; session_id: number | null; signal?: AbortSignal }>({
     mutationFn: uploadForecastedFile,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: PRODUCTION_REMAINING_REPORT_QUERY_KEY });
