@@ -35,26 +35,12 @@ export async function fetchContainerDetailReport<T = StockReportApiResponse | Co
   filters: ContainerReportFilters = {},
   signal?: AbortSignal
 ): Promise<T> {
-  const isFilterActive = (val: string | string[] | undefined) => {
-    if (!val) return false;
-    if (Array.isArray(val)) return val.some(v => v !== "" && v !== null && v !== undefined);
-    return val !== "";
-  };
-
-  const hasActiveFilters =
-    isFilterActive(filters.warehouse) ||
-    isFilterActive(filters.category) ||
-    isFilterActive(filters.item_number) ||
-    isFilterActive(filters.container_name) ||
-    isFilterActive(filters.sku);
-
-  const queryParams = new URLSearchParams({ table });
-
-  if (!hasActiveFilters) {
-    queryParams.append("page", String(page));
-    queryParams.append("page_size", String(pageSize));
-    queryParams.append("session_id", String(session_id))
-  }
+  const queryParams = new URLSearchParams({ 
+    table,
+    session_id: String(session_id),
+    page: String(page),
+    page_size: String(pageSize),
+  });
 
   appendFilter(queryParams, "warehouse", filters.warehouse);
   appendFilter(queryParams, "category", filters.category);

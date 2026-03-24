@@ -12,16 +12,12 @@ import {
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
-// ============================================================================
-// Constants
-// ============================================================================
-
 const ALL_OPTION = '__ALL__';
 const CHECKBOX_ICON = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const CHECKBOX_ICON_CHECKED = <CheckBoxIcon fontSize="small" />;
 
 const CHECKBOX_STYLE = { marginRight: 8 };
-const TEXTFIELD_STYLE = { '& .MuiListItemText-primary': { fontSize: '14px' } };
+const TEXTFIELD_STYLE = { '& .MuiListItemText-primary': { fontSize: '14px' } }; 
 
 const AUTOCOMPLETE_SX = {
   m: 1,
@@ -37,10 +33,6 @@ const LISTBOX_STYLE = {
   overflow: 'auto',
 };
 
-// ============================================================================
-// Types
-// ============================================================================
-
 interface StockFiltersProps {
   value: string[];
   handleChange: (value: string[]) => void;
@@ -49,23 +41,11 @@ interface StockFiltersProps {
   loading?: boolean;
 }
 
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-/**
- * Sanitizes an array of strings by removing empty or whitespace-only entries
- */
 const sanitizeStringArray = (arr: string[]): string[] =>
   (arr || []).filter((item) => typeof item === 'string' && item.trim() !== '');
 
-// ============================================================================
-// Component
-// ============================================================================
-
 const StockFilters = React.memo<StockFiltersProps>(
   ({ value, handleChange, filterName, options, loading }) => {
-    // Memoized sanitized data
     const sanitizedOptions = useMemo(
       () => sanitizeStringArray(options),
       [options]
@@ -93,7 +73,6 @@ const StockFilters = React.memo<StockFiltersProps>(
       [sanitizedValue]
     );
 
-    // Memoized handlers
     const handleChange_Callback = useCallback(
       (
         _event: React.SyntheticEvent,
@@ -103,20 +82,15 @@ const StockFilters = React.memo<StockFiltersProps>(
       ) => {
         const clickedOption = details?.option;
 
-        // Handle 'Select All' option click
         if (clickedOption === ALL_OPTION) {
-          // If all are currently selected and user clicked Select All, deselect all
           if (isAllSelected) {
             handleChange([]);
           } else {
-            // Otherwise, select all
             handleChange([...sanitizedOptions]);
           }
           return;
         }
 
-        // Handle normal selection/deselection of individual options
-        // Filter out the internal ALL_OPTION marker and clean values
         const cleaned = newValue.filter(
           (v) => v !== ALL_OPTION && typeof v === 'string' && v.trim() !== ''
         );

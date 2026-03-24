@@ -13,8 +13,12 @@ export interface ChartFilters {
   sku?: string | string[];
 }
 
-async function fetchContainerChartData<T>(chart: string, filters?: ChartFilters, signal?: AbortSignal): Promise<T> {
+async function fetchContainerChartData<T>(chart: string, session_id: number | null, filters?: ChartFilters, signal?: AbortSignal): Promise<T> {
   const queryParams = new URLSearchParams({ chart });
+
+  if (session_id !== null && session_id !== undefined) {
+    queryParams.append("session_id", String(session_id));
+  }
 
   if (filters) {
     Object.entries(filters).forEach(([key, value]) => {
@@ -43,18 +47,20 @@ async function fetchContainerChartData<T>(chart: string, filters?: ChartFilters,
 }
 
 
-export const useInTransitVolumeChart = (filters?: ChartFilters): UseQueryResult<InTransitVolumeResponse, Error> =>
+export const useInTransitVolumeChart = (session_id: number | null, filters?: ChartFilters): UseQueryResult<InTransitVolumeResponse, Error> =>
   useQuery<InTransitVolumeResponse, Error>({
-    queryKey: [...WAREHOUSE_CONTAINER_REPORT_CHARTS_QUERY_KEY, "intransit_volume", filters],
-    queryFn: ({ signal }) => fetchContainerChartData<InTransitVolumeResponse>("intransit_volume", filters, signal),
+    queryKey: [...WAREHOUSE_CONTAINER_REPORT_CHARTS_QUERY_KEY, "intransit_volume", session_id, filters],
+    queryFn: ({ signal }) => fetchContainerChartData<InTransitVolumeResponse>("intransit_volume", session_id, filters, signal),
     staleTime: 300_000,
     refetchOnWindowFocus: false,
+    enabled: session_id !== null && session_id !== undefined,
   });
 
-export const useWarehouseKpi = (filters?: ChartFilters): UseQueryResult<ContainerKpisResponse, Error> =>
+export const useWarehouseKpi = (session_id: number | null, filters?: ChartFilters): UseQueryResult<ContainerKpisResponse, Error> =>
   useQuery<ContainerKpisResponse, Error>({
-    queryKey: [...WAREHOUSE_CONTAINER_REPORT_CHARTS_QUERY_KEY, "kpis", filters],
-    queryFn: ({ signal }) => fetchContainerChartData<ContainerKpisResponse>("kpis", filters, signal),
+    queryKey: [...WAREHOUSE_CONTAINER_REPORT_CHARTS_QUERY_KEY, "kpis", session_id, filters],
+    queryFn: ({ signal }) => fetchContainerChartData<ContainerKpisResponse>("kpis", session_id, filters, signal),
     staleTime: 300_000,
     refetchOnWindowFocus: false,
+    enabled: session_id !== null && session_id !== undefined,
   });

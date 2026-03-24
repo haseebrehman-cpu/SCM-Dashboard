@@ -5,17 +5,18 @@ import { ChartColors, ChartGrid, ChartTooltip } from '../../types/charts';
 import ContainerTreemap from './ContainerTreemap';
 import RegionalCategoryPreference from './RegionalCategoryPreference';
 
-import { useInTransitVolumeChart } from '../../api/warehouseContainerReportChart';
+import { useInTransitVolumeChart, ChartFilters } from '../../api/warehouseContainerReportChart';
 
 interface ContainerLoadAnalysisProps {
-  filters?: { [key: string]: string[] };
+  filters?: ChartFilters;
+  sessionId: number | null;
 }
 
-const ContainerLoadAnalysis: React.FC<ContainerLoadAnalysisProps> = ({ filters }) => {
+const ContainerLoadAnalysis: React.FC<ContainerLoadAnalysisProps> = ({ filters, sessionId }) => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  const { data: inTransitVolumeData, isLoading: isInTransitLoading } = useInTransitVolumeChart(filters);
+  const { data: inTransitVolumeData, isLoading: isInTransitLoading } = useInTransitVolumeChart(sessionId, filters);
 
   const colors: ChartColors = React.useMemo(() => ({
     primary: '#6366f1',

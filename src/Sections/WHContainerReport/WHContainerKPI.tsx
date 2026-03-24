@@ -3,10 +3,11 @@ import KpiCards from '../../components/common/KpiCards'
 
 interface WHContainerKPIProps {
   filters?: ChartFilters;
+  sessionId: number | null;
 }
 
-const WHContainerKPI = ({ filters }: WHContainerKPIProps) => {
-  const { data: kpiResponse, isLoading } = useWarehouseKpi(filters);
+const WHContainerKPI = ({ filters, sessionId }: WHContainerKPIProps) => {
+  const { data: kpiResponse, isLoading } = useWarehouseKpi(sessionId, filters);
   const kpiData = kpiResponse?.data;
 
   const kpiCards = [
