@@ -263,7 +263,13 @@ export default function PurchaseOrder() {
             onUpload={async (file) => {
               try {
                 await uploadMutation.mutateAsync({ file })
-                await refetchFlag()
+                if (uploadMutation.isSuccess) {
+                  try {
+                    await refetchFlag();
+                  } catch (error) {
+                    console.error(error)
+                  }
+                }
               } catch (error) {
                 const message = error instanceof Error ? error.message : "Failed to upload file";
                 toast.error(message);
