@@ -38,8 +38,6 @@ export default function PurchaseOrder() {
 
   const { isButtonDisabled: isFlagsDisabled, isLoading: isFlagsLoading } = useLoadReportflagCheck(selectedWarehouse, sessionId);
 
-  console.log("FLAG CHECK", isFlagsDisabled);
-
   const [loadStatus, setLoadStatus] = useState<LoadStatus>('idle');
   const [loadProgress, setLoadProgress] = useState(0);
   const [currentLoadStep, setCurrentLoadStep] = useState(0);
