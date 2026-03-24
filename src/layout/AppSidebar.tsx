@@ -10,7 +10,7 @@ import { useTheme } from "../hooks/useTheme";
 
 
 const AppSidebar: React.FC = () => {
-  const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
+  const { isExpanded, isMobileOpen } = useSidebar();
   const location = useLocation();
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -30,18 +30,13 @@ const AppSidebar: React.FC = () => {
       className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
         ${isExpanded || isMobileOpen
           ? "w-[290px]"
-          : isHovered
-            ? "w-[290px]"
-            : "w-[90px]"
+          : "w-[90px]"
         }
         ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0`}
-      onMouseEnter={() => !isExpanded && setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       <SidebarHeader
         isExpanded={isExpanded}
-        isHovered={isHovered}
         isMobileOpen={isMobileOpen}
       />
       <div className="flex flex-col flex-1 overflow-y-auto duration-300 ease-linear no-scrollbar">
@@ -49,13 +44,12 @@ const AppSidebar: React.FC = () => {
           <div className="flex flex-col gap-4">
             <div>
               <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
+                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded
                   ? "lg:justify-center"
                   : "justify-start"
                   }`}
               >
                 {isExpanded
-                  // || isHovered
                   || isMobileOpen ? (
                   " "
                 ) : (
@@ -69,7 +63,6 @@ const AppSidebar: React.FC = () => {
                     nav={nav}
                     isActive={isActive}
                     isExpanded={isExpanded}
-                    isHovered={isHovered}
                     isMobileOpen={isMobileOpen}
                     isSubmenuOpen={isSubmenuOpen("main", index)}
                     onSubmenuToggle={() => handleSubmenuToggle(index, "main")}
@@ -83,7 +76,7 @@ const AppSidebar: React.FC = () => {
           </div>
         </nav>
       </div>
-      {isExpanded || isHovered ? (
+      {isExpanded ? (
         <h1 className="flex items-center px-6 py-4 shrink-0" style={{ color: isDark ? "white" : "#000" }}>A solution by &nbsp;<span className="font-bold">AI Team</span></h1>
       ) : null}
     </aside>
