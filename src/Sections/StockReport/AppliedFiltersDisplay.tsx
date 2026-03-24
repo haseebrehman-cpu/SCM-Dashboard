@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import CloseIcon from '@mui/icons-material/Close';
 import { Paper } from '@mui/material';
 
-// Using framer-motion for smooth entry/exit animations
 const MotionChip = motion(Chip);
 
 interface FilterEntry {
