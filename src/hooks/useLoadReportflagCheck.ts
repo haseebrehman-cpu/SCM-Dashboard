@@ -46,9 +46,8 @@ export const useLoadReportflagCheck = (warehouse_region: string, session_id: num
     isLoading: prodLoading || containerLoading,
     production_remaining_report,
     container_report,
-    refetchAll: () => {
-      refetchProd();
-      refetchContainer();
+    refetchAll: async () => {
+      await Promise.all([refetchProd(), refetchContainer()]);
     }
   };
 };

@@ -36,7 +36,7 @@ export default function PurchaseOrder() {
   const loadReportMutation = useUploadPurchaseOrderReport();
   const postProductionLoadReportMutation = usePostProductionLoadReport();
 
-  const { isButtonDisabled: isFlagsDisabled, isLoading: isFlagsLoading } = useLoadReportflagCheck(selectedWarehouse, sessionId);
+  const { isButtonDisabled: isFlagsDisabled, isLoading: isFlagsLoading, refetchAll: refetchFlag } = useLoadReportflagCheck(selectedWarehouse, sessionId);
 
   const [loadStatus, setLoadStatus] = useState<LoadStatus>('idle');
   const [loadProgress, setLoadProgress] = useState(0);
@@ -110,9 +110,10 @@ export default function PurchaseOrder() {
 
   const handleRefreshApi = async () => {
     try {
-      const result = await refetch()
+      const result = await refetch();
+      await refetchFlag();
       if (result.isSuccess) {
-        toast.success("Data Refetched Successfully!")
+        toast.success("Data Refetched Successfully!");
       } else if (result.isError) {
         const message = result.error instanceof Error ? result.error.message : "Failed to refetch data. Please try again.";
         toast.error(message);
@@ -122,7 +123,7 @@ export default function PurchaseOrder() {
       toast.error(message);
       console.error("Refetch error:", error);
     }
-  }
+  };
 
   const arrivalDates = rows.map((item) => item.arrival_date)
 
@@ -163,7 +164,6 @@ export default function PurchaseOrder() {
       toast.error("No upload session found. Please upload a file first.");
       return;
     }
-    // Reset process state
     setLoadStatus('idle');
     setLoadProgress(0);
     setCurrentLoadStep(0);
@@ -182,7 +182,6 @@ export default function PurchaseOrder() {
     try {
       let step = currentLoadStep;
 
-      // Step 0: Initial report generation
       if (step === 0) {
         await loadReportMutation.mutateAsync({ session_id: sessionId });
         step = 1;
@@ -190,7 +189,6 @@ export default function PurchaseOrder() {
         setLoadProgress(20);
       }
 
-      // Steps 1 to 4: Warehouse regions (total 5 steps)
       for (let i = step - 1; i < WAREHOUSE_OPTIONS.length; i++) {
         currentTaskName = `Report for ${WAREHOUSE_OPTIONS[i].label}`;
         await postProductionLoadReportMutation.mutateAsync({
@@ -265,8 +263,7 @@ export default function PurchaseOrder() {
             onUpload={async (file) => {
               try {
                 await uploadMutation.mutateAsync({ file })
-                console.log(file);
-
+                await refetchFlag()
               } catch (error) {
                 const message = error instanceof Error ? error.message : "Failed to upload file";
                 toast.error(message);
