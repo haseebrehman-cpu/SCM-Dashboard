@@ -184,6 +184,13 @@ export default function PurchaseOrder() {
 
       if (step === 0) {
         await loadReportMutation.mutateAsync({ session_id: sessionId });
+        if (loadReportMutation.isSuccess) {
+          try {
+            await refetchFlag();
+          } catch (error) {
+            console.error(error)
+          }
+        }
         step = 1;
         setCurrentLoadStep(1);
         setLoadProgress(20);
@@ -263,13 +270,6 @@ export default function PurchaseOrder() {
             onUpload={async (file) => {
               try {
                 await uploadMutation.mutateAsync({ file })
-                if (uploadMutation.isSuccess) {
-                  try {
-                    await refetchFlag();
-                  } catch (error) {
-                    console.error(error)
-                  }
-                }
               } catch (error) {
                 const message = error instanceof Error ? error.message : "Failed to upload file";
                 toast.error(message);
