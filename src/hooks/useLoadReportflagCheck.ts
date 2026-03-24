@@ -20,8 +20,8 @@ export const useLoadReportflagCheck = (warehouse_region: string, session_id: num
     refetch: refetchContainer
   } = useCombinedReport(1, 100, session_id);
 
-  const production_remaining_report = prodData?.production_remaining_report ?? true;
-  const container_report = containerData?.container_report ?? true;
+  const production_remaining_report = prodData?.production_remaining_report ?? false;
+  const container_report = containerData?.container_report ?? false;
 
   useEffect(() => {
     if (session_id !== null) {
@@ -30,7 +30,7 @@ export const useLoadReportflagCheck = (warehouse_region: string, session_id: num
     }
   }, [warehouse_region, session_id, refetchProd, refetchContainer, container_report]);
 
-  const isButtonDisabled = container_report === false;
+  const isButtonDisabled = container_report === true || production_remaining_report === false;
 
   return {
     isButtonDisabled,

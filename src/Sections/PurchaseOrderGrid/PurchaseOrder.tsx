@@ -243,7 +243,7 @@ export default function PurchaseOrder() {
           isDark={isDark}
           onWarehouseChange={handleWarehouseChange}
           onUploadClick={() => setIsDialogOpen(true)}
-          isSelectWarehouse={true}
+          isSelectWarehouse={false}
           isShowUpload={true}
         />
       </div>
