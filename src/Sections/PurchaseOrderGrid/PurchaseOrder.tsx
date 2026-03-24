@@ -1,5 +1,5 @@
 import { useTheme } from "../../hooks/useTheme";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { PAGINATION_MODEL } from '../../mockData/purchaseOrderMock';
 import { useInlineEdit } from '../../hooks/useInlineEdit';
 import { generatePurchaseOrderColumns } from '../../utils/columnGenerators/purchaseOrder';
@@ -39,7 +39,7 @@ export default function PurchaseOrder() {
   const { isButtonDisabled: isFlagsDisabled, isLoading: isFlagsLoading, refetchAll: refetchFlag } = useLoadReportflagCheck(selectedWarehouse, sessionId);
 
   const [loadStatus, setLoadStatus] = useState<LoadStatus>('idle');
-  const [loadProgress, setLoadProgress] = useState(0);
+  const [loadProgress, setLoadProgress] = useState(1);
   const [currentLoadStep, setCurrentLoadStep] = useState(0);
   const [loadErrorMessage, setLoadErrorMessage] = useState<string | undefined>();
 
@@ -165,11 +165,35 @@ export default function PurchaseOrder() {
       return;
     }
     setLoadStatus('idle');
-    setLoadProgress(0);
+    setLoadProgress(1);
     setCurrentLoadStep(0);
     setLoadErrorMessage(undefined);
     setIsLoadReportDialogOpen(true);
   }
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (loadStatus === 'loading') {
+      interval = setInterval(() => {
+        setLoadProgress((prev) => {
+          if (prev >= 100) return 100;
+
+          // Total steps: 1 (Main Report) + 4 (Warehouse Reports) = 5
+          const totalSteps = WAREHOUSE_OPTIONS.length + 1;
+          const progressPerStep = 100 / totalSteps;
+          const currentMilestone = (currentLoadStep + 1) * progressPerStep;
+
+          if (prev < currentMilestone - 1) {
+            // Increment by a random small amount to simulate real loading
+            const increment = Math.random() * 2 + 0.5;
+            return Math.min(prev + increment, currentMilestone - 0.5);
+          }
+          return prev;
+        });
+      }, 4000);
+    }
+    return () => clearInterval(interval);
+  }, [loadStatus, currentLoadStep]);
 
   const handleConfirmLoadReport = async () => {
     if (sessionId === null) return;
@@ -184,12 +208,10 @@ export default function PurchaseOrder() {
 
       if (step === 0) {
         await loadReportMutation.mutateAsync({ session_id: sessionId });
-        if (loadReportMutation.isSuccess) {
-          try {
-            await refetchFlag();
-          } catch (error) {
-            console.error(error)
-          }
+        try {
+          await refetchFlag();
+        } catch (error) {
+          console.error(error)
         }
         step = 1;
         setCurrentLoadStep(1);
@@ -204,9 +226,10 @@ export default function PurchaseOrder() {
         });
         const nextStep = i + 2;
         setCurrentLoadStep(nextStep);
-        setLoadProgress(20 + (i + 1) * 20);
+        setLoadProgress(Math.min(20 + (i + 1) * 20, 100));
       }
 
+      setLoadProgress(100);
       setLoadStatus('success');
     } catch (error) {
       setLoadStatus('error');
@@ -220,6 +243,7 @@ export default function PurchaseOrder() {
     if (sessionId !== null) {
       try {
         await deleteMutation.mutateAsync({ session_id: sessionId });
+        setIsLoadReportDialogOpen(false)
         toast.success("Report loading cancelled.");
       } catch (error) {
         toast.error("Failed to cancel report loading.");
@@ -291,6 +315,7 @@ export default function PurchaseOrder() {
             progress={loadProgress}
             errorMessage={loadErrorMessage}
             showRetry={currentLoadStep >= 1}
+            containerSuccess={loadReportMutation.status}
           />
         )}
 

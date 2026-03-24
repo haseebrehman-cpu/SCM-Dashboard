@@ -13,12 +13,13 @@ interface LoadReportProgressDialogProps {
   onClose: () => void
   onConfirm: () => Promise<void>
   onRetry: () => Promise<void>
-  onCancel: () => void
-  isDark: boolean
-  status: LoadStatus
-  progress: number
-  errorMessage?: string
-  showRetry?: boolean
+  onCancel: () => Promise<void> | void
+  isDark: boolean;
+  status: LoadStatus;
+  progress: number;
+  errorMessage?: string;
+  showRetry?: boolean;
+  containerSuccess?: string;
 }
 
 const LoadReportProgressDialog: React.FC<LoadReportProgressDialogProps> = ({
@@ -32,17 +33,26 @@ const LoadReportProgressDialog: React.FC<LoadReportProgressDialogProps> = ({
   progress: loadingPercentage,
   errorMessage,
   showRetry = true,
+  containerSuccess,
 }) => {
-  const handleConfirm = async () => {
-    await onConfirm()
-  }
+  const [isCancelling, setIsCancelling] = React.useState(false);
 
-  const handleCancel = () => {
-    if (status === 'loading') {
-      onCancel()
+  const handleConfirm = async () => {
+    await onConfirm();
+  };
+
+  const handleCancel = async () => {
+    if (status === "loading") {
+      setIsCancelling(true);
+      try {
+        await onCancel();
+      } finally {
+        setIsCancelling(false);
+      }
+    } else {
+      onClose();
     }
-    onClose()
-  }
+  };
 
   const handleCloseAfterDone = () => {
     onClose()
@@ -149,7 +159,7 @@ const LoadReportProgressDialog: React.FC<LoadReportProgressDialogProps> = ({
                     fontSize: '0.8rem',
                   }}
                 >
-                  {loadingPercentage}%
+                  {Math.round(loadingPercentage)}%
                 </Typography>
               </Box>
               <LinearProgress
@@ -187,6 +197,7 @@ const LoadReportProgressDialog: React.FC<LoadReportProgressDialogProps> = ({
                 variant="outlined"
                 size="medium"
                 onClick={handleCancel}
+                disabled={containerSuccess === 'success'}
                 sx={{
                   color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
                   borderColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
@@ -220,6 +231,7 @@ const LoadReportProgressDialog: React.FC<LoadReportProgressDialogProps> = ({
               variant="outlined"
               size="medium"
               onClick={handleCancel}
+              disabled={isCancelling || containerSuccess === 'success'}
               sx={{
                 color: isDark ? '#ef4444' : '#dc2626',
                 borderColor: isDark ? 'rgba(239,68,68,0.4)' : 'rgba(220,38,38,0.4)',
@@ -229,7 +241,7 @@ const LoadReportProgressDialog: React.FC<LoadReportProgressDialogProps> = ({
                 },
               }}
             >
-              Cancel
+              {isCancelling ? 'Cancelling...' : 'Cancel'}
             </Button>
           )}
 
