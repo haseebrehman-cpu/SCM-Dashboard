@@ -18,6 +18,9 @@ import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 import { useDeleteRunningReport } from "../../api/containerDetailReport";
 import LoadReportProgressDialog, { LoadStatus } from "./LoadReportProgressDialog";
 import { WAREHOUSE_OPTIONS } from '../../constants/productionReport';
+import { Warehouse } from "../../types/productionReport";
+import { SelectChangeEvent } from "@mui/material";
+import { useLoadReportflagCheck } from "../../hooks/useLoadReportflagCheck";
 
 export default function PurchaseOrder() {
   const { theme } = useTheme();
@@ -26,11 +29,16 @@ export default function PurchaseOrder() {
   const [isLoadReportDialogOpen, setIsLoadReportDialogOpen] = useState(false);
   const [isUpdatingDate, setIsUpdatingDate] = useState(false);
   const [updatingRowId, setUpdatingRowId] = useState<number | null>(null);
+  const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>("UK");
 
   const latestSessionId = useLatestSessionId();
   const sessionId = latestSessionId;
   const loadReportMutation = useUploadPurchaseOrderReport();
   const postProductionLoadReportMutation = usePostProductionLoadReport();
+
+  const { isButtonDisabled: isFlagsDisabled, isLoading: isFlagsLoading } = useLoadReportflagCheck(selectedWarehouse, sessionId);
+
+  console.log("FLAG CHECK", isFlagsDisabled);
 
   const [loadStatus, setLoadStatus] = useState<LoadStatus>('idle');
   const [loadProgress, setLoadProgress] = useState(0);
@@ -145,8 +153,12 @@ export default function PurchaseOrder() {
     }
     return count;
   };
-  
+
   const emptyItemCount = countEmptyItems(arrivalDates);
+
+  const handleWarehouseChange = (event: SelectChangeEvent<Warehouse>) => {
+    setSelectedWarehouse(event.target.value as Warehouse);
+  };
 
   const handleLoadReportClick = () => {
     if (sessionId === null) {
@@ -220,16 +232,18 @@ export default function PurchaseOrder() {
           Refetching &nbsp; <LoaderIcon />
         </> : "Refresh Report"}</Button>
         <Button
-          disabled={!isArrivalEmpty || sessionId === null || isRefetching}
+          disabled={!isArrivalEmpty || sessionId === null || isRefetching || isFlagsDisabled || isFlagsLoading}
           onClick={handleLoadReportClick}
           startIcon={<CachedIcon />}
         >
-          Load Reports
+          {isFlagsLoading ? "Checking Status..." : "Load Reports"}
         </Button>
         <ProductionReportHeader
+          selectedWarehouse={selectedWarehouse}
           isDark={isDark}
+          onWarehouseChange={handleWarehouseChange}
           onUploadClick={() => setIsDialogOpen(true)}
-          isSelectWarehouse={false}
+          isSelectWarehouse={true}
           isShowUpload={true}
         />
       </div>

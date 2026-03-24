@@ -237,6 +237,7 @@ export interface CombinedReportApiResponse {
     has_previous: boolean;
   };
   data: CombinedReportApiRow[];
+  container_report?: boolean;
 }
 
 export interface PurchaseOrderBulkUpdateDetailRow {
@@ -388,6 +389,7 @@ export interface ProductionRemainingApiResponse {
   total_records: number;
   message: string;
   data: ProductionRemainingRow[];
+  production_remaining_report?: boolean;
 }
 
 export interface ProductionRemainingLoadResponse {
