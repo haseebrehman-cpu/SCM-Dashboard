@@ -1,13 +1,16 @@
 import React from "react";
 import {
-  BoxIcon,
-  CalenderIcon,
-  DollarLineIcon,
-  GridIcon,
-  ListIcon,
-  UserCircleIcon,
+  BoxIcon
 } from "../icons";
-
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import MergeTypeIcon from '@mui/icons-material/MergeType';
+import FactoryIcon from '@mui/icons-material/Factory';
+import ShowChartIcon from '@mui/icons-material/ShowChart';
+import SummarizeIcon from '@mui/icons-material/Summarize';
 export type NavItem = {
   name: string;
   icon: React.ReactNode;
@@ -27,17 +30,17 @@ export type NavItem = {
  */
 export const navItems: NavItem[] = [
   {
-    icon: <CalenderIcon />,
+    icon: <DashboardIcon />,
     name: "Dashboard Home",
     path: "/"
   },
   {
-    icon: <CalenderIcon />,
+    icon: <CloudUploadIcon />,
     name: "Linnworks Files Upload",
     path: "/file-upload"
   },
   {
-    icon: <GridIcon />,
+    icon: <ShoppingCartIcon />,
     name: "Purchase Order Report",
     path: "/purchase-order"
   },
@@ -47,34 +50,34 @@ export const navItems: NavItem[] = [
     subItems: [
       {
         name: "Stock Report",
-        icon: <DollarLineIcon />,
+        icon: <AssessmentIcon />,
         path: "/stock-report",
       },
       {
         name: "WH Container Report",
-        icon: <BoxIcon />,
+        icon: <LocalShippingIcon />,
         path: "/wh-container-report",
       },
       {
         name: "Combined Report",
-        icon: <BoxIcon />,
+        icon: <MergeTypeIcon />,
         path: "/combined-report",
       },
     ],
   },
   {
-    icon: <CalenderIcon />,
+    icon: <FactoryIcon />,
     name: "Production Remaining Report",
     path: "/production-remaining-report",
   },
   {
-    icon: <UserCircleIcon />,
+    icon: <ShowChartIcon />,
     name: "Stock Performance Report",
     path: "/stock-performance-report",
   },
   {
     name: "Summary Dashboard",
-    icon: <ListIcon />,
+    icon: <SummarizeIcon />,
     path: "/summary-dashboard",
   },
 

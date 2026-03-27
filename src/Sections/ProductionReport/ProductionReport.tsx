@@ -6,6 +6,7 @@ import {
   GridToolbarDensitySelector,
   GridToolbarQuickFilter,
   useGridApiContext,
+  GridToolbarProps,
 } from "@mui/x-data-grid-premium";
 import { useTheme } from "../../hooks/useTheme";
 import { useState, useMemo, useCallback, useRef } from "react";
@@ -28,7 +29,7 @@ const FORECAST_FIXED_KEYS: (keyof ProductionRemainingRow)[] = [
   "warehouse_region",
 ];
 
-function downloadForecastCSV(data: ProductionRemainingRow[]) {
+function downloadForecastCSV(data: ProductionRemainingRow[], region: string) {
   if (!data || data.length === 0) return;
 
   const forecastedKeys = Object.keys(data[0]).filter((k) =>
@@ -57,30 +58,34 @@ function downloadForecastCSV(data: ProductionRemainingRow[]) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.setAttribute("download", `forecast_${new Date().toISOString().slice(0, 10)}.csv`);
+  link.setAttribute("download", `forecast_${region}_${new Date().toISOString().slice(0, 10)}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
 
-declare module "@mui/x-data-grid" {
+declare module "@mui/x-data-grid-premium" {
   interface ToolbarPropsOverrides {
     onDownloadForecast: () => void;
+    selectedWarehouse: Warehouse;
   }
 }
 
-interface ForecastToolbarProps {
+interface ForecastToolbarProps extends Partial<GridToolbarProps> {
   onDownloadForecast: () => void;
+  selectedWarehouse: Warehouse;
 }
 
-function ExportDropdown({ onDownloadForecast }: ForecastToolbarProps) {
+function ExportDropdown({ onDownloadForecast, selectedWarehouse }: ForecastToolbarProps) {
   const apiRef = useGridApiContext();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
 
   const handleExportCSV = () => {
-    apiRef.current.exportDataAsCsv();
+    apiRef.current.exportDataAsCsv({
+      fileName: `production_remaining_${selectedWarehouse}_${new Date().toISOString().slice(0, 10)}`,
+    });
     setOpen(false);
   };
 
@@ -127,9 +132,9 @@ function ExportDropdown({ onDownloadForecast }: ForecastToolbarProps) {
   );
 }
 
-function ForecastToolbar({ onDownloadForecast }: ForecastToolbarProps) {
+function ForecastToolbar({ onDownloadForecast, selectedWarehouse }: ForecastToolbarProps) {
   return (
-    <GridToolbarContainer sx={{ display: "flex", alignItems: "center", width: "100%" , color: 'white'}}>
+    <GridToolbarContainer sx={{ display: "flex", alignItems: "center", width: "100%", color: 'white' }}>
       <Typography
         variant="subtitle1"
         sx={{ fontWeight: 600, fontSize: "0.9rem", mr: 1, whiteSpace: "nowrap" }}
@@ -142,7 +147,7 @@ function ForecastToolbar({ onDownloadForecast }: ForecastToolbarProps) {
       <GridToolbarColumnsButton />
       <GridToolbarFilterButton />
       <GridToolbarDensitySelector />
-      <ExportDropdown onDownloadForecast={onDownloadForecast} />
+      <ExportDropdown onDownloadForecast={onDownloadForecast} selectedWarehouse={selectedWarehouse} />
       <GridToolbarQuickFilter />
     </GridToolbarContainer>
   );
@@ -193,8 +198,8 @@ export default function ProductionReport() {
   );
 
   const handleDownloadForecast = useCallback(() => {
-    downloadForecastCSV(reportResponse?.data ?? []);
-  }, [reportResponse?.data]);
+    downloadForecastCSV(reportResponse?.data ?? [], selectedWarehouse);
+  }, [reportResponse?.data, selectedWarehouse]);
 
   return (
     <>
@@ -241,6 +246,8 @@ export default function ProductionReport() {
           slotProps={{
             toolbar: {
               onDownloadForecast: handleDownloadForecast,
+              selectedWarehouse: selectedWarehouse,
+
             },
           }}
         />

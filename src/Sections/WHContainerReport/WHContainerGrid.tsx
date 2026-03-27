@@ -50,7 +50,7 @@ const WHContainerGrid = ({ filters = {} }: WHContainerGridProps) => {
     [data?.data]
   );
 
-  const columns = generateWarehouseColumns();
+  const columns = generateWarehouseColumns(isDark);
 
   return (
     <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">

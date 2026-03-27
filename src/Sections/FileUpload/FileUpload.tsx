@@ -65,7 +65,7 @@ const FileUpload: React.FC = () => {
     file3?.status === "completed";
 
   return (
-    <div className="flex items-center justify-center py-2 px-4">
+    <div className="flex items-center justify-center py-6 px-4">
       <div className="w-full max-w-4xl">
         {/* Header */}
         <Header />

@@ -176,7 +176,7 @@ export default function PurchaseOrder() {
     if (loadStatus === 'loading') {
       interval = setInterval(() => {
         setLoadProgress((prev) => {
-          if (prev >= 100) return 100;
+          if (prev >= 99) return 99;
 
           // Total steps: 1 (Main Report) + 4 (Warehouse Reports) = 5
           const totalSteps = WAREHOUSE_OPTIONS.length + 1;
@@ -186,7 +186,8 @@ export default function PurchaseOrder() {
           if (prev < currentMilestone - 1) {
             // Increment by a random small amount to simulate real loading
             const increment = Math.random() * 2 + 0.5;
-            return Math.min(prev + increment, currentMilestone - 0.5);
+            // Cap at 99% to ensure 100% is only reached on success
+            return Math.min(prev + increment, currentMilestone - 0.5, 99);
           }
           return prev;
         });
@@ -226,7 +227,8 @@ export default function PurchaseOrder() {
         });
         const nextStep = i + 2;
         setCurrentLoadStep(nextStep);
-        setLoadProgress(Math.min(20 + (i + 1) * 20, 100));
+        const progress = 20 + (i + 1) * 20;
+        setLoadProgress(Math.min(progress, 99));
       }
 
       setLoadProgress(100);

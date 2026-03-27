@@ -49,8 +49,7 @@ const AppSidebar: React.FC = () => {
                   : "justify-start"
                   }`}
               >
-                {isExpanded
-                  || isMobileOpen ? (
+                {isExpanded || isMobileOpen ? (
                   " "
                 ) : (
                   <HorizontaLDots className="size-6" />

@@ -23,7 +23,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({
 
   return (
     <div
-      className={`py-8 flex ${!isExpanded ? "lg:justify-center" : "justify-start"
+      className={`py-1 flex ${!isExpanded ? "lg:justify-center" : "justify-start"
         }`}
     >
       <Link to="/">

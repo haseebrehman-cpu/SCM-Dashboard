@@ -59,16 +59,16 @@ export const generateCombinedReportColumns = ({ isDark, containerKeys }: ColumnC
       renderCell: (params: GridRenderCellParams<CombinedReportRow>) => (
         <div style={{ ...cellStyle, fontFamily: 'monospace' }}>{params.value}</div>
       ),
-    },
-    {
-      field: 'itemTitle',
-      headerName: 'Item Title',
-      width: 280,
-      renderHeader: () => <div style={headerStyle}>Item Title</div>,
-      renderCell: (params: GridRenderCellParams<CombinedReportRow>) => (
-        <div style={cellStyle}>{params.value}</div>
-      ),
-    },
+    }
+    // {
+    //   field: 'itemTitle',
+    //   headerName: 'Item Title',
+    //   width: 280,
+    //   renderHeader: () => <div style={headerStyle}>Item Title</div>,
+    //   renderCell: (params: GridRenderCellParams<CombinedReportRow>) => (
+    //     <div style={cellStyle}>{params.value}</div>
+    //   ),
+    // },
   ];
 
   // Sales columns (Last 60 Days)

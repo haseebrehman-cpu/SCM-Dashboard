@@ -1,31 +1,46 @@
 import { GridColDef } from "@mui/x-data-grid";
 
-export const generateWarehouseColumns = (): GridColDef[] => [
+const renderDateHeader = (title: string, isDark: boolean) => (
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+    <span style={{ fontWeight: 500, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)', fontSize: '0.7rem' }}>
+      {title}
+    </span>
+    <span style={{ fontSize: '0.5rem', opacity: 0.7, fontWeight: 400, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>
+      (YYYY/MM/DD)
+    </span>
+  </div>
+);
+
+export const generateWarehouseColumns = (isDark: boolean): GridColDef[] => [
   {
     field: "CategoryName",
     headerName: "Category Name",
-    width: 150,
+    flex: 1.5,
+    minWidth: 150,
     sortable: true,
     filterable: true,
   },
   {
     field: "ItemNumber",
     headerName: "Item Number",
-    width: 150,
+    flex: 1.5,
+    minWidth: 150,
     sortable: true,
     filterable: true,
   },
   {
     field: "ContainerName",
     headerName: "Container Name",
-    width: 150,
+    flex: 1.5,
+    minWidth: 150,
     sortable: true,
     filterable: true,
   },
   {
     field: "ContainerRegion",
     headerName: "Warehouse",
-    width: 150,
+    flex: 1,
+    minWidth: 120,
     sortable: true,
     filterable: true,
     headerAlign: "center",
@@ -34,7 +49,8 @@ export const generateWarehouseColumns = (): GridColDef[] => [
   {
     field: "IntransitQuantity",
     headerName: "Intransit Qty",
-    width: 120,
+    flex: 1,
+    minWidth: 110,
     sortable: true,
     filterable: true,
     headerAlign: "center",
@@ -43,7 +59,8 @@ export const generateWarehouseColumns = (): GridColDef[] => [
   {
     field: "ContainerNumber",
     headerName: "Container #",
-    width: 110,
+    flex: 1,
+    minWidth: 100,
     sortable: true,
     filterable: true,
     headerAlign: "center",
@@ -52,25 +69,30 @@ export const generateWarehouseColumns = (): GridColDef[] => [
   {
     field: "DepartureDate",
     headerName: "Departure Date",
-    width: 140,
+    flex: 1,
+    minWidth: 140,
     sortable: true,
     filterable: true,
     headerAlign: "center",
     align: "center",
+    renderHeader: () => renderDateHeader("Departure Date", isDark),
   },
   {
     field: "ArrivalDate",
     headerName: "Arrival Date",
-    width: 140,
+    flex: 1,
+    minWidth: 140,
     sortable: true,
     filterable: true,
     headerAlign: "center",
     align: "center",
+    renderHeader: () => renderDateHeader("Arrival Date", isDark),
   },
   {
     field: "LeftDays",
     headerName: "Left Days",
-    width: 100,
+    flex: 1,
+    minWidth: 120,
     sortable: true,
     filterable: true,
     headerAlign: "center",
@@ -79,10 +101,25 @@ export const generateWarehouseColumns = (): GridColDef[] => [
   {
     field: "UploadDate",
     headerName: "Current Date",
-    width: 140,
+    flex: 1,
+    minWidth: 140,
     sortable: true,
     filterable: true,
     headerAlign: "center",
     align: "center",
+    renderHeader: () => renderDateHeader("Current Date", isDark),
   },
-]
+  {
+    field: 'status',
+    headerName: "Status",
+    flex: 1,
+    minWidth: 120,
+    sortable: true,
+    filterable: true,
+    headerAlign: "center",
+    align: "center",
+    valueGetter: (_value, row) => {
+      return row.LeftDays === 0 ? "Delivered" : "Transit";
+    }
+  }
+];
