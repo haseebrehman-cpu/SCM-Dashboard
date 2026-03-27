@@ -63,9 +63,17 @@ export const FileUploadStep: React.FC<FileUploadStepProps> = ({
             <Switch
               checked={restrictDailyUpload}
               onChange={(e) => setRestrictDailyUpload(e.target.checked)}
+              sx={{
+                '& .MuiSwitch-switchBase.Mui-checked': {
+                  color: '#047ADB',
+                },
+                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                  backgroundColor: '#047ADB',
+                },
+              }}
             />
           }
-          label={<span className="text-sm font-medium text-gray-900 dark:text-white ">Restrict Daily Upload</span>}
+          label={<span className="text-sm font-medium  text-gray-900 dark:text-white ">Restrict Daily Upload</span>}
         />
       </FormGroup>
       <div className="mb-2">

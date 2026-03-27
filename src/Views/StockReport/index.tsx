@@ -8,6 +8,7 @@ import { useFilterOptions } from '../../api/containerDetailReport';
 import toast from 'react-hot-toast';
 import { useLatestSessionId } from '../../hooks/useLatestSessionId';
 import AppliedFiltersDisplay from '../../Sections/StockReport/AppliedFiltersDisplay';
+import AddTaskIcon from '@mui/icons-material/AddTask';
 
 const StockReportView = () => {
   const sessionId = useLatestSessionId();
@@ -100,11 +101,12 @@ const StockReportView = () => {
                 ml: 1,
                 boxShadow: 'none',
                 height: '40px',
-                backgroundColor: 'primary.main',
+                backgroundColor: '#047ADB',
                 '&:hover': {
                   boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                 }
               }}
+              startIcon={<AddTaskIcon/>}
             >
               Apply Filter
             </Button>

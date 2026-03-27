@@ -55,7 +55,7 @@ export const ProductionReportHeader: React.FC<ProductionReportHeaderProps> = ({
         {isShowUpload &&
           <Button
             variant="contained"
-            sx={{ borderRadius: '20px', fontSize: '12px' }}
+            sx={{ borderRadius: '20px', fontSize: '12px', bgcolor: "#047ADB" }}
             onClick={onUploadClick}
             startIcon={<IosShare sx={{ width: '16px' }} />}
           >
@@ -63,7 +63,7 @@ export const ProductionReportHeader: React.FC<ProductionReportHeaderProps> = ({
           </Button>
         }
         {isArchieved &&
-          <Button variant='contained' sx={{ borderRadius: '20px', fontSize: '12px' }} size='small' onClick={onArchieveCLick} startIcon={<ListIcon style={{ width: '16px' }} />}>View Archieved Reports</Button>
+          <Button variant='contained' sx={{ borderRadius: '20px', fontSize: '12px', bgcolor: "#047ADB" }} size='small' onClick={onArchieveCLick} startIcon={<ListIcon style={{ width: '16px' }} />}>View Archieved Reports</Button>
         }
       </FormControl>
     </>

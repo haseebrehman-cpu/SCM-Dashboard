@@ -7,6 +7,7 @@ import StockFilters from "../../Sections/StockReport/StockFilters"
 import { useFilterOptions } from "../../api/containerDetailReport"
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 import AppliedFiltersDisplay from "../../Sections/StockReport/AppliedFiltersDisplay";
+import AddTaskIcon from '@mui/icons-material/AddTask';
 
 const WHContainerReportView = () => {
   const sessionId = useLatestSessionId();
@@ -104,11 +105,12 @@ const WHContainerReportView = () => {
                 ml: 1,
                 boxShadow: 'none',
                 height: '40px',
-                backgroundColor: 'primary.main',
+                backgroundColor: '#047ADB',
                 '&:hover': {
                   boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                 }
               }}
+              startIcon={<AddTaskIcon />}
             >
               Apply Filter
             </Button>

@@ -50,7 +50,7 @@ export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = React.memo(({
           {isVisible && <span className="menu-item-text">{nav.name}</span>}
           {isVisible && (
             <ChevronDownIcon
-              className={`ml-auto w-5 h-5 transition-transform duration-200 ${isSubmenuOpen ? "rotate-180 text-brand-500" : ""
+              className={`ml-auto w-5 h-5 transition-transform duration-200 ${isSubmenuOpen ? "rotate-180 text-white" : ""
                 }`}
             />
           )}

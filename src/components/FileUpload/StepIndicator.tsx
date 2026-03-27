@@ -26,7 +26,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
           <div
             className={`flex items-center justify-center w-20 h-12 rounded-full border-2 transition-all duration-300 ${
               currentStep >= 1
-                ? 'bg-brand-500 border-brand-500 text-white'
+                ? 'bg-[#047ADB] border-[#047ADB] text-white'
                 : 'bg-gray-100 border-gray-300 text-gray-400 dark:bg-gray-800 dark:border-gray-700'
             }`}
           >
@@ -56,7 +56,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
           <div
             className={`flex items-center justify-center w-20 h-12 rounded-full border-2 transition-all duration-300 ${
               currentStep >= 2 && file1Status === 'completed'
-                ? 'bg-brand-500 border-brand-500 text-white'
+                ? 'bg-[#047ADB] border-[#047ADB] text-white'
                 : 'bg-gray-100 border-gray-300 text-gray-400 dark:bg-gray-800 dark:border-gray-700'
             }`}
           >
@@ -90,7 +90,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
           <div
             className={`flex items-center justify-center w-20 h-12 rounded-full border-2 transition-all duration-300 ${
               currentStep >= 3 && file2Status === 'completed'
-                ? 'bg-brand-500 border-brand-500 text-white'
+                ? 'bg-[#047ADB] border-[#047ADB] text-white'
                 : 'bg-gray-100 border-gray-300 text-gray-400 dark:bg-gray-800 dark:border-gray-700'
             }`}
           >

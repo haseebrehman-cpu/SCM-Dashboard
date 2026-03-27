@@ -257,13 +257,31 @@ export default function PurchaseOrder() {
   return (
     <>
       <div className="flex justify-end my-2">
-        <Button onClick={() => handleRefreshApi()} disabled={isRefetching} startIcon={isRefetching ? "" : <RefreshIcon />}>{isRefetching ? <>
-          Refetching &nbsp; <LoaderIcon />
-        </> : "Refresh Report"}</Button>
+        <Button
+          sx={{
+            color: isDark ? '#047ADB' : '#045CB8',
+            // '&:hover': {
+            //   backgroundColor: isDark ? 'rgba(251, 191, 36, 0.08)' : 'rgba(146, 64, 14, 0.08)'
+            // }
+          }}
+          onClick={() => handleRefreshApi()}
+          disabled={isRefetching}
+          startIcon={isRefetching ? "" : <RefreshIcon />}
+        >
+          {isRefetching ? <>
+            Refetching &nbsp; <LoaderIcon />
+          </> : "Refresh Report"}
+        </Button>
         <Button
           disabled={!isArrivalEmpty || sessionId === null || isRefetching || isFlagsDisabled || isFlagsLoading}
           onClick={handleLoadReportClick}
           startIcon={<CachedIcon />}
+          sx={{
+            color: isDark ? '#047ADB' : '#045CB8',
+            // '&:hover': {
+            //   backgroundColor: isDark ? 'rgba(251, 191, 36, 0.08)' : 'rgba(146, 64, 14, 0.08)'
+            // }
+          }}
         >
           {isFlagsLoading ? "Checking Status..." : "Load Reports"}
         </Button>
