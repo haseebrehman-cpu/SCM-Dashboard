@@ -8,6 +8,8 @@ import { useStockReport, usePrefetchContainerReport, ContainerReportFilters } fr
 import { StockReportRow } from "../../types/stockReport";
 import { StockReportApiRow } from "../../types/Interfaces/interfaces";
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
+import { Box, LinearProgress } from "@mui/material";
+
 
 function mapApiRowToGridRow(apiRow: StockReportApiRow): StockReportRow {
   return {
@@ -50,7 +52,20 @@ const StockReportGrid = ({ filters = {} }: StockReportGridProps) => {
   const columns = generateStockReportColumns();
 
   return (
+
     <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
+      {isLoading && (
+        <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
+          <LinearProgress
+            sx={{
+              backgroundColor: isDark ? 'rgba(4, 122, 219, 0.1)' : 'rgba(4, 122, 219, 0.05)',
+              '& .MuiLinearProgress-bar': {
+                backgroundColor: '#047ADB'
+              }
+            }}
+          />
+        </Box>
+      )}
       <DataGridPremium
         label="Stock Report"
         rows={rows}
@@ -73,6 +88,7 @@ const StockReportGrid = ({ filters = {} }: StockReportGridProps) => {
             csvOptions: { disableToolbarButton: false },
           },
         }}
+
       />
     </div>
   );

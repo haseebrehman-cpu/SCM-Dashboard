@@ -86,6 +86,12 @@ export const getDataGridStyles = (isDark: boolean, height: string) => ({
     opacity: '0 !important',
     pointerEvents: 'none !important',
   },
+  '& .MuiLinearProgress-root': {
+    backgroundColor: isDark ? 'rgba(4, 122, 219, 0.1)' : 'rgba(4, 122, 219, 0.05)',
+  },
+  '& .MuiLinearProgress-bar': {
+    backgroundColor: '#047ADB',
+  },
 });
 
 export const getFormControlStyles = (isDark: boolean) => ({

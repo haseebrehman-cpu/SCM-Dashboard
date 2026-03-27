@@ -12,8 +12,9 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { usePurchaseOrderReport, usePatchPurchaseOrderReport, useUploadPurchaseOrderFiles, useUploadPurchaseOrderReport, usePostProductionLoadReport } from "../../api/purchaseOrder";
 import toast, { LoaderIcon } from "react-hot-toast";
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { Button } from "@mui/material";
+import { Box, Button, LinearProgress } from "@mui/material";
 import CachedIcon from '@mui/icons-material/Cached';
+
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 import { useDeleteRunningReport } from "../../api/containerDetailReport";
 import LoadReportProgressDialog, { LoadStatus } from "./LoadReportProgressDialog";
@@ -184,9 +185,7 @@ export default function PurchaseOrder() {
           const currentMilestone = (currentLoadStep + 1) * progressPerStep;
 
           if (prev < currentMilestone - 1) {
-            // Increment by a random small amount to simulate real loading
             const increment = Math.random() * 2 + 0.5;
-            // Cap at 99% to ensure 100% is only reached on success
             return Math.min(prev + increment, currentMilestone - 0.5, 99);
           }
           return prev;
@@ -339,6 +338,18 @@ export default function PurchaseOrder() {
           />
         )}
 
+        {isLoading && (
+          <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
+            <LinearProgress
+              sx={{
+                backgroundColor: isDark ? 'rgba(4, 122, 219, 0.1)' : 'rgba(4, 122, 219, 0.05)',
+                '& .MuiLinearProgress-bar': {
+                  backgroundColor: '#047ADB'
+                }
+              }}
+            />
+          </Box>
+        )}
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DataGridPremium
             label="Purchase Order Report"

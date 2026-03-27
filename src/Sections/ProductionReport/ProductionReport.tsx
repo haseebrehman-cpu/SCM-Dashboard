@@ -45,7 +45,6 @@ function downloadForecastCSV(data: ProductionRemainingRow[], region: string) {
       .map((k) => {
         const val = (row as Record<string, unknown>)[k];
         const str = val == null ? "" : String(val);
-        // Quote if the value contains a comma, quote, or newline
         return str.includes(",") || str.includes('"') || str.includes("\n")
           ? `"${str.replace(/"/g, '""')}"`
           : str;
@@ -99,17 +98,16 @@ function ExportDropdown({ onDownloadForecast, selectedWarehouse }: ForecastToolb
       <Button
         ref={anchorRef}
         size="small"
-        startIcon={<DownloadIcon />}
-        endIcon={<ArrowDropDownIcon />}
+
         onClick={() => setOpen((prev) => !prev)}
         sx={{
-          fontSize: "0.8125rem",
-          textTransform: "none",
-          color: "#465FFF",
-          fontWeight: 500,
+          minWidth: 0,
+          px: 1,
+          color: "gray",
         }}
       >
-        Export Report
+        <DownloadIcon fontSize="small" />
+        <ArrowDropDownIcon fontSize="small" />
       </Button>
       <Menu
         anchorEl={anchorRef.current}
@@ -134,10 +132,44 @@ function ExportDropdown({ onDownloadForecast, selectedWarehouse }: ForecastToolb
 
 function ForecastToolbar({ onDownloadForecast, selectedWarehouse }: ForecastToolbarProps) {
   return (
-    <GridToolbarContainer sx={{ display: "flex", alignItems: "center", width: "100%", color: 'white' }}>
+    <GridToolbarContainer
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        width: "100%",
+        "& .MuiButton-root": {
+          color: "gray",
+          minWidth: 0,
+          p: 1,
+          textTransform: "none",
+          fontWeight: 500,
+          "& .MuiButton-startIcon": {
+            mr: 0,
+          },
+          "& .MuiButton-endIcon": {
+            ml: 0,
+          },
+          fontSize: 0, 
+        },
+        "& .MuiInputBase-root": {
+          fontSize: "0.8125rem",
+          color: "gray",
+        },
+        "& .MuiSvgIcon-root": {
+          color: "gray",
+          fontSize: "1.25rem", 
+        },
+      }}
+    >
       <Typography
         variant="subtitle1"
-        sx={{ fontWeight: 600, fontSize: "0.9rem", mr: 1, whiteSpace: "nowrap" }}
+        sx={{
+          fontWeight: 600,
+          fontSize: "0.9rem",
+          mr: 1,
+          whiteSpace: "nowrap",
+          color: "white",
+        }}
       >
         Production Remaining Report
       </Typography>
@@ -225,7 +257,14 @@ export default function ProductionReport() {
 
         {isLoading && (
           <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
-            <LinearProgress />
+            <LinearProgress
+              sx={{
+                backgroundColor: isDark ? 'rgba(4, 122, 219, 0.1)' : 'rgba(4, 122, 219, 0.05)',
+                '& .MuiLinearProgress-bar': {
+                  backgroundColor: '#047ADB'
+                }
+              }}
+            />
           </Box>
         )}
 
@@ -247,7 +286,6 @@ export default function ProductionReport() {
             toolbar: {
               onDownloadForecast: handleDownloadForecast,
               selectedWarehouse: selectedWarehouse,
-
             },
           }}
         />
