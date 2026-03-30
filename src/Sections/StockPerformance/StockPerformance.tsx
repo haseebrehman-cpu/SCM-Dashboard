@@ -67,8 +67,6 @@ export default function StockPerformance() {
       daysGap: row.days_gap,
       stockAfterArrival: row.stock_after_arrival,
       stockDaysAfterArrival: row.stock_days_after_arrival,
-      containerName: row.container_name,
-      intransitQuantity: row.intransit_quantity,
       remWarehouse: row.remaining,
       oosDays: row.oos_days,
     }));
@@ -80,7 +78,6 @@ export default function StockPerformance() {
     () =>
       generateStockPerformanceColumns({
         selectedWarehouse,
-        containers: [],
         isDark,
         data: tableData,
       }),

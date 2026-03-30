@@ -1,11 +1,34 @@
-import { GridColDef } from "@mui/x-data-grid";
-import { ContainerInfo, Warehouse } from '../../types/stockPerformance';
+import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { Warehouse } from '../../types/stockPerformance';
+import { StockPerformanceRow } from '../../types/Interfaces/interfaces';
+
+export interface MappedStockPerformanceRow extends StockPerformanceRow {
+  itemNumber: string;
+  categoryName: string;
+  itemTitle: string;
+  whStock: number;
+  linnLast60DaysSale: number;
+  linnWorksSales: number;
+  fbaLast30Days: number;
+  fbaLast7Days: number;
+  fbaStock: number;
+  allStock: number;
+  maxDc: number;
+  totalCtn: number;
+  daysCover: number;
+  daysCoverCurrentStock: number;
+  dispatchDateCover: number | string;
+  daysGap: number;
+  stockAfterArrival: number;
+  stockDaysAfterArrival: number;
+  remWarehouse: number | null;
+  oosDays: number;
+}
 
 interface ColumnGeneratorParams {
   selectedWarehouse: Warehouse;
-  containers: ContainerInfo[];
   isDark: boolean;
-  data?: any[];
+  data?: MappedStockPerformanceRow[];
 }
 
 const renderMultiLineHeader = (line1: string, line2?: string, isDark?: boolean) => (
@@ -133,7 +156,7 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
     headerAlign: "center",
     align: "center",
     renderHeader: () => renderMultiLineHeader("ALL IStock", "(WH+CTN+FBA)", isDark),
-    renderCell: (params) => <span style={{ fontWeight: 600 }}>{params.value}</span>,
+    renderCell: (params: GridRenderCellParams<MappedStockPerformanceRow>) => <span style={{ fontWeight: 600 }}>{params.value}</span>,
   },
   {
     field: "maxDc",
@@ -225,7 +248,7 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
     filterable: false,
     headerAlign: "center",
     align: "center",
-    renderCell: (params) => {
+    renderCell: (params: GridRenderCellParams<MappedStockPerformanceRow>) => {
       const value = params.value as number;
       const color = value > 20 ? '#EF4444' : value > 10 ? '#F59E0B' : '#10B981';
       return <span style={{ fontWeight: 600, color }}>{value}</span>;
@@ -276,7 +299,7 @@ export const generateStockPerformanceColumns = ({
       filterable: false,
       headerAlign: "center",
       align: "center",
-      renderCell: (params) => (
+      renderCell: (params: GridRenderCellParams<MappedStockPerformanceRow>) => (
         <span style={{ fontWeight: 600, color: isDark ? '#fbbf24' : '#d97706' }}>
           {params.value ?? '0'}
         </span>
