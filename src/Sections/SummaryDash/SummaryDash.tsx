@@ -144,7 +144,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           onPaginationModelChange={setPaginationModel}
           paginationMode="server"
           rowCount={reportResponse?.summary_dashboard_count ?? 0}
-          pageSizeOptions={[100, 500, 1000]}
+          pageSizeOptions={[500, 1000, 2500, 5000]}
           pagination
           rowBufferPx={100}
           loading={isLoading}

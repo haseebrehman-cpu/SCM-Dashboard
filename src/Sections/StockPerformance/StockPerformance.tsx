@@ -127,7 +127,7 @@ export default function StockPerformance() {
           onPaginationModelChange={setPaginationModel}
           paginationMode="server"
           rowCount={reportResponse?.stock_performance_count ?? 0}
-          pageSizeOptions={[100, 500, 1000]}
+          pageSizeOptions={[500, 1000, 2500, 5000]}
           pagination
           loading={isLoading}
           disableRowSelectionOnClick
