@@ -209,24 +209,6 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
     align: "center",
   },
   {
-    field: "containerName",
-    headerName: "Container Name",
-    width: 220,
-    sortable: true,
-    filterable: true,
-    headerAlign: "center",
-    align: "center",
-  },
-  {
-    field: "intransitQuantity",
-    headerName: "Intransit Quantity",
-    width: 180,
-    sortable: true,
-    filterable: false,
-    headerAlign: "center",
-    align: "center",
-  },
-  {
     field: "remWarehouse",
     headerName: `Remaining ${selectedWarehouse}`,
     width: 150,
@@ -272,7 +254,7 @@ export const generateStockPerformanceColumns = ({
       "itemTitle", "whStock", "linnLast60DaysSale", "linnWorksSales", "fbaLast30Days",
       "fbaLast7Days", "fbaStock", "allStock", "maxDc", "totalCtn", "daysCover",
       "daysCoverCurrentStock", "dispatchDateCover", "daysGap", "stockAfterArrival",
-      "stockDaysAfterArrival", "containerName", "intransitQuantity", "remWarehouse",
+      "stockDaysAfterArrival", "remWarehouse",
       "oosDays", "item_title", "remaining"
     ];
 
