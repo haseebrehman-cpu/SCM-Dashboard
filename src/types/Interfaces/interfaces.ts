@@ -419,3 +419,70 @@ export interface ProductionRemainingUploadFileResponse {
     updated_by: string | null;
   };
 }
+
+export interface StockPerformanceRow {
+  id: number;
+  upload_date: string;
+  warehouse_code: string;
+  category_name: string;
+  item_number: string;
+  item_title?: string;
+  linn_last_60days_sale: number;
+  wh_stock: number;
+  linn_next_60days_sale_previousyear: number;
+  fba_last_30days_sale: number;
+  fba_last_07days_sale: number;
+  fba_stock: number;
+  max_daily_consumption: number;
+  total_ctn: number;
+  all_stock: number;
+  days_cover: number;
+  days_cover_current_stock: number;
+  dispatch_date_cover: number | string;
+  days_gap: number;
+  stock_after_arrival: number;
+  stock_days_after_arrival: number;
+  oos_days: number;
+  remaining: number | null;
+  container_name: string;
+  intransit_quantity: number;
+  session_id: number;
+  [key: string]: string | number | null | undefined;
+}
+
+export interface StockPerformanceQuarters {
+  included_months: string[];
+  quarter_1_close: string;
+  quarter_2_close: string;
+}
+
+export interface StockPerformanceOverrides {
+  success: boolean;
+  message: string | null;
+  fetched_rows: number;
+  applied_cells: number;
+  applied_remaining_cells: number;
+  unmatched_rows: number;
+  missing_columns: number;
+  missing_column_names: string[];
+  missing_remaining_columns: number;
+  missing_remaining_column_names: string[];
+  seconds: number;
+}
+
+export interface StockPerformanceResponse {
+  success: boolean;
+  warehouse_code: string;
+  upload_date: string;
+  stock_performance_data: StockPerformanceRow[];
+  summary_dashboard_data: any;
+  stock_performance_count: number;
+  summary_dashboard_count: number;
+  page: number;
+  page_size: number;
+  stock_performance_page_count: number;
+  summary_dashboard_page_count: number;
+  stock_performance_has_next: boolean;
+  summary_dashboard_has_next: boolean;
+  message: string;
+}

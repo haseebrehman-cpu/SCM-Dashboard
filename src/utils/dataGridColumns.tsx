@@ -34,7 +34,6 @@ export const createSummaryDashboardColumns = (
       sortable: true,
       filterable: true,
       headerAlign: "center",
-      align: "center",
       renderHeader: () => renderHeader("ItemNumber"),
     },
     {
@@ -44,7 +43,7 @@ export const createSummaryDashboardColumns = (
       sortable: true,
       filterable: true,
       headerAlign: "center",
-      align: "center",
+
       renderHeader: () => renderHeader("ItemTitle"),
     },
     {
@@ -54,7 +53,7 @@ export const createSummaryDashboardColumns = (
       sortable: true,
       filterable: true,
       headerAlign: "center",
-      align: "center",
+
       renderHeader: () => renderHeader("Category Name"),
     },
     {
@@ -64,7 +63,7 @@ export const createSummaryDashboardColumns = (
       sortable: true,
       filterable: true,
       headerAlign: "center",
-      align: "center",
+
       renderHeader: () => renderHeader("WH"),
     },
     {
@@ -74,7 +73,7 @@ export const createSummaryDashboardColumns = (
       sortable: true,
       filterable: true,
       headerAlign: "center",
-      align: "center",
+
       valueFormatter: (value: number) => value?.toFixed(5) || "0",
       renderHeader: () => renderHeader("FBA+WH Cover Day"),
     },
@@ -85,7 +84,7 @@ export const createSummaryDashboardColumns = (
       sortable: true,
       filterable: true,
       headerAlign: "center",
-      align: "center",
+
       renderHeader: () => renderHeader("Remaining"),
     },
     {
@@ -95,7 +94,7 @@ export const createSummaryDashboardColumns = (
       sortable: true,
       filterable: true,
       headerAlign: "center",
-      align: "center",
+
       renderHeader: () => renderHeader("Total Dispatch Qty"),
     },
     {
@@ -105,7 +104,7 @@ export const createSummaryDashboardColumns = (
       sortable: true,
       filterable: true,
       headerAlign: "center",
-      align: "center",
+
       valueFormatter: (value: number) => value?.toFixed(5) || "0",
       renderHeader: () => renderHeader("Dispatch Cover Day"),
     },
@@ -116,7 +115,7 @@ export const createSummaryDashboardColumns = (
       sortable: true,
       filterable: true,
       headerAlign: "center",
-      align: "center",
+
       valueFormatter: (value: number) => value?.toFixed(5) || "0",
       renderHeader: () => renderHeader("MAX D"),
     },
@@ -261,7 +260,7 @@ export const createSummaryDashboardColumns = (
       sortable: true,
       filterable: true,
       headerAlign: "center",
-      align: "center",
+
       renderHeader: () => renderHeader("Edited By"),
     },
     {
@@ -270,7 +269,7 @@ export const createSummaryDashboardColumns = (
       headerName: "Action",
       width: 120,
       headerAlign: "center",
-      align: "center",
+
       getActions: (params) => {
         const isEditing = editingRowId === params.id;
         if (isEditing) {
