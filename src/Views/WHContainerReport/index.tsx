@@ -80,6 +80,7 @@ const WHContainerReportView = () => {
   const handleClearAll = () => {
     handleCancel();
   };
+  const hasFilters = Object.values(filters).some(arr => arr.length > 0)
 
   return (
     <Box>
@@ -100,6 +101,7 @@ const WHContainerReportView = () => {
             <Button
               variant="contained"
               onClick={handleApplyFilter}
+              disabled={!hasFilters}
               sx={{
                 borderRadius: '12px',
                 ml: 1,
