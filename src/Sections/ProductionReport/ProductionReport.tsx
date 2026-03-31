@@ -149,7 +149,7 @@ function ForecastToolbar({ onDownloadForecast, selectedWarehouse }: ForecastTool
           "& .MuiButton-endIcon": {
             ml: 0,
           },
-          fontSize: 0, 
+          fontSize: 0,
         },
         "& .MuiInputBase-root": {
           fontSize: "0.8125rem",
@@ -157,7 +157,7 @@ function ForecastToolbar({ onDownloadForecast, selectedWarehouse }: ForecastTool
         },
         "& .MuiSvgIcon-root": {
           color: "gray",
-          fontSize: "1.25rem", 
+          fontSize: "1.25rem",
         },
       }}
     >
@@ -196,7 +196,6 @@ export default function ProductionReport() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>("UK");
 
-  // Show a brief loader when changing pages to provide feedback
   useEffect(() => {
     setIsChangingPage(true);
     const timer = setTimeout(() => {

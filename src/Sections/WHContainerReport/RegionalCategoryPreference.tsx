@@ -131,7 +131,7 @@ const RegionalCategoryPreference: React.FC<RegionalCategoryPreferenceProps> = Re
       yAxis: {
         type: 'category',
         data: categories,
-        name: 'Product Category',
+        name: '',
         nameLocation: 'middle',
         nameGap: 140,
         nameTextStyle: {
