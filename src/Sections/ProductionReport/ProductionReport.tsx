@@ -1,18 +1,9 @@
 import {
   DataGridPremium,
-  GridToolbarContainer,
-  GridToolbarColumnsButton,
-  GridToolbarFilterButton,
-  GridToolbarDensitySelector,
-  GridToolbarQuickFilter,
-  useGridApiContext,
-  GridToolbarProps,
 } from "@mui/x-data-grid-premium";
 import { useTheme } from "../../hooks/useTheme";
-import { useState, useMemo, useCallback, useRef, useEffect } from "react";
-import { SelectChangeEvent, Button, Typography, Menu, MenuItem, Box } from "@mui/material";
-import DownloadIcon from "@mui/icons-material/Download";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import { SelectChangeEvent } from "@mui/material";
 import { FileUploadDialog } from "./FileUploadDialog";
 import { Warehouse } from '../../types/productionReport';
 import { PAGINATION_MODEL } from '../../constants/productionReport';
@@ -20,170 +11,10 @@ import { generateProductionColumns } from '../../utils/columnGenerators/producti
 import { getDataGridStyles } from '../../styles/productionReportStyles';
 import { ProductionReportHeader } from './ProductionReportHeader';
 import { useProductionRemainingReport, useUploadForecastedFile } from "../../api/productionRemainingReport";
-import { ProductionRemainingRow } from "../../types/Interfaces/interfaces";
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
-
-const FORECAST_FIXED_KEYS: (keyof ProductionRemainingRow)[] = [
-  "category_name",
-  "item_number",
-  "warehouse_region",
-];
-
-function downloadForecastCSV(data: ProductionRemainingRow[], region: string) {
-  if (!data || data.length === 0) return;
-
-  const forecastedKeys = Object.keys(data[0]).filter((k) =>
-    k.startsWith("FORECASTED Order")
-  );
-
-  const allKeys = [...FORECAST_FIXED_KEYS, ...forecastedKeys];
-
-  const header = allKeys.map((k) => `"${String(k).replace(/_/g, " ")}"`).join(",");
-
-  const rows = data.map((row) =>
-    allKeys
-      .map((k) => {
-        const val = (row as Record<string, unknown>)[k];
-        const str = val == null ? "" : String(val);
-        return str.includes(",") || str.includes('"') || str.includes("\n")
-          ? `"${str.replace(/"/g, '""')}"`
-          : str;
-      })
-      .join(",")
-  );
-
-  const csvContent = [header, ...rows].join("\n");
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.setAttribute("download", `forecast_${region}_${new Date().toISOString().slice(0, 10)}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-}
-
-declare module "@mui/x-data-grid-premium" {
-  interface ToolbarPropsOverrides {
-    onDownloadForecast: () => void;
-    selectedWarehouse: Warehouse;
-  }
-}
-
-interface ForecastToolbarProps extends Partial<GridToolbarProps> {
-  onDownloadForecast: () => void;
-  selectedWarehouse: Warehouse;
-}
-
-function ExportDropdown({ onDownloadForecast, selectedWarehouse }: ForecastToolbarProps) {
-  const apiRef = useGridApiContext();
-  const anchorRef = useRef<HTMLButtonElement>(null);
-  const [open, setOpen] = useState(false);
-
-  const handleExportCSV = () => {
-    apiRef.current.exportDataAsCsv({
-      fileName: `production_remaining_${selectedWarehouse}_${new Date().toISOString().slice(0, 10)}`,
-    });
-    setOpen(false);
-  };
-
-  const handleExportForecast = () => {
-    onDownloadForecast();
-    setOpen(false);
-  };
-
-  return (
-    <>
-      <Button
-        ref={anchorRef}
-        size="small"
-        onClick={() => setOpen((prev) => !prev)}
-        sx={{
-          minWidth: 0,
-          px: 1,
-          color: "gray",
-        }}
-      >
-        <DownloadIcon fontSize="small" />
-        <ArrowDropDownIcon fontSize="small" />
-      </Button>
-      <Menu
-        anchorEl={anchorRef.current}
-        open={open}
-        onClose={() => setOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-        transformOrigin={{ vertical: "top", horizontal: "left" }}
-        slotProps={{ paper: { elevation: 3, sx: { minWidth: 200, borderRadius: 2, mt: 0.5 } } }}
-      >
-        <MenuItem onClick={handleExportCSV} sx={{ fontSize: "0.875rem", gap: 1 }}>
-          <DownloadIcon fontSize="small" />
-          Export as CSV
-        </MenuItem>
-        <MenuItem onClick={handleExportForecast} sx={{ fontSize: "0.875rem", gap: 1 }}>
-          <DownloadIcon fontSize="small" />
-          Export Forecast Data
-        </MenuItem>
-      </Menu>
-    </>
-  );
-}
-
-function ForecastToolbar({ onDownloadForecast, selectedWarehouse }: ForecastToolbarProps) {
-  return (
-    <GridToolbarContainer
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        width: "100%",
-        "& .MuiButton-root": {
-          color: "gray",
-          minWidth: 0,
-          p: 1,
-          textTransform: "none",
-          fontWeight: 500,
-          "& .MuiButton-startIcon": {
-            mr: 0,
-          },
-          "& .MuiButton-endIcon": {
-            ml: 0,
-          },
-          fontSize: 0,
-        },
-        "& .MuiInputBase-root": {
-          fontSize: "0.8125rem",
-          color: "gray",
-        },
-        "& .MuiSvgIcon-root": {
-          color: "gray",
-          fontSize: "1.25rem",
-        },
-      }}
-    >
-      <Typography
-        variant="subtitle1"
-        sx={{
-          fontWeight: 600,
-          fontSize: "0.9rem",
-          mr: 1,
-          whiteSpace: "nowrap",
-          color: "white",
-        }}
-      >
-        Production Remaining Report
-      </Typography>
-
-      <Box sx={{ flex: 1 }} />
-
-      <GridToolbarColumnsButton />
-      <GridToolbarFilterButton />
-      <GridToolbarDensitySelector />
-      <ExportDropdown onDownloadForecast={onDownloadForecast} selectedWarehouse={selectedWarehouse} />
-      <GridToolbarQuickFilter />
-    </GridToolbarContainer>
-  );
-}
+import { ForecastToolbar } from "./ForecastToolbar";
+import { downloadForecastCSV } from "../../utils/productionRemainingReport/downloadForecastCSV";
 
 export default function ProductionReport() {
   const { theme } = useTheme();
@@ -209,18 +40,16 @@ export default function ProductionReport() {
     setPaginationModel((prev) => ({ ...prev, page: 0 }));
   };
 
-  const { data: reportResponse, isLoading } = useProductionRemainingReport(selectedWarehouse, sessionId);
+  const { data: reportResponse, isLoading, error } = useProductionRemainingReport(selectedWarehouse, sessionId);
   const uploadMutation = useUploadForecastedFile();
 
   const isAnyLoading = isLoading || isChangingPage;
 
   const handleFileUpload = async (file: File) => {
-    const controller = new AbortController();
     await uploadMutation.mutateAsync({
       file,
       warehouse_region: selectedWarehouse,
       session_id: sessionId,
-      signal: controller.signal
     });
   };
 
@@ -270,6 +99,13 @@ export default function ProductionReport() {
         {/* Loading Overlay */}
         <BrandedLogoLoader isLoading={isAnyLoading} isDark={isDark} message="Loading Production Report..." />
 
+        {error && (
+          <div className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-100">
+            There was a problem loading the production remaining report. Please try again or contact support
+            if the issue persists.
+          </div>
+        )}
+
         <DataGridPremium
           label="Production Remaining Report"
           rows={tableDataWithId}
@@ -280,7 +116,7 @@ export default function ProductionReport() {
           pagination
           disableRowSelectionOnClick
           sx={getDataGridStyles(isDark, "auto")}
-          loading={false}
+          loading={isAnyLoading}
           rowBufferPx={100}
           showToolbar
           slots={{ toolbar: ForecastToolbar }}

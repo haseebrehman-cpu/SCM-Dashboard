@@ -2,7 +2,7 @@ import { DataGridPremium, GridPaginationModel } from "@mui/x-data-grid-premium"
 import { getDataGridStyles } from "../../styles/productionReportStyles"
 import { useTheme } from "../../hooks/useTheme";
 import { generateWarehouseColumns } from "../../utils/columnGenerators/whContainerReport";
-import { PAGINATION_MODEL } from "../../mockData/whContainersReportMock";
+import { WH_CONTAINER_REPORT_PAGINATION_MODEL } from "../../constants/pagination";
 import { useContainerReport, usePrefetchContainerReport, ContainerReportFilters } from "../../api/containerDetailReport";
 import { useMemo, useState, useEffect } from "react";
 import { ContainerReportApiRow } from "../../types/Interfaces/interfaces";
@@ -35,7 +35,7 @@ interface WHContainerGridProps {
 const WHContainerGrid = ({ filters = {} }: WHContainerGridProps) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(PAGINATION_MODEL);
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(WH_CONTAINER_REPORT_PAGINATION_MODEL);
   const [isChangingPage, setIsChangingPage] = useState(false);
 
   // Show a brief loader when changing pages to provide feedback

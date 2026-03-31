@@ -163,23 +163,26 @@ export const FileLogsDetailPanel: React.FC<FileLogsDetailPanelProps> = ({ sessio
     // },
   ], []);
 
-  const categoryTabs = [
-    {
-      key: 'last_60_days',
-      label: 'Last 60 Days',
-      count: filesByCategory.last_60_days.length,
-    },
-    {
-      key: 'next_60_days_previous_year',
-      label: 'Next 60 Days (Previous Year)',
-      count: filesByCategory.next_60_days_previous_year.length,
-    },
-    {
-      key: 'open_orders',
-      label: 'Open Orders',
-      count: filesByCategory.open_orders.length,
-    },
-  ];
+  const categoryTabs = useMemo(
+    () => [
+      {
+        key: 'last_60_days',
+        label: 'Last 60 Days',
+        count: filesByCategory.last_60_days.length,
+      },
+      {
+        key: 'next_60_days_previous_year',
+        label: 'Next 60 Days (Previous Year)',
+        count: filesByCategory.next_60_days_previous_year.length,
+      },
+      {
+        key: 'open_orders',
+        label: 'Open Orders',
+        count: filesByCategory.open_orders.length,
+      },
+    ],
+    [filesByCategory],
+  );
 
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900/50">

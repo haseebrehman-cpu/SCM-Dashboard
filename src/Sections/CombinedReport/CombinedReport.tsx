@@ -4,7 +4,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { getDataGridStyles } from "../../styles/productionReportStyles";
 import { useCombinedReport, usePrefetchContainerReport, ContainerReportFilters } from "../../api/containerDetailReport";
 import { generateCombinedReportColumns } from "../../utils/columnGenerators/combinedReport";
-import { PAGINATION_MODEL } from "../../mockData/combinedReportMock";
+import { COMBINED_REPORT_PAGINATION_MODEL } from "../../constants/pagination";
 import { CombinedReportRow } from "../../types/combinedReport";
 import { CombinedReportApiRow } from "../../types/Interfaces/interfaces";
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
@@ -36,7 +36,7 @@ interface CombinedReportGridProps {
 const CombinedReportGrid = ({ filters = {} }: CombinedReportGridProps) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(PAGINATION_MODEL);
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(COMBINED_REPORT_PAGINATION_MODEL);
   const [isChangingPage, setIsChangingPage] = useState(false);
 
   // Show a brief loader when changing pages to provide feedback

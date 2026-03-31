@@ -3,16 +3,16 @@ import { useState, useMemo, useEffect } from "react";
 import { SummaryDashboardRow } from "../../config/summaryDashboard";
 import { createSummaryDashboardColumns } from "../../utils/dataGridColumns";
 import React from "react";
-import { useSummaryEdit } from '../../hooks/useSummaryEdit';
-import { getDataGridStyles } from '../../styles/productionReportStyles';
+import { useSummaryEdit } from "../../hooks/useSummaryEdit";
+import { getDataGridStyles } from "../../styles/productionReportStyles";
 import { ProductionReportHeader } from "../ProductionReport/ProductionReportHeader";
 import ArchieveDialog from "./ArchieveDialog";
 import { DataGridPremium } from "@mui/x-data-grid-premium";
 import { Warehouse } from "../../types/common";
 import { SelectChangeEvent } from "@mui/material";
-import { useStockPerfomanceReport, usePrefetchStockPerformance } from "../../api/stockPerfomance";
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
+import { useSummaryDashboardData } from "../../hooks/useSummaryDashboardData";
 
 /**
  * Summary Dashboard Grid Component
@@ -45,51 +45,17 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     setPaginationModel((prev) => ({ ...prev, page: 0 }));
   };
 
-  const { data: reportResponse, isLoading, isSuccess } = useStockPerfomanceReport(
+  const { rows: summaryRows, rowCount, isLoading } = useSummaryDashboardData({
     selectedWarehouse,
     sessionId,
-    "sd",
-    paginationModel.page + 1,
-    paginationModel.pageSize
-  );
+    page: paginationModel.page,
+    pageSize: paginationModel.pageSize,
+  });
 
-  // Prefetch next 9 pages when successful
-  usePrefetchStockPerformance(
-    selectedWarehouse,
-    sessionId,
-    "sd",
-    paginationModel.page + 1,
-    paginationModel.pageSize,
-    isSuccess
-  );
-
+  // Keep local rows state in sync with summaryRows for editing logic
   useEffect(() => {
-    if (reportResponse?.summary_dashboard_data) {
-      const mappedRows = reportResponse.summary_dashboard_data.map((row: any) => ({
-        ...row,
-        id: row.id,
-        itemNumber: row.item_number,
-        itemTitle: row.item_title,
-        categoryName: row.category_name,
-        wh: row.warehouse_code,
-        fbaWhCoverDay: row.fba_wh_cover_day,
-        remaining: row.remaining,
-        totalDispatchQty: row.total_dispatch_quantity,
-        dispatchCoverDay: row.dispatch_cover_day,
-        maxD: row.max_daily_consumption,
-        status: row.status,
-        reason1: row.reason_1,
-        reason2: row.reason_2,
-        reason3: row.reason_3,
-        reason4: row.reason_4,
-        factoryComments: row.factory_comments,
-        editedBy: row.edited_by,
-      }));
-      setRows(mappedRows);
-    } else if (!isLoading) {
-      setRows([]);
-    }
-  }, [reportResponse, isLoading]);
+    setRows(summaryRows);
+  }, [summaryRows]);
 
   const {
     editingRowId,
@@ -148,11 +114,11 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           paginationMode="server"
-          rowCount={reportResponse?.summary_dashboard_count ?? 0}
+          rowCount={rowCount}
           pageSizeOptions={[500, 1000, 2500, 5000]}
           pagination
           rowBufferPx={100}
-          loading={false}
+          loading={isAnyLoading}
           disableRowSelectionOnClick
           sx={getDataGridStyles(isDark, "auto")}
           showToolbar

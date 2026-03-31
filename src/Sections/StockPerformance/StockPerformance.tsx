@@ -130,7 +130,7 @@ export default function StockPerformance() {
           rowCount={reportResponse?.stock_performance_count ?? 0}
           pageSizeOptions={[500, 1000, 2500, 5000]}
           pagination
-          loading={false}
+          loading={isAnyLoading}
           disableRowSelectionOnClick
           rowBufferPx={100}
           sx={getDataGridStyles(isDark, "auto")}

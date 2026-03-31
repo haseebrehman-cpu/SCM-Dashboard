@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { DataGridPremium, GridPaginationModel } from "@mui/x-data-grid-premium";
-import { PAGINATION_MODEL } from "../../mockData/stockReportMock";
+import { STOCK_REPORT_PAGINATION_MODEL } from "../../constants/pagination";
 import { getDataGridStyles } from "../../styles/productionReportStyles";
 import { useTheme } from "../../hooks/useTheme";
 import { generateStockReportColumns } from "../../utils/columnGenerators/stockReport";
@@ -31,7 +31,7 @@ interface StockReportGridProps {
 const StockReportGrid = ({ filters = {} }: StockReportGridProps) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(PAGINATION_MODEL);
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(STOCK_REPORT_PAGINATION_MODEL);
   const [isChangingPage, setIsChangingPage] = useState(false);
 
   // Show a brief loader when changing pages to provide feedback

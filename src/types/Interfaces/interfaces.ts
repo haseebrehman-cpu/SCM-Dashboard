@@ -470,12 +470,32 @@ export interface StockPerformanceOverrides {
   seconds: number;
 }
 
+export interface SummaryDashboardDataRowApi {
+  id: number;
+  item_number: string | number;
+  item_title: string;
+  category_name: string;
+  warehouse_code: string;
+  fba_wh_cover_day: number;
+  remaining: number | null;
+  total_dispatch_quantity: number;
+  dispatch_cover_day: number;
+  max_daily_consumption: number;
+  status: string;
+  reason_1: string | null;
+  reason_2: string | null;
+  reason_3: string | null;
+  reason_4: string | null;
+  factory_comments: string | null;
+  edited_by?: string | null;
+}
+
 export interface StockPerformanceResponse {
   success: boolean;
   warehouse_code: string;
   upload_date: string;
   stock_performance_data: StockPerformanceRow[];
-  summary_dashboard_data: any;
+  summary_dashboard_data: SummaryDashboardDataRowApi[];
   stock_performance_count: number;
   summary_dashboard_count: number;
   page: number;

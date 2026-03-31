@@ -3,13 +3,12 @@ import { DataGridPremium, GridColDef } from "@mui/x-data-grid-premium";
 import { useTheme } from '../../hooks/useTheme';
 import { getDataGridStyles } from '../../styles/productionReportStyles';
 import React from 'react';
-import { useDeleteFileUploads, useLatestUploadSession, useProcessScmFiles } from '../../api/scmFileUpload';
-import toast from 'react-hot-toast';
 import { Modal } from '../../components/ui/modal';
 import { FileLogsDetailPanel } from './FileLogsDetailPanel';
 import { IconButton } from '@mui/material';
 import { TrashBinIcon } from '../../icons';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import { useFileLogsSessions } from '../../hooks/useFileLogsSessions';
 /**
  * FileLogsGrid Component
  * Displays upload sessions in a hierarchical grid with expandable detail rows.
@@ -20,27 +19,17 @@ const FileLogsGrid: React.FC = React.memo(() => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  const { data, isLoading, refetch } = useLatestUploadSession();
-  const deleteMutation = useDeleteFileUploads();
-  const processMutation = useProcessScmFiles();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedSessionId, setSelectedSessionId] = useState<number | null>(null);
 
-  // Transform sessions data for the main grid
-  const rows = useMemo(() => {
-    if (!data?.sessions || data.sessions.length === 0) return [];
-
-    return data.sessions.map((session) => ({
-      id: session.session.id,
-      uploadTimestamp: session.session.upload_timestamp,
-      totalFilesProcessed: session.session.total_files,
-      status: session.session.status === 'Success' ? 'Success' : 'Failed',
-      message: session.session.message,
-      uploadedBy: session.session.uploaded_by,
-      process_data: session.session.process_data,
-      sessionData: session, // Stored full session data for detail panel
-    }));
-  }, [data]);
+  const {
+    rows,
+    isGridLoading,
+    isDeleting,
+    isProcessing,
+    deleteSession,
+    processSession,
+  } = useFileLogsSessions();
 
   const columns = useMemo((): GridColDef[] => {
     return [
@@ -121,6 +110,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
             <IconButton
               size="small"
               title="Delete Session"
+              aria-label="Delete upload session"
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedSessionId(params.row.id);
@@ -132,28 +122,24 @@ const FileLogsGrid: React.FC = React.memo(() => {
             <IconButton
               size="small"
               title="Process Files"
+              aria-label="Process uploaded files"
               onClick={(e) => {
                 e.stopPropagation();
-                processMutation.mutate({ session_id: params.row.id }, {
-                  onSuccess: () => {
-                    toast.success('Files processed successfully!');
-                    refetch();
-                  },
-                  onError: (err) => {
-                    toast.error(err.message || 'Failed to process files');
-                  },
-                });
+                processSession(params.row.id);
               }}
-              disabled={params?.row?.process_data === true || processMutation.isPending}
+              disabled={params?.row?.process_data === true || isProcessing}
             >
-              <PlayCircleOutlineIcon sx={{ color: params?.row?.process_data === true ? "" : 'green' }}
+              <PlayCircleOutlineIcon
+                sx={{
+                  color: params?.row?.process_data === true ? "" : 'green',
+                }}
               />
             </IconButton>
           </>
         ),
       },
     ];
-  }, []);
+  }, [isProcessing, processSession]);
 
   return (
     <>
@@ -161,7 +147,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
         <DataGridPremium
           rows={rows}
           columns={columns}
-          loading={isLoading || deleteMutation.isPending || processMutation.isPending}
+          loading={isGridLoading}
           pageSizeOptions={[10, 25, 50, 100]}
           initialState={{
             pagination: {
@@ -217,15 +203,12 @@ const FileLogsGrid: React.FC = React.memo(() => {
             <button
               type="button"
               className="px-4 py-1.5 text-sm rounded-md bg-red-600 text-white hover:bg-red-700 disabled:opacity-60"
-              disabled={deleteMutation.isPending || !selectedSessionId}
+              disabled={isDeleting || !selectedSessionId}
               onClick={() => {
                 if (!selectedSessionId) return;
-                deleteMutation.mutate({ sessionId: selectedSessionId }, {
-                  onSuccess: () => {
-                    setIsDeleteModalOpen(false);
-                    setSelectedSessionId(null);
-                    refetch();
-                  },
+                deleteSession(selectedSessionId, () => {
+                  setIsDeleteModalOpen(false);
+                  setSelectedSessionId(null);
                 });
               }}
             >

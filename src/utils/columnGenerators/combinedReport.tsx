@@ -1,6 +1,5 @@
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid-pro';
 import { CombinedReportRow } from '../../types/combinedReport';
-import { allContainers } from '../../mockData/combinedReportMock';
 
 interface ColumnConfig {
   isDark: boolean;
@@ -223,17 +222,6 @@ export const generateCombinedReportColumns = ({ isDark, containerKeys }: ColumnC
     containerKeys.forEach(key => {
       containerColumns.push(createContainerColumn(key, parseContainerStatus(key)));
     });
-  } else {
-    const addFromMock = (containers: { containerNumber: string; shipmentDate: string; arrivalDate: string; status: 'Delivered' | number }[]) => {
-      containers.forEach(c => {
-        const columnKey = `${c.containerNumber} ${c.shipmentDate} ${c.arrivalDate} ${c.status}`;
-        containerColumns.push(createContainerColumn(columnKey, c.status));
-      });
-    };
-    addFromMock(allContainers.CA);
-    addFromMock(allContainers.DE);
-    addFromMock(allContainers.UK);
-    addFromMock(allContainers.US);
   }
 
   // Summary columns

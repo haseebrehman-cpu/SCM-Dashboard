@@ -18,7 +18,6 @@ export async function fetchProductionRemainingReport(
   }
 
   const url = `${API_BASE_URL}/production-remaining/?${queryParams.toString()}`;
-  console.log("Fetching Production Remaining Report from:", url);
 
   const response = await fetch(url, {
     method: "GET",
@@ -30,7 +29,6 @@ export async function fetchProductionRemainingReport(
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error("API Error Response:", errorText);
     throw new Error(errorText || `Failed to fetch report. Status: ${response.status}`);
   }
 

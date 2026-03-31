@@ -19,7 +19,7 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
 }) => {
   const groupedFilters = React.useMemo(() => {
     return Object.entries(appliedFilters)
-      .filter(([_, values]) => values && values.length > 0)
+      .filter(([, values]) => values && values.length > 0)
       .map(([category, values]) => {
         const formattedLabel = category
           .split('_')
