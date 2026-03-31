@@ -37,6 +37,15 @@ export const createSummaryDashboardColumns = (
       renderHeader: () => renderHeader("ItemNumber"),
     },
     {
+      field: "upload_date",
+      headerName: "Upload Date",
+      width: 150,
+      sortable: true,
+      filterable: true,
+      headerAlign: "center",
+      renderHeader: () => renderHeader("Upload Date"),
+    },
+    {
       field: "itemTitle",
       headerName: "ItemTitle",
       width: 120,

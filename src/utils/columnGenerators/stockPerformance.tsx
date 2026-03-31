@@ -68,6 +68,14 @@ const generateBasicColumns = (): GridColDef[] => [
     filterable: true,
   },
   {
+    field: "upload_date",
+    headerName: "Upload Date",
+    flex: 1,
+    minWidth: 250,
+    sortable: true,
+    filterable: true,
+  },
+  {
     field: "categoryName",
     headerName: "Category Name",
     width: 160,
@@ -205,33 +213,6 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
     renderHeader: () => renderMultiLineHeader("Dispatch", "Date Cover", isDark),
   },
   {
-    field: "daysGap",
-    headerName: "Days Gap",
-    width: 120,
-    sortable: true,
-    filterable: false,
-    headerAlign: "center",
-    align: "center",
-  },
-  {
-    field: "stockAfterArrival",
-    headerName: "Stock After Arrival",
-    width: 180,
-    sortable: true,
-    filterable: false,
-    headerAlign: "center",
-    align: "center",
-  },
-  {
-    field: "stockDaysAfterArrival",
-    headerName: "Stock Days After Arrival",
-    width: 210,
-    sortable: true,
-    filterable: false,
-    headerAlign: "center",
-    align: "center",
-  },
-  {
     field: "remWarehouse",
     headerName: `Remaining ${selectedWarehouse}`,
     width: 150,
@@ -250,7 +231,7 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
     align: "center",
     renderCell: (params: GridRenderCellParams<MappedStockPerformanceRow>) => {
       const value = params.value as number;
-      const color = value > 20 ? '#EF4444' : value > 10 ? '#F59E0B' : '#10B981';
+      const color = value < 0 ? 'red' : '#10B981';
       return <span style={{ fontWeight: 600, color }}>{value}</span>;
     },
   },
