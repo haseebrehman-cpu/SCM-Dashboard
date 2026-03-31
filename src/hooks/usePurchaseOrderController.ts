@@ -132,6 +132,7 @@ export const usePurchaseOrderController = (isDark: boolean): UsePurchaseOrderCon
     () => (purchaseOrderResponse?.data ?? []) as PurchaseOrderData[],
     [purchaseOrderResponse],
   );
+  
   const isAnyLoading = isLoading || isChangingPage || isRefetching;
 
   const handleDateChange = useCallback(

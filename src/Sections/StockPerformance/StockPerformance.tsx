@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { SelectChangeEvent } from "@mui/material";
+import { Button, SelectChangeEvent } from "@mui/material";
 import { Warehouse } from '../../types/stockPerformance';
 import { generateStockPerformanceColumns } from '../../utils/columnGenerators/stockPerformance';
 import { getDataGridStyles } from '../../styles/productionReportStyles';
@@ -10,6 +10,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { useStockPerfomanceReport, usePrefetchStockPerformance } from "../../api/stockPerfomance";
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
+import CachedIcon from "@mui/icons-material/Cached";
 
 export default function StockPerformance() {
   const { theme } = useTheme();
@@ -109,6 +110,11 @@ export default function StockPerformance() {
           isArchieved={true}
           onArchieveCLick={() => setIsDialogOpen(true)}
         />
+        <Button
+          startIcon={<CachedIcon />}
+          sx={{
+            color: isDark ? "#047ADB" : "#045CB8",
+          }}>Load Report</Button>
       </div>
       <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden min-h-[400px]">
 

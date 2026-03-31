@@ -102,8 +102,8 @@ const RegionalCategoryPreference: React.FC<RegionalCategoryPreferenceProps> = Re
         ...commonGrid,
         top: 100,
         bottom: 120,
-        left: '4%',
-        right: '5%',
+        left: 20,
+        right: 60,
         containLabel: true
       },
       xAxis: {
@@ -124,7 +124,8 @@ const RegionalCategoryPreference: React.FC<RegionalCategoryPreferenceProps> = Re
           fontSize: 11,
           fontWeight: 600,
           fontFamily: 'Inter, sans-serif',
-          margin: 10
+          margin: 10,
+          interval: 0
         },
         axisLine: { lineStyle: { color: isDark ? '#374151' : '#e5e7eb' } }
       },
@@ -146,7 +147,11 @@ const RegionalCategoryPreference: React.FC<RegionalCategoryPreferenceProps> = Re
           fontSize: 11,
           fontWeight: 600,
           fontFamily: 'Inter, sans-serif',
-          margin: 15
+          margin: 15,
+          interval: 0,
+          width: 160,
+          overflow: 'truncate',
+          ellipsis: '...'
         },
         axisLine: { lineStyle: { color: isDark ? '#374151' : '#e5e7eb' } }
       },
@@ -156,7 +161,7 @@ const RegionalCategoryPreference: React.FC<RegionalCategoryPreferenceProps> = Re
           xAxisIndex: [0],
           yAxisIndex: [0],
           start: 0,
-          end: 30 // Default state for mouse/pinch zoom
+          end: 100 // Show all categories initially
         },
         {
           type: 'slider',
@@ -175,10 +180,10 @@ const RegionalCategoryPreference: React.FC<RegionalCategoryPreferenceProps> = Re
           type: 'slider',
           show: true,
           yAxisIndex: [0],
-          left: 10,
-          width: 20,
+          right: 5,
+          width: 15,
           start: 0,
-          end: 50, // Show half categories
+          end: 100, // Show all categories initially
           borderColor: 'transparent',
           fillerColor: isDark ? 'rgba(99, 102, 241, 0.2)' : 'rgba(99, 102, 241, 0.1)',
           handleStyle: { color: colors.primary },
