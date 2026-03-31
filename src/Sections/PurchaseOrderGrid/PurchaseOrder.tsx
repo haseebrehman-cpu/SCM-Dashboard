@@ -6,13 +6,13 @@ import { generatePurchaseOrderColumns } from '../../utils/columnGenerators/purch
 import { getDataGridStyles } from '../../styles/productionReportStyles';
 import { FileUploadDialog } from "../ProductionReport/FileUploadDialog";
 import { ProductionReportHeader } from "../ProductionReport/ProductionReportHeader";
-import { DataGridPremium } from "@mui/x-data-grid-premium";
+import { DataGridPremium, GridPaginationModel } from "@mui/x-data-grid-premium";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { usePurchaseOrderReport, usePatchPurchaseOrderReport, useUploadPurchaseOrderFiles, useUploadPurchaseOrderReport, usePostProductionLoadReport } from "../../api/purchaseOrder";
 import toast, { LoaderIcon } from "react-hot-toast";
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { Box, Button, LinearProgress } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import CachedIcon from '@mui/icons-material/Cached';
 
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
@@ -21,7 +21,8 @@ import LoadReportProgressDialog, { LoadStatus } from "./LoadReportProgressDialog
 import { WAREHOUSE_OPTIONS } from '../../constants/productionReport';
 import { Warehouse } from "../../types/productionReport";
 import { SelectChangeEvent } from "@mui/material";
-import { useLoadReportflagCheck } from "../../hooks/useLoadReportflagCheck";
+import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
+import { useLoadReportflagCheck } from "../../hooks/useLoadReportFlagCheck";
 
 export default function PurchaseOrder() {
   const { theme } = useTheme();
@@ -43,6 +44,8 @@ export default function PurchaseOrder() {
   const [loadProgress, setLoadProgress] = useState(1);
   const [currentLoadStep, setCurrentLoadStep] = useState(0);
   const [loadErrorMessage, setLoadErrorMessage] = useState<string | undefined>();
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(PAGINATION_MODEL);
+  const [isChangingPage, setIsChangingPage] = useState(false);
 
   const {
     editingRowId,
@@ -55,6 +58,8 @@ export default function PurchaseOrder() {
   } = useInlineEdit();
 
   const { data: purchaseOrderResponse, isLoading, refetch, isRefetching } = usePurchaseOrderReport();
+  const isAnyLoading = isLoading || isChangingPage || isRefetching;
+
   const patchMutation = usePatchPurchaseOrderReport();
   const uploadMutation = useUploadPurchaseOrderFiles();
   const deleteMutation = useDeleteRunningReport()
@@ -171,6 +176,15 @@ export default function PurchaseOrder() {
     setLoadErrorMessage(undefined);
     setIsLoadReportDialogOpen(true);
   }
+
+  // Show a brief loader when changing pages to provide feedback
+  useEffect(() => {
+    setIsChangingPage(true);
+    const timer = setTimeout(() => {
+      setIsChangingPage(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [paginationModel]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -305,7 +319,10 @@ export default function PurchaseOrder() {
         </div>
       )}
 
-      <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
+      <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden min-h-[400px]">
+        {/* Loading Overlay */}
+        <BrandedLogoLoader isLoading={isAnyLoading} isDark={isDark} message="Loading Purchase Order Report..." />
+
         {isDialogOpen && (
           <FileUploadDialog
             isOpen={isDialogOpen}
@@ -338,25 +355,14 @@ export default function PurchaseOrder() {
           />
         )}
 
-        {isLoading && (
-          <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
-            <LinearProgress
-              sx={{
-                backgroundColor: isDark ? 'rgba(4, 122, 219, 0.1)' : 'rgba(4, 122, 219, 0.05)',
-                '& .MuiLinearProgress-bar': {
-                  backgroundColor: '#047ADB'
-                }
-              }}
-            />
-          </Box>
-        )}
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DataGridPremium
             label="Purchase Order Report"
-            loading={isLoading}
+            loading={false}
             rows={rows}
             columns={columns}
-            initialState={{ pagination: { paginationModel: PAGINATION_MODEL } }}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
             pageSizeOptions={[100, 250, 500, 1000, 1500]}
             rowBufferPx={100}
             pagination
