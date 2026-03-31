@@ -9,9 +9,10 @@ import { ProductionReportHeader } from "../ProductionReport/ProductionReportHead
 import ArchieveDialog from "./ArchieveDialog";
 import { DataGridPremium } from "@mui/x-data-grid-premium";
 import { Warehouse } from "../../types/common";
-import { SelectChangeEvent, LinearProgress, Box } from "@mui/material";
+import { SelectChangeEvent } from "@mui/material";
 import { useStockPerfomanceReport, usePrefetchStockPerformance } from "../../api/stockPerfomance";
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
+import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
 
 /**
  * Summary Dashboard Grid Component
@@ -28,13 +29,23 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     page: 0,
     pageSize: 1000,
   });
+  const [isChangingPage, setIsChangingPage] = useState(false);
+
+  // Show a brief loader when changing pages to provide feedback
+  useEffect(() => {
+    setIsChangingPage(true);
+    const timer = setTimeout(() => {
+      setIsChangingPage(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [paginationModel.page, paginationModel.pageSize]);
 
   const handleWarehouseChange = (event: SelectChangeEvent<Warehouse>) => {
     setSelectedWarehouse(event.target.value as Warehouse);
     setPaginationModel((prev) => ({ ...prev, page: 0 }));
   };
 
-  const { data: reportResponse, isLoading } = useStockPerfomanceReport(
+  const { data: reportResponse, isLoading, isSuccess } = useStockPerfomanceReport(
     selectedWarehouse,
     sessionId,
     "sd",
@@ -42,13 +53,14 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     paginationModel.pageSize
   );
 
-  // Prefetch next 7 pages
+  // Prefetch next 9 pages when successful
   usePrefetchStockPerformance(
     selectedWarehouse,
     sessionId,
     "sd",
     paginationModel.page + 1,
-    paginationModel.pageSize
+    paginationModel.pageSize,
+    isSuccess
   );
 
   useEffect(() => {
@@ -104,6 +116,8 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     );
   }, [isDark, editingRowId, editValues, handleStatusChange, handleReasonChange, handleCommentsChange, handleEdit, handleSave, handleCancel, rows]);
 
+  const isAnyLoading = isLoading || isChangingPage;
+
   return (
     <>
       <div className="flex justify-end my-4">
@@ -117,19 +131,10 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           onArchieveCLick={() => setIsDialogOpen(true)}
         />
       </div>
-      <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
-        {isLoading && (
-          <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
-            <LinearProgress
-              sx={{
-                backgroundColor: isDark ? 'rgba(4, 122, 219, 0.1)' : 'rgba(4, 122, 219, 0.05)',
-                '& .MuiLinearProgress-bar': {
-                  backgroundColor: '#047ADB'
-                }
-              }}
-            />
-          </Box>
-        )}
+      <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden min-h-[400px]">
+
+        {/* Loading Overlay */}
+        <BrandedLogoLoader isLoading={isAnyLoading} isDark={isDark} message="Loading Summary Dashboard" />
 
         {isDialogOpen && <>
           <ArchieveDialog isOpen={isDialogOpen}
@@ -147,7 +152,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           pageSizeOptions={[500, 1000, 2500, 5000]}
           pagination
           rowBufferPx={100}
-          loading={isLoading}
+          loading={false}
           disableRowSelectionOnClick
           sx={getDataGridStyles(isDark, "auto")}
           showToolbar

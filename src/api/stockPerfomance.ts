@@ -69,15 +69,15 @@ export const usePrefetchStockPerformance = (
   session_id: number | null,
   p: string,
   currentPage: number,
-  pageSize: number = 1000
+  pageSize: number = 1000,
+  isSuccess: boolean = false
 ) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!warehouse_code) return;
+    if (!warehouse_code || !isSuccess) return;
 
-    // Prefetch next 7 pages
-    for (let i = 1; i <= 7; i++) {
+    for (let i = 1; i <= 9; i++) {
       const nextPage = currentPage + i;
       queryClient.prefetchQuery({
         queryKey: [...STOCK_PERFORMANCE_REPORT_QUERY_KEY, warehouse_code, session_id, p, nextPage, pageSize],
@@ -85,5 +85,5 @@ export const usePrefetchStockPerformance = (
         staleTime: 60_000,
       });
     }
-  }, [warehouse_code, session_id, p, currentPage, pageSize, queryClient]);
+  }, [warehouse_code, session_id, p, currentPage, pageSize, queryClient, isSuccess]);
 };

@@ -9,8 +9,8 @@ import {
   GridToolbarProps,
 } from "@mui/x-data-grid-premium";
 import { useTheme } from "../../hooks/useTheme";
-import { useState, useMemo, useCallback, useRef } from "react";
-import { SelectChangeEvent, LinearProgress, Box, Button, Typography, Menu, MenuItem } from "@mui/material";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import { SelectChangeEvent, Button, Typography, Menu, MenuItem, Box } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { FileUploadDialog } from "./FileUploadDialog";
@@ -22,6 +22,7 @@ import { ProductionReportHeader } from './ProductionReportHeader';
 import { useProductionRemainingReport, useUploadForecastedFile } from "../../api/productionRemainingReport";
 import { ProductionRemainingRow } from "../../types/Interfaces/interfaces";
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
+import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
 
 const FORECAST_FIXED_KEYS: (keyof ProductionRemainingRow)[] = [
   "category_name",
@@ -98,7 +99,6 @@ function ExportDropdown({ onDownloadForecast, selectedWarehouse }: ForecastToolb
       <Button
         ref={anchorRef}
         size="small"
-
         onClick={() => setOpen((prev) => !prev)}
         sx={{
           minWidth: 0,
@@ -191,15 +191,29 @@ export default function ProductionReport() {
   const currentYear = new Date().getFullYear();
   const sessionId = useLatestSessionId();
 
+  const [paginationModel, setPaginationModel] = useState(PAGINATION_MODEL);
+  const [isChangingPage, setIsChangingPage] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>("UK");
 
+  // Show a brief loader when changing pages to provide feedback
+  useEffect(() => {
+    setIsChangingPage(true);
+    const timer = setTimeout(() => {
+      setIsChangingPage(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [paginationModel, selectedWarehouse]);
+
   const handleWarehouseChange = (event: SelectChangeEvent<Warehouse>) => {
     setSelectedWarehouse(event.target.value as Warehouse);
+    setPaginationModel((prev) => ({ ...prev, page: 0 }));
   };
 
   const { data: reportResponse, isLoading } = useProductionRemainingReport(selectedWarehouse, sessionId);
   const uploadMutation = useUploadForecastedFile();
+
+  const isAnyLoading = isLoading || isChangingPage;
 
   const handleFileUpload = async (file: File) => {
     const controller = new AbortController();
@@ -245,8 +259,7 @@ export default function ProductionReport() {
           isShowUpload={true}
         />
       </div>
-      <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
-
+      <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden min-h-[400px]">
         {isDialogOpen && (
           <FileUploadDialog
             isOpen={isDialogOpen}
@@ -255,31 +268,21 @@ export default function ProductionReport() {
           />
         )}
 
-        {isLoading && (
-          <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
-            <LinearProgress
-              sx={{
-                backgroundColor: isDark ? 'rgba(4, 122, 219, 0.1)' : 'rgba(4, 122, 219, 0.05)',
-                '& .MuiLinearProgress-bar': {
-                  backgroundColor: '#047ADB'
-                }
-              }}
-            />
-          </Box>
-        )}
+        {/* Loading Overlay */}
+        <BrandedLogoLoader isLoading={isAnyLoading} isDark={isDark} message="Loading Production Report..." />
 
         <DataGridPremium
           label="Production Remaining Report"
           rows={tableDataWithId}
           columns={columns}
-          initialState={{ pagination: { paginationModel: PAGINATION_MODEL } }}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
           pageSizeOptions={[100, 500, 1000, 1500]}
           pagination
           disableRowSelectionOnClick
           sx={getDataGridStyles(isDark, "auto")}
-          loading={isLoading}
+          loading={false}
           rowBufferPx={100}
-          // disableColumnFilter
           showToolbar
           slots={{ toolbar: ForecastToolbar }}
           slotProps={{

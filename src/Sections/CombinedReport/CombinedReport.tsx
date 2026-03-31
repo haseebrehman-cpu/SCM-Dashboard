@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { DataGridPremium, GridPaginationModel } from "@mui/x-data-grid-premium";
 import { useTheme } from "../../hooks/useTheme";
 import { getDataGridStyles } from "../../styles/productionReportStyles";
@@ -8,7 +8,7 @@ import { PAGINATION_MODEL } from "../../mockData/combinedReportMock";
 import { CombinedReportRow } from "../../types/combinedReport";
 import { CombinedReportApiRow } from "../../types/Interfaces/interfaces";
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
-import { Box, LinearProgress } from "@mui/material";
+import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
 
 function mapApiRowToGridRow(apiRow: CombinedReportApiRow, index: number): CombinedReportRow {
   const {
@@ -37,15 +37,27 @@ const CombinedReportGrid = ({ filters = {} }: CombinedReportGridProps) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(PAGINATION_MODEL);
+  const [isChangingPage, setIsChangingPage] = useState(false);
+
+  // Show a brief loader when changing pages to provide feedback
+  useEffect(() => {
+    setIsChangingPage(true);
+    const timer = setTimeout(() => {
+      setIsChangingPage(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [paginationModel]);
+
   const sessionId = useLatestSessionId();
 
   const page = paginationModel.page + 1;
   const pageSize = paginationModel.pageSize ?? 100;
 
   const { data, isLoading } = useCombinedReport(page, pageSize, sessionId, filters);
+  const isAnyLoading = isLoading || isChangingPage;
 
   const totalPages = data?.pagination?.total_pages;
-  usePrefetchContainerReport("combined", page, pageSize, sessionId, totalPages, 6, filters);
+  const rowCount = data?.pagination?.total_records ?? 0;
 
   const rows: CombinedReportRow[] = useMemo(() => {
     const list = data?.data ?? [];
@@ -53,7 +65,7 @@ const CombinedReportGrid = ({ filters = {} }: CombinedReportGridProps) => {
     return list.map((row, i) => mapApiRowToGridRow(row, baseId + i));
   }, [data?.data, page, pageSize]);
 
-  const rowCount = data?.pagination?.total_records ?? 0;
+  usePrefetchContainerReport("combined", page, pageSize, sessionId, totalPages, 6, filters);
 
   // Here I Extracted thhe container column keys from first row 
   const containerKeys = useMemo(() => {
@@ -76,19 +88,10 @@ const CombinedReportGrid = ({ filters = {} }: CombinedReportGridProps) => {
   );
 
   return (
-    <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
-      {isLoading && (
-        <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
-          <LinearProgress
-            sx={{
-              backgroundColor: isDark ? 'rgba(4, 122, 219, 0.1)' : 'rgba(4, 122, 219, 0.05)',
-              '& .MuiLinearProgress-bar': {
-                backgroundColor: '#047ADB'
-              }
-            }}
-          />
-        </Box>
-      )}
+    <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden min-h-[400px]">
+      {/* Loading Overlay */}
+      <BrandedLogoLoader isLoading={isAnyLoading} isDark={isDark} message="Loading Combined Report..." />
+
       <DataGridPremium
         label="Combined Report"
         rows={rows}
@@ -100,7 +103,7 @@ const CombinedReportGrid = ({ filters = {} }: CombinedReportGridProps) => {
         pageSizeOptions={[100, 200, 500]}
         pagination
         disableRowSelectionOnClick
-        loading={isLoading}
+        loading={false}
         sx={getDataGridStyles(isDark, "auto")}
         rowBufferPx={100}
         columnHeaderHeight={56}

@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { SelectChangeEvent, LinearProgress, Box } from "@mui/material";
+import { useState, useMemo, useEffect } from "react";
+import { SelectChangeEvent } from "@mui/material";
 import { Warehouse } from '../../types/stockPerformance';
 import { generateStockPerformanceColumns } from '../../utils/columnGenerators/stockPerformance';
 import { getDataGridStyles } from '../../styles/productionReportStyles';
@@ -9,6 +9,7 @@ import { DataGridPremium } from "@mui/x-data-grid-premium";
 import { useTheme } from "../../hooks/useTheme";
 import { useStockPerfomanceReport, usePrefetchStockPerformance } from "../../api/stockPerfomance";
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
+import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
 
 export default function StockPerformance() {
   const { theme } = useTheme();
@@ -21,13 +22,23 @@ export default function StockPerformance() {
     page: 0,
     pageSize: 1000,
   });
+  const [isChangingPage, setIsChangingPage] = useState(false);
+
+  // Show a brief loader when changing pages to provide feedback
+  useEffect(() => {
+    setIsChangingPage(true);
+    const timer = setTimeout(() => {
+      setIsChangingPage(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [paginationModel.page, paginationModel.pageSize]);
 
   const handleWarehouseChange = (event: SelectChangeEvent<Warehouse>) => {
     setSelectedWarehouse(event.target.value as Warehouse);
     setPaginationModel((prev) => ({ ...prev, page: 0 }));
   };
 
-  const { data: reportResponse, isLoading } = useStockPerfomanceReport(
+  const { data: reportResponse, isLoading, isSuccess } = useStockPerfomanceReport(
     selectedWarehouse,
     sessionId,
     "spr",
@@ -35,13 +46,14 @@ export default function StockPerformance() {
     paginationModel.pageSize
   );
 
-  // Prefetch next 7 pages when current page changes
+  // Prefetch next 9 pages when current page changes and is successful
   usePrefetchStockPerformance(
     selectedWarehouse,
     sessionId,
     "spr",
     paginationModel.page + 1,
-    paginationModel.pageSize
+    paginationModel.pageSize,
+    isSuccess
   );
 
   const tableData = useMemo(() => {
@@ -73,7 +85,6 @@ export default function StockPerformance() {
   }, [reportResponse]);
 
   // const containers = warehouseContainers[selectedWarehouse];
-
   const columns = useMemo(
     () =>
       generateStockPerformanceColumns({
@@ -83,6 +94,8 @@ export default function StockPerformance() {
       }),
     [selectedWarehouse, isDark, tableData]
   );
+
+  const isAnyLoading = isLoading || isChangingPage;
 
   return (
     <>
@@ -97,19 +110,10 @@ export default function StockPerformance() {
           onArchieveCLick={() => setIsDialogOpen(true)}
         />
       </div>
-      <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
-        {isLoading && (
-          <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
-            <LinearProgress
-              sx={{
-                backgroundColor: isDark ? 'rgba(4, 122, 219, 0.1)' : 'rgba(4, 122, 219, 0.05)',
-                '& .MuiLinearProgress-bar': {
-                  backgroundColor: '#047ADB'
-                }
-              }}
-            />
-          </Box>
-        )}
+      <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden min-h-[400px]">
+
+        {/* Loading Overlay */}
+        <BrandedLogoLoader isLoading={isAnyLoading} isDark={isDark} message="Loading Stock Performance Report..." />
 
         {isDialogOpen && <>
           <ArchieveDialog isOpen={isDialogOpen}
@@ -126,7 +130,7 @@ export default function StockPerformance() {
           rowCount={reportResponse?.stock_performance_count ?? 0}
           pageSizeOptions={[500, 1000, 2500, 5000]}
           pagination
-          loading={isLoading}
+          loading={false}
           disableRowSelectionOnClick
           rowBufferPx={100}
           sx={getDataGridStyles(isDark, "auto")}

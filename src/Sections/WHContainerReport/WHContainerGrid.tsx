@@ -4,11 +4,11 @@ import { useTheme } from "../../hooks/useTheme";
 import { generateWarehouseColumns } from "../../utils/columnGenerators/whContainerReport";
 import { PAGINATION_MODEL } from "../../mockData/whContainersReportMock";
 import { useContainerReport, usePrefetchContainerReport, ContainerReportFilters } from "../../api/containerDetailReport";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { ContainerReportApiRow } from "../../types/Interfaces/interfaces";
 import { WHContainerReportRow } from "../../types/whContainersReport";
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
-import { Box, LinearProgress } from "@mui/material";
+import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
 
 
 function mapApiRowToGridRow(apiRow: ContainerReportApiRow): WHContainerReportRow {
@@ -36,11 +36,23 @@ const WHContainerGrid = ({ filters = {} }: WHContainerGridProps) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(PAGINATION_MODEL);
+  const [isChangingPage, setIsChangingPage] = useState(false);
+
+  // Show a brief loader when changing pages to provide feedback
+  useEffect(() => {
+    setIsChangingPage(true);
+    const timer = setTimeout(() => {
+      setIsChangingPage(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [paginationModel]);
+
   const sessionId = useLatestSessionId();
   const page = paginationModel.page + 1;
   const pageSize = paginationModel.pageSize ?? 100;
 
   const { data, isLoading } = useContainerReport(page, pageSize, sessionId, filters);
+  const isAnyLoading = isLoading || isChangingPage;
 
   const totalPages = data?.pagination?.total_pages;
   usePrefetchContainerReport("container", page, pageSize, sessionId, totalPages, 6, filters);
@@ -55,19 +67,10 @@ const WHContainerGrid = ({ filters = {} }: WHContainerGridProps) => {
   const columns = generateWarehouseColumns(isDark);
 
   return (
-    <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden">
-      {isLoading && (
-        <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
-          <LinearProgress
-            sx={{
-              backgroundColor: isDark ? 'rgba(4, 122, 219, 0.1)' : 'rgba(4, 122, 219, 0.05)',
-              '& .MuiLinearProgress-bar': {
-                backgroundColor: '#047ADB'
-              }
-            }}
-          />
-        </Box>
-      )}
+    <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden min-h-[400px]">
+      {/* Loading Overlay */}
+      <BrandedLogoLoader isLoading={isAnyLoading} isDark={isDark} message="Loading Container Report..." />
+
       <DataGridPremium
         label="Warehouse Container Report"
         rows={rows}
@@ -79,7 +82,7 @@ const WHContainerGrid = ({ filters = {} }: WHContainerGridProps) => {
         pageSizeOptions={[100, 500, 1000, 1500]}
         pagination
         disableRowSelectionOnClick
-        loading={isLoading}
+        loading={false}
         sx={getDataGridStyles(isDark, "auto")}
         rowBufferPx={100}
         showToolbar

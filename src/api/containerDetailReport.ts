@@ -104,7 +104,7 @@ export function usePrefetchContainerReport<T = StockReportApiResponse | Containe
   pageSize: number,
   session_id: number | null,
   totalPages: number | undefined,
-  prefetchCount = 6,
+  prefetchCount = 10,
   filters: ContainerReportFilters = {}
 ): void {
   const queryClient = useQueryClient();
