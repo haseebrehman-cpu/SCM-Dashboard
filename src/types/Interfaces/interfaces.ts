@@ -490,19 +490,22 @@ export interface SummaryDashboardDataRowApi {
   edited_by?: string | null;
 }
 
+
 export interface StockPerformanceResponse {
   success: boolean;
   warehouse_code: string;
   upload_date: string;
-  stock_performance_data: StockPerformanceRow[];
-  summary_dashboard_data: SummaryDashboardDataRowApi[];
-  stock_performance_count: number;
-  summary_dashboard_count: number;
+  stock_performance_data?: StockPerformanceRow[];
+  summary_dashboard_data?: SummaryDashboardDataRowApi[];
+  data?: (StockPerformanceRow | SummaryDashboardDataRowApi)[];
+  total_records?: number;
+  stock_performance_count?: number;
+  summary_dashboard_count?: number;
   page: number;
   page_size: number;
-  stock_performance_page_count: number;
-  summary_dashboard_page_count: number;
-  stock_performance_has_next: boolean;
-  summary_dashboard_has_next: boolean;
+  stock_performance_page_count?: number;
+  summary_dashboard_page_count?: number;
+  stock_performance_has_next?: boolean;
+  summary_dashboard_has_next?: boolean;
   message: string;
 }

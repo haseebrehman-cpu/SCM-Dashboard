@@ -60,8 +60,8 @@ const generateBasicColumns = (): GridColDef[] => [
   //   filterable: true,
   // },
   {
-    field: "itemTitle",
-    headerName: "ItemTitle",
+    field: "item_number",
+    headerName: "Item Number",
     flex: 1,
     minWidth: 250,
     sortable: true,

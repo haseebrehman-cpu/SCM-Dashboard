@@ -1,16 +1,19 @@
 import { useState, useMemo, useEffect } from "react";
 import { Button, SelectChangeEvent } from "@mui/material";
 import { Warehouse } from '../../types/stockPerformance';
+import { StockPerformanceRow } from "../../types/Interfaces/interfaces";
 import { generateStockPerformanceColumns } from '../../utils/columnGenerators/stockPerformance';
 import { getDataGridStyles } from '../../styles/productionReportStyles';
 import { ProductionReportHeader } from '../ProductionReport/ProductionReportHeader';
 import ArchieveDialog from "../SummaryDash/ArchieveDialog";
 import { DataGridPremium } from "@mui/x-data-grid-premium";
 import { useTheme } from "../../hooks/useTheme";
-import { useStockPerfomanceReport, usePrefetchStockPerformance } from "../../api/stockPerfomance";
+import { useStockPerfomanceReport, usePrefetchStockPerformance, useLoadStockPerformanceReport } from "../../api/stockPerfomance";
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
 import CachedIcon from "@mui/icons-material/Cached";
+import { showToast } from "../../utils/toastNotification";
+import { CircularProgress } from "@mui/material";
 
 export default function StockPerformance() {
   const { theme } = useTheme();
@@ -47,6 +50,22 @@ export default function StockPerformance() {
     paginationModel.pageSize
   );
 
+  const loadReportMutation = useLoadStockPerformanceReport();
+
+  const handleLoadReport = async () => {
+    if (sessionId === null || sessionId === undefined) {
+      showToast.error("No active session found. Please upload a file first.");
+      return;
+    }
+
+    try {
+      await loadReportMutation.mutateAsync({ session_id: sessionId });
+      showToast.success("Stock Performance report loaded successfully.");
+    } catch (error) {
+      showToast.error((error as Error).message || "Failed to load Stock Performance report.");
+    }
+  };
+
   // Prefetch next 9 pages when current page changes and is successful
   usePrefetchStockPerformance(
     selectedWarehouse,
@@ -58,8 +77,9 @@ export default function StockPerformance() {
   );
 
   const tableData = useMemo(() => {
-    if (!reportResponse?.stock_performance_data) return [];
-    return reportResponse.stock_performance_data.map((row, index) => ({
+    const data = (reportResponse?.stock_performance_data || reportResponse?.data) as StockPerformanceRow[] | undefined;
+    if (!data) return [];
+    return data.map((row, index) => ({
       ...row,
       id: row.id ?? `${row.item_number}-${index}`,
       itemNumber: row.item_number,
@@ -85,7 +105,6 @@ export default function StockPerformance() {
     }));
   }, [reportResponse]);
 
-  // const containers = warehouseContainers[selectedWarehouse];
   const columns = useMemo(
     () =>
       generateStockPerformanceColumns({
@@ -111,10 +130,15 @@ export default function StockPerformance() {
           onArchieveCLick={() => setIsDialogOpen(true)}
         />
         <Button
-          startIcon={<CachedIcon />}
+          onClick={handleLoadReport}
+          disabled={loadReportMutation.isPending}
+          startIcon={loadReportMutation.isPending ? <CircularProgress size={20} color="inherit" /> : <CachedIcon />}
           sx={{
             color: isDark ? "#047ADB" : "#045CB8",
-          }}>Load Report</Button>
+          }}
+        >
+          {loadReportMutation.isPending ? "Loading..." : "Load Report"}
+        </Button>
       </div>
       <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden min-h-[400px]">
 
@@ -133,7 +157,7 @@ export default function StockPerformance() {
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           paginationMode="server"
-          rowCount={reportResponse?.stock_performance_count ?? 0}
+          rowCount={reportResponse?.stock_performance_count ?? reportResponse?.total_records ?? 0}
           pageSizeOptions={[500, 1000, 2500, 5000]}
           pagination
           loading={isAnyLoading}

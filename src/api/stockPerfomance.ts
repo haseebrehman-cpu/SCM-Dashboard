@@ -1,4 +1,4 @@
-import { UseQueryResult, useQuery, useQueryClient } from "@tanstack/react-query";
+import { UseMutationResult, UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { StockPerformanceResponse } from "../types/Interfaces/interfaces";
 import { API_BASE_URL } from "./purchaseOrder";
@@ -87,3 +87,45 @@ export const usePrefetchStockPerformance = (
     }
   }, [warehouse_code, session_id, p, currentPage, pageSize, queryClient, isSuccess]);
 };
+
+export async function postLoadStockPerformanceReport(session_id: number, signal?: AbortSignal | null): Promise<StockPerformanceResponse>{
+  const formData = new FormData();
+  formData.append("session_id", String(session_id));
+
+
+  const response = await fetch(`${API_BASE_URL}/stock-performance/`, {
+    method: 'POST',
+    body: formData,
+    signal: signal || undefined
+  });
+
+
+  const responseText = await response.text();
+  let data: StockPerformanceResponse;
+
+  try {
+    data = JSON.parse(responseText) as StockPerformanceResponse;
+  } catch (error) {
+    if ((error as Error).name === 'AbortError') throw error;
+    if (response.status === 524) {
+      throw new Error("Cloudflare 524: Server Timeout. The server is taking too long to respond. Please try again later.");
+    }
+    if (!response.ok) {
+      throw new Error (responseText || response.statusText);
+    }
+    throw error;
+  }
+
+  return data
+}
+
+export const useLoadStockPerformanceReport = (): UseMutationResult<StockPerformanceResponse, Error, {session_id: number; signal?: AbortSignal}> => {
+  const queryClient = useQueryClient();
+
+  return useMutation<StockPerformanceResponse, Error, {session_id: number; signal?: AbortSignal}>({
+    mutationFn: ({session_id, signal}) => postLoadStockPerformanceReport(session_id, signal),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({queryKey: STOCK_PERFORMANCE_REPORT_QUERY_KEY})
+    }
+  })
+}

@@ -48,8 +48,9 @@ export const useSummaryDashboardData = ({
   );
 
   useEffect(() => {
-    if (reportResponse?.summary_dashboard_data) {
-      const mappedRows = reportResponse.summary_dashboard_data.map(
+    const data = (reportResponse?.summary_dashboard_data || reportResponse?.data) as SummaryDashboardDataRowApi[] | undefined;
+    if (data) {
+      const mappedRows = data.map(
         (row: SummaryDashboardDataRowApi): SummaryDashboardRow => ({
           id: row.id,
           itemNumber: String(row.item_number),
@@ -79,7 +80,7 @@ export const useSummaryDashboardData = ({
   return {
     rows,
     setRows,
-    rowCount: reportResponse?.summary_dashboard_count ?? 0,
+    rowCount: reportResponse?.summary_dashboard_count ?? reportResponse?.total_records ?? 0,
     isLoading,
   };
 };
