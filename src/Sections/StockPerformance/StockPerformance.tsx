@@ -13,7 +13,9 @@ import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
 import CachedIcon from "@mui/icons-material/Cached";
 import { showToast } from "../../utils/toastNotification";
-import { CircularProgress } from "@mui/material";
+import StockPerformanceLoadProgressDialog, { LoadStatus } from "./StockPerformanceLoadProgressDialog";
+import { useDeleteRunningReport } from "../../api/containerDetailReport";
+import toast from "react-hot-toast";
 
 export default function StockPerformance() {
   const { theme } = useTheme();
@@ -28,7 +30,14 @@ export default function StockPerformance() {
   });
   const [isChangingPage, setIsChangingPage] = useState(false);
 
-  // Show a brief loader when changing pages to provide feedback
+  const [isLoadReportDialogOpen, setIsLoadReportDialogOpen] = useState(false);
+  const [loadStatus, setLoadStatus] = useState<LoadStatus>("idle");
+  const [loadProgress, setLoadProgress] = useState(1);
+  const [loadErrorMessage, setLoadErrorMessage] = useState<string | undefined>();
+
+  const loadReportMutation = useLoadStockPerformanceReport();
+  const deleteMutation = useDeleteRunningReport();
+
   useEffect(() => {
     setIsChangingPage(true);
     const timer = setTimeout(() => {
@@ -50,19 +59,64 @@ export default function StockPerformance() {
     paginationModel.pageSize
   );
 
-  const loadReportMutation = useLoadStockPerformanceReport();
+  // Load progress animation for the load-report dialog
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (loadStatus === "loading") {
+      interval = setInterval(() => {
+        setLoadProgress((prev) => {
+          // Cap at 90% while loading to keep "room" for the final completion
+          if (prev >= 90) return 90;
+          const increment = Math.random() * 3 + 1;
+          return Math.min(prev + increment, 90);
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [loadStatus]);
 
-  const handleLoadReport = async () => {
+  const handleLoadReportClick = () => {
     if (sessionId === null || sessionId === undefined) {
       showToast.error("No active session found. Please upload a file first.");
       return;
     }
+    setLoadStatus("idle");
+    setLoadProgress(1);
+    setLoadErrorMessage(undefined);
+    setIsLoadReportDialogOpen(true);
+  };
+
+  const handleConfirmLoadReport = async () => {
+    if (sessionId === null || sessionId === undefined) return;
+    setLoadStatus("loading");
+    setLoadErrorMessage(undefined);
+    setLoadProgress(10);
 
     try {
-      await loadReportMutation.mutateAsync({ session_id: sessionId });
-      showToast.success("Stock Performance report loaded successfully.");
+      const response = await loadReportMutation.mutateAsync({ session_id: sessionId });
+      
+      if (response.success) {
+        setLoadProgress(100);
+        setLoadStatus("success");
+      }
     } catch (error) {
-      showToast.error((error as Error).message || "Failed to load Stock Performance report.");
+      setLoadStatus("error");
+      const apiError = error instanceof Error ? error.message : "An unknown error occurred";
+      setLoadErrorMessage(`Failed to load report: ${apiError}`);
+      console.error("Load report failed:", error);
+    }
+  };
+
+  const handleCancelLoadReport = async () => {
+    if (sessionId === null || sessionId === undefined) return;
+    try {
+      await deleteMutation.mutateAsync({ session_id: sessionId });
+      setIsLoadReportDialogOpen(false);
+      toast.success("Report loading cancelled.");
+    } catch (error) {
+      toast.error("Failed to cancel report loading.");
+      console.log(error);
+      
     }
   };
 
@@ -120,7 +174,19 @@ export default function StockPerformance() {
 
   return (
     <>
-      <div className="flex justify-end my-4">
+      <div className="flex justify-end my-4 gap-2 items-center">
+        <Button
+          onClick={handleLoadReportClick}
+          startIcon={<CachedIcon />}
+          sx={{
+            color: isDark ? "#047ADB" : "#045CB8",
+            textTransform: "none",
+            fontWeight: 600,
+            fontSize: "14px"
+          }}
+        >
+          Load Reports
+        </Button>
         <ProductionReportHeader
           selectedWarehouse={selectedWarehouse}
           isDark={isDark}
@@ -130,16 +196,6 @@ export default function StockPerformance() {
           isArchived={true}
           onArchiveClick={() => setIsDialogOpen(true)}
         />
-        <Button
-          onClick={handleLoadReport}
-          disabled={loadReportMutation.isPending}
-          startIcon={loadReportMutation.isPending ? <CircularProgress size={20} color="inherit" /> : <CachedIcon />}
-          sx={{
-            color: isDark ? "#047ADB" : "#045CB8",
-          }}
-        >
-          {loadReportMutation.isPending ? "Loading..." : "Load Report"}
-        </Button>
       </div>
       <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden min-h-[400px]">
 
@@ -150,6 +206,21 @@ export default function StockPerformance() {
           <ArchieveDialog isOpen={isDialogOpen}
             onClose={() => setIsDialogOpen(false)} />
         </>}
+
+        {isLoadReportDialogOpen && (
+          <StockPerformanceLoadProgressDialog
+            isOpen={isLoadReportDialogOpen}
+            onClose={() => setIsLoadReportDialogOpen(false)}
+            onConfirm={handleConfirmLoadReport}
+            onRetry={handleConfirmLoadReport}
+            onCancel={handleCancelLoadReport}
+            isDark={isDark}
+            status={loadStatus}
+            progress={loadProgress}
+            errorMessage={loadErrorMessage}
+            containerSuccess={loadReportMutation.status}
+          />
+        )}
 
         <DataGridPremium
           label="Stock Performance Report"

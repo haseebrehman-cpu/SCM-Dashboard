@@ -55,9 +55,8 @@ const SummaryDashGrid: React.FC = React.memo(() => {
   useEffect(() => {
     setRows(summaryRows);
   }, [summaryRows]);
-  
-  console.log(summaryRows);
-  
+
+
 
   const {
     editingRowId,
