@@ -68,7 +68,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       error: null,
       errorInfo: null,
     });
-    window.location.href = '/';
+    window.location.href = 'https://skumapper.igate.com.pk/scm/';
   };
 
   render() {

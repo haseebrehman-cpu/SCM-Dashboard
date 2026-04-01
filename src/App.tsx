@@ -3,11 +3,12 @@ import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import { FileUploadProvider } from "./context/FileUploadContext";
 import { useTheme } from "./hooks/useTheme";
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const SignIn = lazy(() => import("./pages/AuthPages/SignIn"));
 const SignUp = lazy(() => import("./pages/AuthPages/SignUp"));
 const NotFound = lazy(() => import("./pages/OtherPage/NotFound"));
-const Home = lazy(() => import("./pages/Dashboard/Home"));
 const AppLayout = lazy(() => import("./layout/AppLayout"));
 const UserProfiles = lazy(() => import("./pages/UserProfiles"));
 const PurchaseOrderPage = lazy(() => import("./pages/Dashboard/PurchaseOrder"));
@@ -24,8 +25,9 @@ export default function App() {
   const { theme } = useTheme();
   const isDark = theme === "dark"; return (
     <>
-      <FileUploadProvider>
-        <Router basename="/scm/">
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <FileUploadProvider>
+          <Router basename="/scm/">
           <ScrollToTop />
           <Suspense
             fallback={
@@ -47,9 +49,8 @@ export default function App() {
             <Routes>
               {/* Dashboard Layout */}
               <Route element={<AppLayout />}>
-                <Route index path="/" element={<Home />} />
+                <Route index element={<FileUploadPage />} />
                 <Route path="/purchase-order" element={<PurchaseOrderPage />} />
-                <Route path="/file-upload" element={<FileUploadPage />} />
                 <Route path="/production-remaining-report" element={<ProductionRemainingReportPage />} />
                 <Route path="/stock-performance-report" element={<StockPerformanceReportPage />} />
                 <Route path="/summary-dashboard" element={<SummaryDashboardPage />} />
@@ -67,8 +68,9 @@ export default function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
-        </Router>
-      </FileUploadProvider>
+          </Router>
+        </FileUploadProvider>
+      </LocalizationProvider>
     </>
   );
 }

@@ -37,7 +37,7 @@ export const navItems: NavItem[] = [
   {
     icon: <CloudUploadIcon />,
     name: "Linnworks Files Upload",
-    path: "/file-upload"
+    path: "/"
   },
   {
     icon: <ShoppingCartIcon />,

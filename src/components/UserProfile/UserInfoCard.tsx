@@ -13,7 +13,7 @@ export default function UserInfoCard() {
                 First Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Haseeb Ur
+                User
               </p>
             </div>
 
@@ -22,7 +22,7 @@ export default function UserInfoCard() {
                 Last Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Rehman
+                Alpha
               </p>
             </div>
 
@@ -31,7 +31,7 @@ export default function UserInfoCard() {
                 Email address
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                haseeb.rehman@igate.com.pk
+                user@igate.com.pk
               </p>
             </div>
 

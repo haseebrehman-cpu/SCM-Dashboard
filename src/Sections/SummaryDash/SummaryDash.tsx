@@ -93,10 +93,10 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           selectedWarehouse={selectedWarehouse}
           isDark={isDark}
           onWarehouseChange={handleWarehouseChange}
-          isArchieved={true}
+          isArchived={true}
           isSelectWarehouse={true}
           isShowUpload={false}
-          onArchieveCLick={() => setIsDialogOpen(true)}
+          onArchiveClick={() => setIsDialogOpen(true)}
         />
       </div>
       <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden min-h-[400px]">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MenuItem, Select, FormControl, InputLabel, SelectChangeEvent, Button } from "@mui/material";
+import { MenuItem, Select, FormControl, InputLabel, SelectChangeEvent, Button, Box } from "@mui/material";
 import { Warehouse } from '../../types/productionReport';
 import { WAREHOUSE_OPTIONS } from '../../constants/productionReport';
 import { getFormControlStyles } from '../../styles/productionReportStyles';
@@ -9,12 +9,12 @@ import { ListIcon } from '../../icons';
 interface ProductionReportHeaderProps {
   selectedWarehouse?: Warehouse;
   isDark: boolean;
-  isArchieved?: boolean;
+  isArchived?: boolean;
   isSelectWarehouse?: boolean;
   isShowUpload?: boolean;
   onWarehouseChange?: (event: SelectChangeEvent<Warehouse>) => void;
   onUploadClick?: () => void;
-  onArchieveCLick?: () => void;
+  onArchiveClick?: () => void;
 }
 
 export const ProductionReportHeader: React.FC<ProductionReportHeaderProps> = ({
@@ -22,15 +22,16 @@ export const ProductionReportHeader: React.FC<ProductionReportHeaderProps> = ({
   isDark,
   onWarehouseChange,
   onUploadClick,
-  isArchieved,
+  isArchived,
   isSelectWarehouse,
   isShowUpload,
-  onArchieveCLick
+  onArchiveClick
 }) => {
   return (
     <>
-      <FormControl sx={getFormControlStyles(isDark)}>
-        {isSelectWarehouse && <>
+    <Box sx={getFormControlStyles(isDark)}>
+      {isSelectWarehouse && (
+        <FormControl variant="outlined" size="small" sx={{ minWidth: 200 }}>
           <InputLabel id="warehouse-select-label">Select Warehouse</InputLabel>
           <Select
             labelId="warehouse-select-label"
@@ -73,22 +74,33 @@ export const ProductionReportHeader: React.FC<ProductionReportHeaderProps> = ({
               </MenuItem>
             ))}
           </Select>
-        </>
-        }
-        {isShowUpload &&
-          <Button
-            variant="contained"
-            sx={{ borderRadius: '20px', fontSize: '12px', bgcolor: "#047ADB" }}
-            onClick={onUploadClick}
-            startIcon={<IosShare sx={{ width: '16px' }} />}
-          >
-            Upload File
-          </Button>
-        }
-        {isArchieved &&
-          <Button variant='contained' sx={{ borderRadius: '20px', fontSize: '12px', bgcolor: "#047ADB" }} size='small' onClick={onArchieveCLick} startIcon={<ListIcon style={{ width: '16px' }} />}>View Archieved Reports</Button>
-        }
-      </FormControl>
+        </FormControl>
+      )}
+      {isShowUpload && (
+        <Button
+          variant="contained"
+          sx={{ borderRadius: "20px", fontSize: "12px", bgcolor: "#047ADB" }}
+          onClick={onUploadClick}
+          startIcon={<IosShare sx={{ width: "16px" }} />}
+        >
+          Upload File
+        </Button>
+      )}
+      {isArchived && (
+        <Button
+          variant="contained"
+          sx={{ borderRadius: "20px", fontSize: "12px", bgcolor: "#047ADB" }}
+          size="small"
+          onClick={() => {
+            console.log("Archive button clicked");
+            onArchiveClick?.();
+          }}
+          startIcon={<ListIcon style={{ width: "16px" }} />}
+        >
+          View Archived Reports
+        </Button>
+      )}
+    </Box>
     </>
   );
 };

@@ -127,8 +127,8 @@ export default function StockPerformance() {
           onWarehouseChange={handleWarehouseChange}
           isSelectWarehouse={true}
           isShowUpload={false}
-          isArchieved={true}
-          onArchieveCLick={() => setIsDialogOpen(true)}
+          isArchived={true}
+          onArchiveClick={() => setIsDialogOpen(true)}
         />
         <Button
           onClick={handleLoadReport}

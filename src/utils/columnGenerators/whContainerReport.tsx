@@ -1,4 +1,5 @@
 import { GridColDef } from "@mui/x-data-grid";
+import Badge from "../../components/ui/badge/Badge";
 
 const renderDateHeader = (title: string, isDark: boolean) => (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -119,7 +120,12 @@ export const generateWarehouseColumns = (isDark: boolean): GridColDef[] => [
     headerAlign: "center",
     align: "center",
     valueGetter: (_value, row) => {
-      return row.LeftDays === 0 ? "Delivered" : "Transit";
-    }
+      return row.LeftDays === 0 ? "Delivered" : "In Transit";
+    },
+    renderCell: (params) => (
+      <Badge size="sm" color={params.value === "Delivered" ? "success" : "warning"}>
+        {params.value}
+      </Badge>
+    ),
   }
 ];
