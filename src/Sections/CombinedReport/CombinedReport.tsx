@@ -104,7 +104,7 @@ const CombinedReportGrid = ({ filters = {} }: CombinedReportGridProps) => {
         pagination
         disableRowSelectionOnClick
         loading={false}
-        sx={getDataGridStyles(isDark, "auto")}
+        sx={getDataGridStyles(isDark, "800px")}
         rowBufferPx={100}
         columnHeaderHeight={56}
         showToolbar

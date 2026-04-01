@@ -235,7 +235,7 @@ export default function StockPerformance() {
           loading={isAnyLoading}
           disableRowSelectionOnClick
           rowBufferPx={100}
-          sx={getDataGridStyles(isDark, "auto")}
+          sx={getDataGridStyles(isDark, "690px")}
           showToolbar
           slotProps={{
             toolbar: {

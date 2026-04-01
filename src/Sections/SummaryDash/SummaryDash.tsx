@@ -121,7 +121,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           rowBufferPx={100}
           loading={isAnyLoading}
           disableRowSelectionOnClick
-          sx={getDataGridStyles(isDark, "auto")}
+          sx={getDataGridStyles(isDark, "690px")}
           showToolbar
           slotProps={{
             toolbar: {
