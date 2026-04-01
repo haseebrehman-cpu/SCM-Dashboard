@@ -116,7 +116,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           onPaginationModelChange={setPaginationModel}
           paginationMode="server"
           rowCount={rowCount}
-          pageSizeOptions={[500, 1000, 2500, 5000]}
+          pageSizeOptions={[500, 1000, 5000, { value: rowCount, label: `Show All (${rowCount})` }]}
           pagination
           rowBufferPx={100}
           loading={isAnyLoading}

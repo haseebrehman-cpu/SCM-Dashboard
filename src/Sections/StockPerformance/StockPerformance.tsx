@@ -70,7 +70,7 @@ export default function StockPerformance() {
           const increment = Math.random() * 3 + 1;
           return Math.min(prev + increment, 90);
         });
-      }, 1000);
+      }, 3000);
     }
     return () => clearInterval(interval);
   }, [loadStatus]);
@@ -127,7 +127,8 @@ export default function StockPerformance() {
     "spr",
     paginationModel.page + 1,
     paginationModel.pageSize,
-    isSuccess
+    isSuccess,
+    reportResponse?.pagination?.total_pages ?? reportResponse?.stock_performance_page_count ?? reportResponse?.summary_dashboard_page_count ?? 1
   );
 
   const tableData = useMemo(() => {
@@ -171,6 +172,8 @@ export default function StockPerformance() {
   );
 
   const isAnyLoading = isLoading || isChangingPage;
+
+  const totalRecords = reportResponse?.pagination?.total_records ?? reportResponse?.stock_performance_count ?? reportResponse?.total_records ?? 0;
 
   return (
     <>
@@ -229,8 +232,8 @@ export default function StockPerformance() {
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           paginationMode="server"
-          rowCount={reportResponse?.stock_performance_count ?? reportResponse?.total_records ?? 0}
-          pageSizeOptions={[500, 1000, 2500, 5000]}
+          rowCount={totalRecords}
+          pageSizeOptions={[500, 1000, 5000, { value: totalRecords, label: `Show All (${totalRecords})` }]}
           pagination
           loading={isAnyLoading}
           disableRowSelectionOnClick

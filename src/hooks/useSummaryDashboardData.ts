@@ -45,6 +45,7 @@ export const useSummaryDashboardData = ({
     page + 1,
     pageSize,
     isSuccess,
+    reportResponse?.pagination?.total_pages ?? reportResponse?.summary_dashboard_page_count ?? reportResponse?.stock_performance_page_count ?? 1
   );
 
   useEffect(() => {
@@ -81,7 +82,7 @@ export const useSummaryDashboardData = ({
   return {
     rows,
     setRows,
-    rowCount: reportResponse?.summary_dashboard_count ?? reportResponse?.total_records ?? 0,
+    rowCount: reportResponse?.pagination?.total_records ?? reportResponse?.summary_dashboard_count ?? reportResponse?.total_records ?? 0,
     isLoading,
   };
 };

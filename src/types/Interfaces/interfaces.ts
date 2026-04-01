@@ -510,5 +510,13 @@ export interface StockPerformanceResponse {
   summary_dashboard_page_count?: number;
   stock_performance_has_next?: boolean;
   summary_dashboard_has_next?: boolean;
+  pagination?: {
+    page: number;
+    page_size: number;
+    total_records: number;
+    total_pages: number;
+    has_next: boolean;
+    has_previous: boolean;
+  };
   message: string;
 }
