@@ -11,7 +11,7 @@ import { STATUS_OPTIONS } from "../config/summaryDashboard";
 export const createSummaryDashboardColumns = (
   isDark: boolean,
   editingRowId: number | null,
-  editValues: { status: string; reason1: string; reason2: string; reason3: string; reason4: string; factoryComments: string } | null,
+  editValues: { status: string; reason1: string; reason2: string; reason3: string; reason4: string; factory_comment: string } | null,
   onStatusChange: (value: string) => void,
   onReasonChange: (field: 'reason1' | 'reason2' | 'reason3' | 'reason4', value: string) => void,
   onCommentsChange: (value: string) => void,
@@ -33,7 +33,6 @@ export const createSummaryDashboardColumns = (
       width: 150,
       sortable: true,
       filterable: true,
-      headerAlign: "center",
       renderHeader: () => renderHeader("ItemNumber"),
     },
     {
@@ -42,7 +41,6 @@ export const createSummaryDashboardColumns = (
       width: 150,
       sortable: true,
       filterable: true,
-      headerAlign: "center",
       renderHeader: () => renderHeader("Upload Date"),
     },
     {
@@ -51,40 +49,48 @@ export const createSummaryDashboardColumns = (
       width: 120,
       sortable: true,
       filterable: true,
-      headerAlign: "center",
-
       renderHeader: () => renderHeader("ItemTitle"),
     },
     {
-      field: "categoryName",
+      field: "category_name",
       headerName: "Category Name",
       width: 140,
       sortable: true,
       filterable: true,
-      headerAlign: "center",
-
       renderHeader: () => renderHeader("Category Name"),
     },
+    // {
+    //   field: "warehouse_code",
+    //   headerName: "WH",
+    //   width: 80,
+    //   sortable: true,
+    //   filterable: true,
+    //   renderHeader: () => renderHeader("WH"),
+    // },
     {
-      field: "wh",
-      headerName: "WH",
-      width: 80,
+      field: "wh_stock",
+      headerName: "WH Stock",
+      width: 100,
       sortable: true,
       filterable: true,
-      headerAlign: "center",
-
-      renderHeader: () => renderHeader("WH"),
+      renderHeader: () => renderHeader("WH Stock"),
     },
     {
-      field: "fbaWhCoverDay",
+      field: "fba_wh_cover_day",
       headerName: "FBA+WH Cover Day",
       width: 160,
       sortable: true,
       filterable: true,
-      headerAlign: "center",
-
-      valueFormatter: (value: number) => value?.toFixed(5) || "0",
+      valueFormatter: (value: number) => value?.toFixed(2) || "0",
       renderHeader: () => renderHeader("FBA+WH Cover Day"),
+    },
+    {
+      field: "all_stock",
+      headerName: "All Stock",
+      width: 100,
+      sortable: true,
+      filterable: true,
+      renderHeader: () => renderHeader("All Stock"),
     },
     {
       field: "remaining",
@@ -92,41 +98,25 @@ export const createSummaryDashboardColumns = (
       width: 110,
       sortable: true,
       filterable: true,
-      headerAlign: "center",
-
       renderHeader: () => renderHeader("Remaining"),
     },
     {
-      field: "totalDispatchQty",
-      headerName: "Total Dispatch Qty",
-      width: 150,
-      sortable: true,
-      filterable: true,
-      headerAlign: "center",
-
-      renderHeader: () => renderHeader("Total Dispatch Qty"),
-    },
-    {
-      field: "dispatchCoverDay",
-      headerName: "Dispatch Cover Day",
+      field: "dispatch_date_cover",
+      headerName: "Dispatch Date Cover",
       width: 160,
       sortable: true,
       filterable: true,
-      headerAlign: "center",
-
-      valueFormatter: (value: number) => value?.toFixed(5) || "0",
-      renderHeader: () => renderHeader("Dispatch Cover Day"),
+      valueFormatter: (value: number) => value?.toFixed(2) || "0",
+      renderHeader: () => renderHeader("Dispatch Date Cover"),
     },
     {
-      field: "maxD",
-      headerName: "MAX D",
-      width: 100,
+      field: "max_daily_consumption",
+      headerName: "Max Daily Consumption",
+      width: 220,
       sortable: true,
       filterable: true,
-      headerAlign: "center",
-
-      valueFormatter: (value: number) => value?.toFixed(5) || "0",
-      renderHeader: () => renderHeader("MAX D"),
+      valueFormatter: (value: number) => value?.toFixed(2) || "0",
+      renderHeader: () => renderHeader("Max Daily Consumption"),
     },
     {
       field: "status",
@@ -134,7 +124,6 @@ export const createSummaryDashboardColumns = (
       width: 280,
       sortable: true,
       filterable: true,
-      headerAlign: "center",
       align: "left",
       renderHeader: () => renderHeader("Status"),
       renderCell: (params) => {
@@ -158,7 +147,7 @@ export const createSummaryDashboardColumns = (
       width: 350,
       sortable: true,
       filterable: true,
-      headerAlign: "center",
+      
       align: "left",
       renderCell: (params) => {
         const isEditing = editingRowId === params.row.id;
@@ -180,7 +169,7 @@ export const createSummaryDashboardColumns = (
       width: 350,
       sortable: true,
       filterable: true,
-      headerAlign: "center",
+      
       align: "left",
       renderCell: (params) => {
         const isEditing = editingRowId === params.row.id;
@@ -202,7 +191,7 @@ export const createSummaryDashboardColumns = (
       width: 350,
       sortable: true,
       filterable: true,
-      headerAlign: "center",
+      
       align: "left",
       renderCell: (params) => {
         const isEditing = editingRowId === params.row.id;
@@ -224,7 +213,7 @@ export const createSummaryDashboardColumns = (
       width: 350,
       sortable: true,
       filterable: true,
-      headerAlign: "center",
+      
       align: "left",
       renderCell: (params) => {
         const isEditing = editingRowId === params.row.id;
@@ -241,19 +230,19 @@ export const createSummaryDashboardColumns = (
       },
     },
     {
-      field: "factoryComments",
+      field: "factory_comment",
       headerName: "Factory Comments",
       width: 200,
       sortable: false,
       filterable: false,
-      headerAlign: "center",
+      
       align: "left",
       renderCell: (params) => {
         const isEditing = editingRowId === params.row.id;
         if (isEditing && editValues) {
           return (
             <EditableTextFieldCell
-              value={editValues.factoryComments}
+              value={editValues.factory_comment}
               onChange={onCommentsChange}
               isDark={isDark}
             />
@@ -263,21 +252,11 @@ export const createSummaryDashboardColumns = (
       },
     },
     {
-      field: "editedBy",
-      headerName: "Edited By",
-      width: 100,
-      sortable: true,
-      filterable: true,
-      headerAlign: "center",
-
-      renderHeader: () => renderHeader("Edited By"),
-    },
-    {
       field: "actions",
       type: "actions",
       headerName: "Action",
       width: 120,
-      headerAlign: "center",
+      
 
       getActions: (params) => {
         const isEditing = editingRowId === params.id;

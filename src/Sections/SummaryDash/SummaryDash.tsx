@@ -27,11 +27,10 @@ const SummaryDashGrid: React.FC = React.memo(() => {
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>("UK");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 1000,
+    pageSize: 500,
   });
   const [isChangingPage, setIsChangingPage] = useState(false);
 
-  // Show a brief loader when changing pages to provide feedback
   useEffect(() => {
     setIsChangingPage(true);
     const timer = setTimeout(() => {
@@ -56,6 +55,9 @@ const SummaryDashGrid: React.FC = React.memo(() => {
   useEffect(() => {
     setRows(summaryRows);
   }, [summaryRows]);
+  
+  console.log(summaryRows);
+  
 
   const {
     editingRowId,

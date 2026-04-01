@@ -18,8 +18,8 @@ export const MONTHS_DATA: MonthData[] = [
 export const PAGINATION_MODEL = { page: 0, pageSize: 500 };
 
 export const WAREHOUSE_OPTIONS = [
-  { value: "UK", label: "UK - United Kingdom", flag: "🇬🇧" },
-  { value: "DE", label: "DE - Germany", flag: "🇩🇪" },
-  { value: "US", label: "US - United States", flag: "🇺🇸" },
-  { value: "CA", label: "CA - Canada", flag: "🇨🇦" },
+  { value: "UK", label: "UK - United Kingdom", flag: "gb" },
+  { value: "DE", label: "DE - Germany", flag: "de" },
+  { value: "US", label: "US - United States", flag: "us" },
+  { value: "CA", label: "CA - Canada", flag: "ca" },
 ] as const;

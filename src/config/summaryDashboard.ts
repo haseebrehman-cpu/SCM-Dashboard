@@ -5,22 +5,23 @@
 
 export interface SummaryDashboardRow {
   id: number;
+  upload_date: string;
+  warehouse_code: string;
+  category_name: string;
   itemNumber: string;
   itemTitle: string;
-  categoryName: string;
-  wh: string;
-  fbaWhCoverDay: number;
-  remaining: number;
-  totalDispatchQty: number;
-  dispatchCoverDay: number;
-  maxD: number;
-  status: string;
+  wh_stock: number;
+  fba_wh_cover_day: number;
+  all_stock: number;
+  dispatch_date_cover: number;
+  max_daily_consumption: number;
   reason1: string;
   reason2: string;
   reason3: string;
   reason4: string;
-  factoryComments: string;
-  editedBy?: string;
+  remaining: number;
+  status: string;
+  factory_comment: string
 }
 
 export const STATUS_OPTIONS = [

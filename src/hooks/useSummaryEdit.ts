@@ -7,7 +7,7 @@ interface EditValues {
   reason2: string;
   reason3: string;
   reason4: string;
-  factoryComments: string;
+  factory_comment: string;
 }
 
 interface UseSummaryEditReturn {
@@ -37,7 +37,7 @@ export const useSummaryEdit = (
         reason2: row.reason2 || '',
         reason3: row.reason3 || '',
         reason4: row.reason4 || '',
-        factoryComments: row.factoryComments,
+        factory_comment: row.factory_comment,
       });
     }
   }, []);
@@ -54,8 +54,7 @@ export const useSummaryEdit = (
                 reason2: editValues.reason2,
                 reason3: editValues.reason3,
                 reason4: editValues.reason4,
-                factoryComments: editValues.factoryComments,
-                editedBy: "haseeb.rehman@igate.com.pk"
+                factory_comment: editValues.factory_comment,
               }
             : row
         )
@@ -79,7 +78,7 @@ export const useSummaryEdit = (
   }, []);
 
   const handleCommentsChange = useCallback((value: string) => {
-    setEditValues((prev) => prev ? { ...prev, factoryComments: value } : null);
+    setEditValues((prev) => prev ? { ...prev, factory_comment: value } : null);
   }, []);
 
   return {

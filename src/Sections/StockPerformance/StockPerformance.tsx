@@ -24,7 +24,7 @@ export default function StockPerformance() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 1000,
+    pageSize: 500,
   });
   const [isChangingPage, setIsChangingPage] = useState(false);
 
@@ -82,6 +82,7 @@ export default function StockPerformance() {
     return data.map((row, index) => ({
       ...row,
       id: row.id ?? `${row.item_number}-${index}`,
+      upload_date: row.upload_date,
       itemNumber: row.item_number,
       categoryName: row.category_name,
       itemTitle: row.item_title ?? row.item_number,

@@ -2,7 +2,7 @@ import React from "react";
 import {
   BoxIcon
 } from "../icons";
-import DashboardIcon from '@mui/icons-material/Dashboard';
+// import DashboardIcon from '@mui/icons-material/Dashboard';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AssessmentIcon from '@mui/icons-material/Assessment';
@@ -29,11 +29,11 @@ export type NavItem = {
  * Separated from component to follow Single Responsibility Principle
  */
 export const navItems: NavItem[] = [
-  {
-    icon: <DashboardIcon />,
-    name: "Dashboard Home",
-    path: "/"
-  },
+  // {
+  //   icon: <DashboardIcon />,
+  //   name: "Dashboard Home",
+  //   path: "/"
+  // },
   {
     icon: <CloudUploadIcon />,
     name: "Linnworks Files Upload",

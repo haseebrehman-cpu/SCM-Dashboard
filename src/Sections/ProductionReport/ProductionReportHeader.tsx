@@ -39,12 +39,35 @@ export const ProductionReportHeader: React.FC<ProductionReportHeaderProps> = ({
             label="Select Warehouse"
             onChange={onWarehouseChange}
             size="small"
-            sx={{ fontSize: '10px' }}
+            sx={{ fontSize: "10px" }}
+            renderValue={(selected) => {
+              const option = WAREHOUSE_OPTIONS.find(
+                (opt) => opt.value === selected
+              );
+              return (
+                <div className="flex items-center gap-2">
+                  {option && (
+                    <img
+                      src={`https://flagcdn.com/w20/${option.flag.toLowerCase()}.png`}
+                      width="20"
+                      alt={option.label}
+                      className="rounded-xs"
+                    />
+                  )}
+                  <span>{option ? option.label : selected}</span>
+                </div>
+              );
+            }}
           >
             {WAREHOUSE_OPTIONS.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 <div className="flex items-center gap-2">
-                  <span className="text-lg">{option.flag}</span>
+                  <img
+                    src={`https://flagcdn.com/w20/${option.flag.toLowerCase()}.png`}
+                    srcSet={`https://flagcdn.com/w40/${option.flag.toLowerCase()}.png 2x`}
+                    width="20"
+                    alt={option.label}
+                  />
                   <span>{option.label}</span>
                 </div>
               </MenuItem>
