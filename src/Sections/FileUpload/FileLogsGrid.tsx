@@ -158,7 +158,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
           // checkboxSelection
           keepNonExistentRowsSelected
           rowBufferPx={100}
-          sx={getDataGridStyles(isDark, "400px")}
+          sx={getDataGridStyles(isDark, "")}
           showToolbar
           getDetailPanelHeight={() => 'auto'}
           getDetailPanelContent={({ row }) => (

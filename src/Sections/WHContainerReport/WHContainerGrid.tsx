@@ -83,7 +83,7 @@ const WHContainerGrid = ({ filters = {} }: WHContainerGridProps) => {
         pagination
         disableRowSelectionOnClick
         loading={false}
-        sx={getDataGridStyles(isDark, "auto")}
+        sx={getDataGridStyles(isDark, "750px")}
         rowBufferPx={100}
         showToolbar
         virtualizeColumnsWithAutoRowHeight
