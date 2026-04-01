@@ -21,8 +21,9 @@ steps:
     npm run build
 
     echo "Deploying build to /var/www/vhosts/scm-frontend..."
-    rm -rf /var/www/vhosts/scm-frontend/*
-    cp -r dist/ /var/www/vhosts/scm-frontend/
+    rm -rf /var/www/vhosts/scm-frontend/dist
+    mkdir -p /var/www/vhosts/scm-frontend/dist
+    cp -r dist/* /var/www/vhosts/scm-frontend/dist/
 
     echo "Reloading Nginx..."
     sudo systemctl daemon-reload
