@@ -100,7 +100,6 @@ const SummaryDashGrid: React.FC = React.memo(() => {
       </div>
       <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden min-h-[400px]">
 
-        {/* Loading Overlay */}
         <BrandedLogoLoader isLoading={isAnyLoading} isDark={isDark} message="Loading Summary Dashboard" />
 
         {isDialogOpen && <>
