@@ -355,13 +355,10 @@ export const usePurchaseOrderController = (isDark: boolean): UsePurchaseOrderCon
       try {
         await uploadMutation.mutateAsync({ file });
       } catch (error) {
-        const message = error instanceof Error ? error.message : "Failed to upload file";
-        toast.error(message);
-        throw error;
-      }
-    },
-    [uploadMutation],
-  );
+        toast.error("Unable to process the file. Please try again by checking the file format.");
+      throw error;
+    }
+  }, [uploadMutation]);
 
   return {
     isDialogOpen,
