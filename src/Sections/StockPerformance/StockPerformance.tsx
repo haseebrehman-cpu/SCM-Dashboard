@@ -42,7 +42,7 @@ export default function StockPerformance() {
     setIsChangingPage(true);
     const timer = setTimeout(() => {
       setIsChangingPage(false);
-    }, 800);
+    }, 4000);
     return () => clearTimeout(timer);
   }, [paginationModel.page, paginationModel.pageSize]);
 
@@ -59,7 +59,6 @@ export default function StockPerformance() {
     paginationModel.pageSize
   );
 
-  // Load progress animation for the load-report dialog
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (loadStatus === "loading") {
@@ -94,7 +93,7 @@ export default function StockPerformance() {
 
     try {
       const response = await loadReportMutation.mutateAsync({ session_id: sessionId });
-      
+
       if (response.success) {
         setLoadProgress(100);
         setLoadStatus("success");
@@ -116,11 +115,10 @@ export default function StockPerformance() {
     } catch (error) {
       toast.error("Failed to cancel report loading.");
       console.log(error);
-      
+
     }
   };
 
-  // Prefetch next 9 pages when current page changes and is successful
   usePrefetchStockPerformance(
     selectedWarehouse,
     sessionId,
