@@ -25,6 +25,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
   const [rows, setRows] = useState<SummaryDashboardRow[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>("UK");
+  const ALL_VALUE = -1;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 500,
@@ -115,7 +116,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           onPaginationModelChange={setPaginationModel}
           paginationMode="server"
           rowCount={rowCount}
-          pageSizeOptions={[500, 1000, 5000, { value: rowCount, label: `Show All (${rowCount})` }]}
+          pageSizeOptions={[500, 1000, 5000, { value: ALL_VALUE, label: `Show All` }]}
           pagination
           rowBufferPx={100}
           loading={isAnyLoading}

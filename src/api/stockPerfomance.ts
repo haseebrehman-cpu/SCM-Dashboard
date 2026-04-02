@@ -5,21 +5,25 @@ import { API_BASE_URL } from "./purchaseOrder";
 
 export const STOCK_PERFORMANCE_REPORT_QUERY_KEY = ["stockPerformanceReport"] as const;
 
-
 export async function fetchStockPerformanceReportData(
   warehouse_code: string,
   session_id: number | null,
   p: string,
   page: number = 1,
-  page_size: number = 1000,
+  page_size: number | string = 500,
   signal?: AbortSignal
 ): Promise<StockPerformanceResponse> {
   const queryParams = new URLSearchParams({
     warehouse_code,
     p,
-    page: String(page),
-    page_size: String(page_size)
   })
+
+  if (page_size === "all") {
+    queryParams.append("page_size", "all");
+  } else {
+    queryParams.append("page", String(page));
+    queryParams.append("page_size", String(page_size));
+  }
 
   if (session_id !== null && session_id !== undefined) {
     queryParams.append("session_id", String(session_id))
@@ -55,7 +59,7 @@ export const useStockPerfomanceReport = (
   session_id: number | null,
   p: string,
   page: number = 1,
-  page_size: number = 1000
+  page_size: number | string = 1000
 ): UseQueryResult<StockPerformanceResponse, Error> =>
   useQuery<StockPerformanceResponse, Error>({
     queryKey: [...STOCK_PERFORMANCE_REPORT_QUERY_KEY, warehouse_code, session_id, p, page, page_size],
@@ -69,7 +73,7 @@ export const usePrefetchStockPerformance = (
   session_id: number | null,
   p: string,
   currentPage: number,
-  pageSize: number = 1000,
+  pageSize: number | string = 1000,
   isSuccess: boolean = false,
   totalPages: number = 1
 ) => {

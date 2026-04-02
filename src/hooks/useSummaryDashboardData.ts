@@ -8,7 +8,7 @@ interface UseSummaryDashboardDataParams {
   selectedWarehouse: Warehouse;
   sessionId: number | null;
   page: number;
-  pageSize: number;
+  pageSize: number | string;
 }
 
 interface UseSummaryDashboardDataResult {
@@ -35,7 +35,7 @@ export const useSummaryDashboardData = ({
     sessionId,
     "sd",
     page + 1,
-    pageSize,
+    pageSize === -1 ? "all" : pageSize,
   );
 
   usePrefetchStockPerformance(
@@ -43,7 +43,7 @@ export const useSummaryDashboardData = ({
     sessionId,
     "sd",
     page + 1,
-    pageSize,
+    pageSize === -1 ? "all" : pageSize,
     isSuccess,
     reportResponse?.pagination?.total_pages ?? reportResponse?.summary_dashboard_page_count ?? reportResponse?.stock_performance_page_count ?? 1
   );

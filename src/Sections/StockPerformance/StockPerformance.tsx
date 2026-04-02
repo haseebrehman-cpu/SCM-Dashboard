@@ -21,6 +21,7 @@ export default function StockPerformance() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const sessionId = useLatestSessionId();
+  const ALL_VALUE = -1;
 
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>("UK");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -56,7 +57,7 @@ export default function StockPerformance() {
     sessionId,
     "spr",
     paginationModel.page + 1,
-    paginationModel.pageSize
+    paginationModel.pageSize === ALL_VALUE ? "all" : paginationModel.pageSize
   );
 
   useEffect(() => {
@@ -124,7 +125,7 @@ export default function StockPerformance() {
     sessionId,
     "spr",
     paginationModel.page + 1,
-    paginationModel.pageSize,
+    paginationModel.pageSize === ALL_VALUE ? "all" : paginationModel.pageSize,
     isSuccess,
     reportResponse?.pagination?.total_pages ?? reportResponse?.stock_performance_page_count ?? reportResponse?.summary_dashboard_page_count ?? 1
   );
@@ -231,7 +232,7 @@ export default function StockPerformance() {
           onPaginationModelChange={setPaginationModel}
           paginationMode="server"
           rowCount={totalRecords}
-          pageSizeOptions={[500, 1000, 5000, { value: totalRecords, label: `Show All (${totalRecords})` }]}
+          pageSizeOptions={[500, 1000, 5000, { value: ALL_VALUE, label: `Show All` }]}
           pagination
           loading={isAnyLoading}
           disableRowSelectionOnClick
