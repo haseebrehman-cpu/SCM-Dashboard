@@ -13,6 +13,7 @@ import { SelectChangeEvent } from "@mui/material";
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
 import { useSummaryDashboardData } from "../../hooks/useSummaryDashboardData";
+import { usePatchSummaryDashboard } from "../../api/stockPerfomance";
 
 /**
  * Summary Dashboard Grid Component
@@ -57,7 +58,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     setRows(summaryRows);
   }, [summaryRows]);
 
-
+  const { mutate: patchSummaryDashboardMutation } = usePatchSummaryDashboard();
 
   const {
     editingRowId,
@@ -67,7 +68,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     handleCancel,
     handleStatusChange,
     handleCommentsChange,
-  } = useSummaryEdit(setRows);
+  } = useSummaryEdit(setRows, patchSummaryDashboardMutation);
 
   const columns = useMemo(() => {
     return createSummaryDashboardColumns(

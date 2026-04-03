@@ -521,3 +521,10 @@ export interface StockPerformanceResponse {
   };
   message: string;
 }
+
+
+export interface PatchSummaryDashboardResponse {
+  success: boolean;
+  message: string;
+  updated_fields: string[];
+} 

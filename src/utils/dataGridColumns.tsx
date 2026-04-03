@@ -15,7 +15,7 @@ export const createSummaryDashboardColumns = (
   onStatusChange: (value: string) => void,
   onCommentsChange: (value: string) => void,
   onEdit: (id: number) => void,
-  onSave: (id: number) => void,
+  onSave: (id: number, warehouse_code: string) => void,
   onCancel: () => void
 ): GridColDef[] => {
   const renderHeader = (headerName: string) => (
@@ -267,7 +267,6 @@ export const createSummaryDashboardColumns = (
               icon={
                 <IconButton
                   size="small"
-                  onClick={() => onSave(params.id as number)}
                   sx={{
                     color: isDark ? '#10b981' : '#059669',
                     '&:hover': {
@@ -290,7 +289,7 @@ export const createSummaryDashboardColumns = (
                 </IconButton>
               }
               label="Save"
-              onClick={() => onSave(params.id as number)}
+              onClick={() => onSave(params.id as number, (params.row as { warehouse_code: string }).warehouse_code)}
             />,
             <GridActionsCellItem
               key="cancel"

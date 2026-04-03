@@ -10,18 +10,27 @@ interface EditValues {
   factory_comment: string;
 }
 
+type PatchSummaryDashboardMutation = (variables: {
+  id: number;
+  status: string;
+  factory_comment: string;
+  warehouse_code: string;
+  signal?: AbortSignal;
+}) => void;
+
 interface UseSummaryEditReturn {
   editingRowId: number | null;
   editValues: EditValues | null;
   handleEdit: (id: number, rows: SummaryDashboardRow[]) => void;
-  handleSave: (id: number) => void;
+  handleSave: (id: number, warehouse_code: string) => void;
   handleCancel: () => void;
   handleStatusChange: (value: string) => void;
   handleCommentsChange: (value: string) => void;
 }
 
 export const useSummaryEdit = (
-  setRows: React.Dispatch<React.SetStateAction<SummaryDashboardRow[]>>
+  setRows: React.Dispatch<React.SetStateAction<SummaryDashboardRow[]>>,
+  patchSummaryDashboardMutation: PatchSummaryDashboardMutation
 ): UseSummaryEditReturn => {
   const [editingRowId, setEditingRowId] = useState<number | null>(null);
   const [editValues, setEditValues] = useState<EditValues | null>(null);
@@ -36,13 +45,20 @@ export const useSummaryEdit = (
         reason2: row.reason2 || '',
         reason3: row.reason3 || '',
         reason4: row.reason4 || '',
-        factory_comment: row.factory_comment,
+        factory_comment: row.factory_comment || '',
       });
     }
   }, []);
 
-  const handleSave = useCallback((id: number) => {
+  const handleSave = useCallback((id: number, warehouse_code: string) => {
     if (editValues) {
+      patchSummaryDashboardMutation({
+        id,
+        status: editValues.status,
+        factory_comment: editValues.factory_comment,
+        warehouse_code,
+      });
+
       setRows((prevRows) =>
         prevRows.map((row) =>
           row.id === id
@@ -61,7 +77,7 @@ export const useSummaryEdit = (
       setEditingRowId(null);
       setEditValues(null);
     }
-  }, [editValues, setRows]);
+  }, [editValues, patchSummaryDashboardMutation, setRows]);
 
   const handleCancel = useCallback(() => {
     setEditingRowId(null);
