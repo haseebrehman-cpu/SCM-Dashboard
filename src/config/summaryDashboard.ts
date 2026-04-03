@@ -30,6 +30,7 @@ export const STATUS_OPTIONS = [
   "Moderate Selling Item – Medium Priority",
   "Low Selling Item – Low Priority",
   "No Action Required – FYI Only",
+  'Not Available'
 ] as const;
 
 export const REASON_OPTIONS = [
