@@ -13,7 +13,6 @@ export const createSummaryDashboardColumns = (
   editingRowId: number | null,
   editValues: { status: string; reason1: string; reason2: string; reason3: string; reason4: string; factory_comment: string } | null,
   onStatusChange: (value: string) => void,
-  onReasonChange: (field: 'reason1' | 'reason2' | 'reason3' | 'reason4', value: string) => void,
   onCommentsChange: (value: string) => void,
   onEdit: (id: number) => void,
   onSave: (id: number) => void,
@@ -118,6 +117,95 @@ export const createSummaryDashboardColumns = (
       valueFormatter: (value: number) => value?.toFixed(2) || "0",
       renderHeader: () => renderHeader("Max Daily Consumption"),
     },
+
+    {
+      field: "reason1",
+      headerName: "Reason 1",
+      width: 350,
+      sortable: true,
+      filterable: true,
+
+      align: "left",
+      // renderCell: (params) => {
+      //   const isEditing = editingRowId === params.row.id;
+      //   if (isEditing && editValues) {
+      //     return (
+      //       <EditableTextFieldCell
+      //         value={editValues.reason1}
+      //         onChange={(value) => onReasonChange('reason1', value)}
+      //         isDark={isDark}
+      //       />
+      //     );
+      //   }
+      //   return <span>{params.value}</span>;
+      // },
+    },
+    {
+      field: "reason2",
+      headerName: "Reason 2",
+      width: 350,
+      sortable: true,
+      filterable: true,
+
+      align: "left",
+      // renderCell: (params) => {
+      //   const isEditing = editingRowId === params.row.id;
+      //   if (isEditing && editValues) {
+      //     return (
+      //       <EditableTextFieldCell
+      //         value={editValues.reason2}
+      //         onChange={(value) => onReasonChange('reason2', value)}
+      //         isDark={isDark}
+      //       />
+      //     );
+      //   }
+      //   return <span>{params.value}</span>;
+      // },
+    },
+    {
+      field: "reason3",
+      headerName: "Reason 3",
+      width: 350,
+      sortable: true,
+      filterable: true,
+
+      align: "left",
+      // renderCell: (params) => {
+      //   const isEditing = editingRowId === params.row.id;
+      //   if (isEditing && editValues) {
+      //     return (
+      //       <EditableTextFieldCell
+      //         value={editValues.reason3}
+      //         onChange={(value) => onReasonChange('reason3', value)}
+      //         isDark={isDark}
+      //       />
+      //     );
+      //   }
+      //   return <span>{params.value}</span>;
+      // },
+    },
+    {
+      field: "reason4",
+      headerName: "Reason 4",
+      width: 350,
+      sortable: true,
+      filterable: true,
+
+      align: "left",
+      // renderCell: (params) => {
+      //   const isEditing = editingRowId === params.row.id;
+      //   if (isEditing && editValues) {
+      //     return (
+      //       <EditableTextFieldCell
+      //         value={editValues.reason4}
+      //         onChange={(value) => onReasonChange('reason4', value)}
+      //         isDark={isDark}
+      //       />
+      //     );
+      //   }
+      //   return <span>{params.value}</span>;
+      // },
+    },
     {
       field: "status",
       headerName: "Status",
@@ -142,100 +230,12 @@ export const createSummaryDashboardColumns = (
       },
     },
     {
-      field: "reason1",
-      headerName: "Reason 1",
-      width: 350,
-      sortable: true,
-      filterable: true,
-      
-      align: "left",
-      renderCell: (params) => {
-        const isEditing = editingRowId === params.row.id;
-        if (isEditing && editValues) {
-          return (
-            <EditableTextFieldCell
-              value={editValues.reason1}
-              onChange={(value) => onReasonChange('reason1', value)}
-              isDark={isDark}
-            />
-          );
-        }
-        return <span>{params.value}</span>;
-      },
-    },
-    {
-      field: "reason2",
-      headerName: "Reason 2",
-      width: 350,
-      sortable: true,
-      filterable: true,
-      
-      align: "left",
-      renderCell: (params) => {
-        const isEditing = editingRowId === params.row.id;
-        if (isEditing && editValues) {
-          return (
-            <EditableTextFieldCell
-              value={editValues.reason2}
-              onChange={(value) => onReasonChange('reason2', value)}
-              isDark={isDark}
-            />
-          );
-        }
-        return <span>{params.value}</span>;
-      },
-    },
-    {
-      field: "reason3",
-      headerName: "Reason 3",
-      width: 350,
-      sortable: true,
-      filterable: true,
-      
-      align: "left",
-      renderCell: (params) => {
-        const isEditing = editingRowId === params.row.id;
-        if (isEditing && editValues) {
-          return (
-            <EditableTextFieldCell
-              value={editValues.reason3}
-              onChange={(value) => onReasonChange('reason3', value)}
-              isDark={isDark}
-            />
-          );
-        }
-        return <span>{params.value}</span>;
-      },
-    },
-    {
-      field: "reason4",
-      headerName: "Reason 4",
-      width: 350,
-      sortable: true,
-      filterable: true,
-      
-      align: "left",
-      renderCell: (params) => {
-        const isEditing = editingRowId === params.row.id;
-        if (isEditing && editValues) {
-          return (
-            <EditableTextFieldCell
-              value={editValues.reason4}
-              onChange={(value) => onReasonChange('reason4', value)}
-              isDark={isDark}
-            />
-          );
-        }
-        return <span>{params.value}</span>;
-      },
-    },
-    {
       field: "factory_comment",
       headerName: "Factory Comments",
       width: 200,
       sortable: false,
-      filterable: false,
-      
+      filterable: true,
+
       align: "left",
       renderCell: (params) => {
         const isEditing = editingRowId === params.row.id;
@@ -256,7 +256,7 @@ export const createSummaryDashboardColumns = (
       type: "actions",
       headerName: "Action",
       width: 120,
-      
+
 
       getActions: (params) => {
         const isEditing = editingRowId === params.id;

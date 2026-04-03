@@ -105,7 +105,7 @@ export const generatePurchaseOrderColumns = ({
       headerName: "Departure Date",
       width: 150,
       sortable: true,
-      filterable: false,
+      filterable: true,
       valueFormatter: (value: string | null | undefined) => formatDate(value),
       renderHeader: () => renderDateHeader("Departure Date", isDark),
       renderCell: (params) => <span>{params.value?.toString().trim()}</span>,
@@ -115,7 +115,7 @@ export const generatePurchaseOrderColumns = ({
       headerName: "Arrival Date",
       width: 180,
       sortable: true,
-      filterable: false,
+      filterable: true,
       valueFormatter: (value: string | null | undefined) => formatDate(value),
       renderHeader: () => renderDateHeader("Arrival Date", isDark),
       renderCell: (params) => {

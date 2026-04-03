@@ -17,7 +17,6 @@ interface UseSummaryEditReturn {
   handleSave: (id: number) => void;
   handleCancel: () => void;
   handleStatusChange: (value: string) => void;
-  handleReasonChange: (field: 'reason1' | 'reason2' | 'reason3' | 'reason4', value: string) => void;
   handleCommentsChange: (value: string) => void;
 }
 
@@ -48,14 +47,14 @@ export const useSummaryEdit = (
         prevRows.map((row) =>
           row.id === id
             ? {
-                ...row,
-                status: editValues.status,
-                reason1: editValues.reason1,
-                reason2: editValues.reason2,
-                reason3: editValues.reason3,
-                reason4: editValues.reason4,
-                factory_comment: editValues.factory_comment,
-              }
+              ...row,
+              status: editValues.status,
+              reason1: editValues.reason1,
+              reason2: editValues.reason2,
+              reason3: editValues.reason3,
+              reason4: editValues.reason4,
+              factory_comment: editValues.factory_comment,
+            }
             : row
         )
       );
@@ -73,9 +72,6 @@ export const useSummaryEdit = (
     setEditValues((prev) => prev ? { ...prev, status: value } : null);
   }, []);
 
-  const handleReasonChange = useCallback((field: 'reason1' | 'reason2' | 'reason3' | 'reason4', value: string) => {
-    setEditValues((prev) => prev ? { ...prev, [field]: value } : null);
-  }, []);
 
   const handleCommentsChange = useCallback((value: string) => {
     setEditValues((prev) => prev ? { ...prev, factory_comment: value } : null);
@@ -88,7 +84,6 @@ export const useSummaryEdit = (
     handleSave,
     handleCancel,
     handleStatusChange,
-    handleReasonChange,
     handleCommentsChange,
   };
 };

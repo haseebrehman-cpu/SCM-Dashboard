@@ -92,7 +92,7 @@ export const generateProductionColumns = ({
       headerName,
       width,
       sortable: true,
-      filterable: false,
+      filterable: true,
       headerAlign: "center",
       align: "center",
       renderCell,

@@ -66,7 +66,6 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     handleSave,
     handleCancel,
     handleStatusChange,
-    handleReasonChange,
     handleCommentsChange,
   } = useSummaryEdit(setRows);
 
@@ -76,13 +75,12 @@ const SummaryDashGrid: React.FC = React.memo(() => {
       editingRowId,
       editValues,
       handleStatusChange,
-      handleReasonChange,
       handleCommentsChange,
       (id: number) => handleEdit(id, rows),
       handleSave,
       handleCancel
     );
-  }, [isDark, editingRowId, editValues, handleStatusChange, handleReasonChange, handleCommentsChange, handleEdit, handleSave, handleCancel, rows]);
+  }, [isDark, editingRowId, editValues, handleStatusChange, handleCommentsChange, handleEdit, handleSave, handleCancel, rows]);
 
   const isAnyLoading = isLoading || isChangingPage;
 
