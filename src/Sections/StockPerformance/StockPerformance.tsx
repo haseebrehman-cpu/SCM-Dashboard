@@ -186,8 +186,10 @@ export default function StockPerformance() {
             fontWeight: 600,
             fontSize: "14px"
           }}
+
+          disabled={reportResponse?.spr || isAnyLoading}
         >
-          Load Reports
+          {isAnyLoading ? "Checking Statu" : "Load Report"}
         </Button>
         <ProductionReportHeader
           selectedWarehouse={selectedWarehouse}

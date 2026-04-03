@@ -496,6 +496,7 @@ export interface SummaryDashboardDataRowApi {
 
 export interface StockPerformanceResponse {
   success: boolean;
+  spr?: boolean;
   warehouse_code: string;
   upload_date: string;
   stock_performance_data?: StockPerformanceRow[];
