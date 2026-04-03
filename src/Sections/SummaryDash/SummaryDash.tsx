@@ -46,7 +46,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     setPaginationModel((prev) => ({ ...prev, page: 0 }));
   };
 
-  const { rows: summaryRows, rowCount, isLoading } = useSummaryDashboardData({
+  const { rows: summaryRows, rowCount, isLoading, refetchSummary } = useSummaryDashboardData({
     selectedWarehouse,
     sessionId,
     page: paginationModel.page,
@@ -68,7 +68,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     handleCancel,
     handleStatusChange,
     handleCommentsChange,
-  } = useSummaryEdit(setRows, patchSummaryDashboardMutation);
+  } = useSummaryEdit(setRows, patchSummaryDashboardMutation, refetchSummary);
 
   const columns = useMemo(() => {
     return createSummaryDashboardColumns(

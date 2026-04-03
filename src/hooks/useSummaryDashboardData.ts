@@ -16,6 +16,7 @@ interface UseSummaryDashboardDataResult {
   setRows: React.Dispatch<React.SetStateAction<SummaryDashboardRow[]>>;
   rowCount: number;
   isLoading: boolean;
+  refetchSummary: () => Promise<unknown>;
 }
 
 export const useSummaryDashboardData = ({
@@ -30,6 +31,7 @@ export const useSummaryDashboardData = ({
     data: reportResponse,
     isLoading,
     isSuccess,
+    refetch: refetchSummary
   } = useStockPerfomanceReport(
     selectedWarehouse,
     sessionId,
@@ -84,6 +86,7 @@ export const useSummaryDashboardData = ({
     setRows,
     rowCount: reportResponse?.pagination?.total_records ?? reportResponse?.summary_dashboard_count ?? reportResponse?.total_records ?? 0,
     isLoading,
+    refetchSummary
   };
 };
 

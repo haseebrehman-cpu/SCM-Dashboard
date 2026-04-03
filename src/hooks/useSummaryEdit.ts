@@ -10,13 +10,20 @@ interface EditValues {
   factory_comment: string;
 }
 
-type PatchSummaryDashboardMutation = (variables: {
+type PatchSummaryDashboardMutation = (
+  variables: {
   id: number;
   status: string;
   factory_comment: string;
   warehouse_code: string;
   signal?: AbortSignal;
-}) => void;
+  },
+  options?: {
+    onSuccess?: () => void;
+    onError?: (error: unknown) => void;
+    onSettled?: () => void;
+  }
+) => void;
 
 interface UseSummaryEditReturn {
   editingRowId: number | null;
@@ -30,7 +37,9 @@ interface UseSummaryEditReturn {
 
 export const useSummaryEdit = (
   setRows: React.Dispatch<React.SetStateAction<SummaryDashboardRow[]>>,
-  patchSummaryDashboardMutation: PatchSummaryDashboardMutation
+  patchSummaryDashboardMutation: PatchSummaryDashboardMutation,
+  refetchSummary?: () => Promise<unknown> | void
+  
 ): UseSummaryEditReturn => {
   const [editingRowId, setEditingRowId] = useState<number | null>(null);
   const [editValues, setEditValues] = useState<EditValues | null>(null);
@@ -57,6 +66,10 @@ export const useSummaryEdit = (
         status: editValues.status,
         factory_comment: editValues.factory_comment,
         warehouse_code,
+      }, {
+        onSuccess: () => {
+          refetchSummary?.();
+        }
       });
 
       setRows((prevRows) =>
@@ -77,7 +90,7 @@ export const useSummaryEdit = (
       setEditingRowId(null);
       setEditValues(null);
     }
-  }, [editValues, patchSummaryDashboardMutation, setRows]);
+  }, [editValues, patchSummaryDashboardMutation, refetchSummary, setRows]);
 
   const handleCancel = useCallback(() => {
     setEditingRowId(null);
