@@ -27,31 +27,15 @@ const StockPerformanceLoadProgressDialog: React.FC<StockPerformanceLoadProgressD
   onClose,
   onConfirm,
   onRetry,
-  onCancel,
   isDark,
   status,
   progress: loadingPercentage,
   errorMessage,
   showRetry = true,
-  containerSuccess,
 }) => {
-  const [isCancelling, setIsCancelling] = React.useState(false);
 
   const handleConfirm = async () => {
     await onConfirm();
-  };
-
-  const handleCancel = async () => {
-    if (status === "loading") {
-      setIsCancelling(true);
-      try {
-        await onCancel();
-      } finally {
-        setIsCancelling(false);
-      }
-    } else {
-      onClose();
-    }
   };
 
   const handleCloseAfterDone = () => {
@@ -194,22 +178,6 @@ const StockPerformanceLoadProgressDialog: React.FC<StockPerformanceLoadProgressD
           {status === 'idle' && (
             <>
               <Button
-                variant="outlined"
-                size="medium"
-                onClick={handleCancel}
-                disabled={containerSuccess === 'success'}
-                sx={{
-                  color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)',
-                  borderColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
-                  '&:hover': {
-                    borderColor: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
-                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
-                  },
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
                 variant="contained"
                 size="medium"
                 onClick={handleConfirm}
@@ -224,25 +192,6 @@ const StockPerformanceLoadProgressDialog: React.FC<StockPerformanceLoadProgressD
                 Load Report
               </Button>
             </>
-          )}
-
-          {status === 'loading' && (
-            <Button
-              variant="outlined"
-              size="medium"
-              onClick={handleCancel}
-              disabled={isCancelling || containerSuccess === 'success'}
-              sx={{
-                color: isDark ? '#ef4444' : '#dc2626',
-                borderColor: isDark ? 'rgba(239,68,68,0.4)' : 'rgba(220,38,38,0.4)',
-                '&:hover': {
-                  borderColor: isDark ? 'rgba(239,68,68,0.7)' : 'rgba(220,38,38,0.7)',
-                  backgroundColor: isDark ? 'rgba(239,68,68,0.08)' : 'rgba(220,38,38,0.05)',
-                },
-              }}
-            >
-              {isCancelling ? 'Cancelling...' : 'Cancel'}
-            </Button>
           )}
 
           {status === 'error' && showRetry && (

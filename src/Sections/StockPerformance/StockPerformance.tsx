@@ -189,7 +189,7 @@ export default function StockPerformance() {
 
           disabled={reportResponse?.spr || isAnyLoading}
         >
-          {isAnyLoading ? "Checking Statu" : "Load Report"}
+          {isAnyLoading ? "Checking Status" : "Load Report"}
         </Button>
         <ProductionReportHeader
           selectedWarehouse={selectedWarehouse}
