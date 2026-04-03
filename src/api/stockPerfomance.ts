@@ -2,6 +2,7 @@ import { UseMutationResult, UseQueryResult, useMutation, useQuery, useQueryClien
 import { useEffect } from "react";
 import { PatchSummaryDashboardResponse, StockPerformanceResponse } from "../types/Interfaces/interfaces";
 import { API_BASE_URL } from "./purchaseOrder";
+import toast from "react-hot-toast";
 
 export const STOCK_PERFORMANCE_REPORT_QUERY_KEY = ["stockPerformanceReport"] as const;
 
@@ -178,5 +179,11 @@ export const usePatchSummaryDashboard = (): UseMutationResult<PatchSummaryDashbo
   return useMutation<PatchSummaryDashboardResponse, Error, { id: number; status: string; factory_comment: string; warehouse_code: string; signal?: AbortSignal }>({
     mutationFn: ({ id, status, factory_comment, warehouse_code, signal }) =>
       patchSummaryDashboard(id, status, factory_comment, warehouse_code, signal),
+    onSuccess: () => {
+      toast.success("Data Updated Successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Unable to Update at the moment");
+    },
   })
 }
