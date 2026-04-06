@@ -81,14 +81,14 @@ const StockReportGrid = ({ filters = {} }: StockReportGridProps) => {
         pagination
         disableRowSelectionOnClick
         loading={false}
-        sx={getDataGridStyles(isDark, "80vh")}
+        sx={getDataGridStyles(isDark)}
         rowBufferPx={100}
         showToolbar
         slotProps={{
           toolbar: {
             printOptions: { disableToolbarButton: true },
             excelOptions: { disableToolbarButton: true },
-            csvOptions: { disableToolbarButton: false },
+            csvOptions: { disableToolbarButton: false, escapeFormulas: false, fileName: "Stock_Report_SCM_Dashboard" },
           },
         }}
 

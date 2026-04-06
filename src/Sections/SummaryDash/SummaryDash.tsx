@@ -120,13 +120,13 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           rowBufferPx={100}
           loading={isAnyLoading}
           disableRowSelectionOnClick
-          sx={getDataGridStyles(isDark, "690px")}
+          sx={getDataGridStyles(isDark)}
           showToolbar
           slotProps={{
             toolbar: {
               printOptions: { disableToolbarButton: true },
               excelOptions: { disableToolbarButton: true },
-              csvOptions: { disableToolbarButton: false },
+              csvOptions: { disableToolbarButton: false, escapeFormulas: false, fileName: "Summary_Dashboard_SCM_Dashboard" },
             }
           }}
         />

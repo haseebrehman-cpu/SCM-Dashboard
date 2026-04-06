@@ -1,10 +1,10 @@
-export const getDataGridStyles = (isDark: boolean, height: string) => ({
+export const getDataGridStyles = (isDark: boolean, height: string = 'calc(100vh - 200px)') => ({
   border: 'none',
   backgroundColor: 'transparent',
   width: '100%',
   height: height,
-  minHeight: '100%',
-  maxHeight: 'calc(72px * 14)',
+  minHeight: height === 'auto' ? '0' : '400px',
+  maxHeight: height === 'auto' ? 'none' : 'calc(100vh - 200px)',
   overflow: 'hidden',
   '& .MuiDataGrid-main': {
     backgroundColor: 'transparent',

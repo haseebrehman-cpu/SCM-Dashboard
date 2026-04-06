@@ -104,7 +104,7 @@ const CombinedReportGrid = ({ filters = {} }: CombinedReportGridProps) => {
         pagination
         disableRowSelectionOnClick
         loading={false}
-        sx={getDataGridStyles(isDark, "800px")}
+        sx={getDataGridStyles(isDark)}
         rowBufferPx={100}
         columnHeaderHeight={56}
         showToolbar
@@ -112,7 +112,7 @@ const CombinedReportGrid = ({ filters = {} }: CombinedReportGridProps) => {
           toolbar: {
             printOptions: { disableToolbarButton: true },
             excelOptions: { disableToolbarButton: true },
-            csvOptions: { disableToolbarButton: false },
+            csvOptions: { disableToolbarButton: false, escapeFormulas: false, fileName: "Combined_Report_SCM_Dashboard" },
           },
         }}
       />

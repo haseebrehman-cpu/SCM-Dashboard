@@ -83,7 +83,7 @@ const WHContainerGrid = ({ filters = {} }: WHContainerGridProps) => {
         pagination
         disableRowSelectionOnClick
         loading={false}
-        sx={getDataGridStyles(isDark, "750px")}
+        sx={getDataGridStyles(isDark)}
         rowBufferPx={100}
         showToolbar
         virtualizeColumnsWithAutoRowHeight
@@ -91,7 +91,7 @@ const WHContainerGrid = ({ filters = {} }: WHContainerGridProps) => {
           toolbar: {
             printOptions: { disableToolbarButton: true },
             excelOptions: { disableToolbarButton: true },
-            csvOptions: { disableToolbarButton: false },
+            csvOptions: { disableToolbarButton: false, escapeFormulas: false, fileName: "Warehouse_Container_SCM_Dashboard" },
           }
         }}
 

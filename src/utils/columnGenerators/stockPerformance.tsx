@@ -90,6 +90,7 @@ const generateBasicColumns = (): GridColDef[] => [
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
   },
 ];
 
@@ -102,6 +103,7 @@ const generateSalesColumns = (isDark: boolean): GridColDef[] => [
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
     renderHeader: () => renderMultiLineHeader("Linn-Last", "60 Days Sale", isDark),
   },
   {
@@ -112,6 +114,7 @@ const generateSalesColumns = (isDark: boolean): GridColDef[] => [
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
     renderHeader: () => (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1.2 }}>
         <span style={{ fontWeight: 600, fontSize: '0.65rem', color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>
@@ -131,6 +134,7 @@ const generateSalesColumns = (isDark: boolean): GridColDef[] => [
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
     renderHeader: () => renderMultiLineHeader("FBA-last 30", "Days Sale", isDark),
   },
   {
@@ -141,6 +145,7 @@ const generateSalesColumns = (isDark: boolean): GridColDef[] => [
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
     renderHeader: () => renderMultiLineHeader("FBA-last 7", "Days Sale", isDark),
   },
   {
@@ -151,6 +156,7 @@ const generateSalesColumns = (isDark: boolean): GridColDef[] => [
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
   },
 ];
 
@@ -163,6 +169,7 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
     renderHeader: () => renderMultiLineHeader("ALL IStock", "(WH+CTN+FBA)", isDark),
     renderCell: (params: GridRenderCellParams<MappedStockPerformanceRow>) => <span style={{ fontWeight: 600 }}>{params.value}</span>,
   },
@@ -174,6 +181,7 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
   },
   {
     field: "totalCtn",
@@ -183,6 +191,7 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
   },
   {
     field: "daysCover",
@@ -192,6 +201,7 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
   },
   {
     field: "daysCoverCurrentStock",
@@ -201,6 +211,7 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
   },
   {
     field: "dispatchDateCover",
@@ -220,6 +231,7 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
   },
   {
     field: "oosDays",
@@ -229,6 +241,7 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
     renderCell: (params: GridRenderCellParams<MappedStockPerformanceRow>) => {
       const value = params.value as number;
       const color = value < 0 ? 'red' : '#10B981';
@@ -280,6 +293,7 @@ export const generateStockPerformanceColumns = ({
       filterable: true,
       headerAlign: "center",
       align: "center",
+      type: "number",
       renderCell: (params: GridRenderCellParams<MappedStockPerformanceRow>) => (
         <span style={{ fontWeight: 600, color: isDark ? '#fbbf24' : '#d97706' }}>
           {params.value ?? '0'}

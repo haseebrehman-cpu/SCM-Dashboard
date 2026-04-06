@@ -36,6 +36,7 @@ function ExportDropdown({
   const handleExportCSV = () => {
     apiRef.current.exportDataAsCsv({
       fileName: `production_remaining_${selectedWarehouse}_${new Date().toISOString().slice(0, 10)}`,
+      escapeFormulas: false,
     });
     setOpen(false);
   };
