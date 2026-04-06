@@ -37,7 +37,6 @@ interface ContainerTreemapProps extends ChartBaseProps {
 
 const ContainerTreemap: React.FC<ContainerTreemapProps> = React.memo(({ isDark, commonTooltip, data = [], isLoading }) => {
   const option: EChartsOption = React.useMemo(() => {
-    // Group data by Container Name -> Region -> Category
     const aggregated = data.reduce<Record<string, ContainerAggregation>>((acc, curr) => {
       const { container_name, container_region, category_name, total_intransit_quantity } = curr;
 
@@ -67,7 +66,6 @@ const ContainerTreemap: React.FC<ContainerTreemapProps> = React.memo(({ isDark, 
       return acc;
     }, {});
 
-    // Convert objects to arrays for ECharts treemap
     const treemapData = Object.values(aggregated).map(container => ({
       name: container.name,
       children: Object.values(container.children)
@@ -95,7 +93,7 @@ const ContainerTreemap: React.FC<ContainerTreemapProps> = React.memo(({ isDark, 
             color: 'transparent',
             borderWidth: 0,
             textStyle: {
-              color: isDark ? '#9ca3af' : '#6b7280',
+              color: isDark ? '#]' : '#6b7280',
               fontSize: 11,
               fontFamily: 'Inter, sans-serif'
             }
@@ -134,7 +132,7 @@ const ContainerTreemap: React.FC<ContainerTreemapProps> = React.memo(({ isDark, 
           },
           {
             itemStyle: {
-              borderColor: isDark ? '#1f2937' : '#fff',
+              borderColor: isDark ? 'transparent' : '#fff',
               borderWidth: 4,
               gapWidth: 4
             },

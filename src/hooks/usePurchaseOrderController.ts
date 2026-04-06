@@ -157,7 +157,6 @@ export const usePurchaseOrderController = (isDark: boolean): UsePurchaseOrderCon
         });
       }
 
-      // userEmail is currently unused by the hook but kept for compatibility
       saveEdit("test@mail.com");
       toast.success("Record Updated Successfully!");
     } catch (error) {
@@ -181,6 +180,7 @@ export const usePurchaseOrderController = (isDark: boolean): UsePurchaseOrderCon
       onDateChange: handleDateChange,
       isUpdatingDate,
       updatingRowId,
+      rows,
     });
   }, [
     isDark,
@@ -192,6 +192,7 @@ export const usePurchaseOrderController = (isDark: boolean): UsePurchaseOrderCon
     handleDateChange,
     isUpdatingDate,
     updatingRowId,
+    rows,
   ]);
 
   const arrivalDates = useMemo(

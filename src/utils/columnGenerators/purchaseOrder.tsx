@@ -15,8 +15,59 @@ interface ColumnGeneratorParams {
   onDateChange: (rowId: number, arrivalDate: string) => void;
   isUpdatingDate?: boolean;
   updatingRowId?: number | null;
+  rows: PurchaseOrderData[];
 }
 
+const calculateAverageDeliveryDays = (rows: PurchaseOrderData[]) => {
+  const regionStats: Record<string, { totalDays: number; count: number; hasDelivered: boolean }> = {};
+
+  rows.forEach(row => {
+    if (row.departure_date && row.arrival_date && row.container_region) {
+      const departureBoundary = row.departure_date.includes(' ')
+        ? row.departure_date.split(' ')[0]
+        : row.departure_date;
+      const arrivalBoundary = row.arrival_date.includes(' ')
+        ? row.arrival_date.split(' ')[0]
+        : row.arrival_date;
+
+      const arrival = new Date(arrivalBoundary + 'T00:00:00');
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const isDelivered = !isNaN(arrival.getTime()) && arrival <= today;
+
+      if (!regionStats[row.container_region]) {
+        regionStats[row.container_region] = { totalDays: 0, count: 0, hasDelivered: false };
+      }
+
+      if (isDelivered) {
+        const departure = new Date(departureBoundary + 'T00:00:00');
+
+        if (!isNaN(departure.getTime()) && !isNaN(arrival.getTime())) {
+          const diffTime = arrival.getTime() - departure.getTime();
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+          if (diffDays >= 0) {
+            regionStats[row.container_region].hasDelivered = true;
+            regionStats[row.container_region].totalDays += diffDays;
+            regionStats[row.container_region].count += 1;
+          }
+        }
+      }
+    }
+  });
+
+  const regionAverages: Record<string, string> = {};
+  Object.keys(regionStats).forEach(region => {
+    if (regionStats[region].hasDelivered && regionStats[region].count > 0) {
+      const avg = regionStats[region].totalDays / regionStats[region].count;
+      regionAverages[region] = avg.toFixed(2);
+    } else {
+      regionAverages[region] = 'N/A';
+    }
+  });
+
+  return regionAverages;
+};
 const renderDateHeader = (title: string, isDark: boolean) => (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
     <span style={{ fontWeight: 500, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)', fontSize: '0.7rem' }}>
@@ -31,7 +82,6 @@ const renderDateHeader = (title: string, isDark: boolean) => (
 const formatDate = (value: string | null | undefined) => {
   if (!value) return '';
 
-  // Standardize delimiters and split, removing any zero-width characters
   const cleanValue = value.toString().trim().replace(/\u200B|\u200C|\u200D|\uFEFF/g, '');
   const parts = cleanValue.includes('-') ? cleanValue.split('-') : cleanValue.split('/');
 
@@ -50,8 +100,6 @@ const formatDate = (value: string | null | undefined) => {
     const m = parseInt(month, 10).toString().padStart(2, '0');
     const y = year.toString();
 
-    // Prepend a single space to force Excel to treat this as a string (General) 
-    // instead of auto-converting it to a Date object.
     return ` ${d}/${m}/${y}`;
   }
 
@@ -69,7 +117,11 @@ export const generatePurchaseOrderColumns = ({
   onDateChange,
   isUpdatingDate,
   updatingRowId,
-}: ColumnGeneratorParams): GridColDef[] => [
+  rows,
+}: ColumnGeneratorParams): GridColDef[] => {
+  const regionAverages = calculateAverageDeliveryDays(rows);
+
+  return [
     {
       field: "container_name",
       headerName: "Container Name",
@@ -158,6 +210,43 @@ export const generatePurchaseOrderColumns = ({
       },
     },
     {
+      field: "average_days",
+      headerName: "Average Days",
+      width: 130,
+      type: "number",
+      sortable: true,
+      filterable: true,
+      valueGetter: (_value, row) => {
+        const arrivalDate = row.arrival_date;
+        let isDelivered = false;
+
+        if (arrivalDate) {
+          const arrival = new Date(arrivalDate + 'T00:00:00');
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          if (arrival <= today) {
+            isDelivered = true;
+          }
+        }
+
+        if (!isDelivered) {
+          return null;
+        }
+
+        if (row.container_region && regionAverages[row.container_region]) {
+          const avg = regionAverages[row.container_region];
+          if (avg === 'N/A') return null;
+          return Number(avg);
+        }
+        return null;
+      },
+      valueFormatter: (value: number | null | undefined) => {
+        if (value === null || value === undefined || Number.isNaN(value)) return "N/A";
+        return `${value} Days`;
+      },
+    },
+    {
       field: "delivery_status",
       headerName: "Delivery Status",
       width: 150,
@@ -229,3 +318,4 @@ export const generatePurchaseOrderColumns = ({
       },
     },
   ];
+};

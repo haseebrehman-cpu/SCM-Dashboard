@@ -17,7 +17,7 @@ function parseContainerStatus(key: string): 'Delivered' | number {
 
 export const generateCombinedReportColumns = ({ isDark, containerKeys }: ColumnConfig): GridColDef[] => {
   const headerStyle = {
-    color: isDark ? '#98a2b3' : '#475467', // gray-400 : gray-600
+    color: isDark ? '#98a2b3' : '#475467',
     fontWeight: '600',
     fontSize: '12px',
     textTransform: 'uppercase' as const,
@@ -25,7 +25,7 @@ export const generateCombinedReportColumns = ({ isDark, containerKeys }: ColumnC
   };
 
   const cellStyle = {
-    color: isDark ? '#f2f4f7' : '#1d2939', // gray-100 : gray-800
+    color: isDark ? '#f2f4f7' : '#1d2939', 
     fontSize: '13px',
   };
 
