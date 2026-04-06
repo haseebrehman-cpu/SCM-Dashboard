@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { DataGridPremium, GridPaginationModel } from "@mui/x-data-grid-premium";
+import { useGridFilterCount } from "../../hooks/useGridFilterCount";
 import { STOCK_REPORT_PAGINATION_MODEL } from "../../constants/pagination";
 import { getDataGridStyles } from "../../styles/productionReportStyles";
 import { useTheme } from "../../hooks/useTheme";
@@ -59,7 +60,8 @@ const StockReportGrid = ({ filters = {} }: StockReportGridProps) => {
     [data?.data]
   );
 
-  const rowCount = data?.pagination?.total_records ?? 0;
+  const totalRecords = data?.pagination?.total_records ?? 0;
+  const { apiRef, filterModel, onFilterModelChange, getFilteredRowCount } = useGridFilterCount();
 
   const columns = generateStockReportColumns();
 
@@ -70,11 +72,14 @@ const StockReportGrid = ({ filters = {} }: StockReportGridProps) => {
       <BrandedLogoLoader isLoading={isAnyLoading} isDark={isDark} message="Loading Stock Report..." />
 
       <DataGridPremium
+        apiRef={apiRef}
         label="Stock Report"
         rows={rows}
         columns={columns}
+        filterModel={filterModel}
+        onFilterModelChange={onFilterModelChange}
         paginationMode="server"
-        rowCount={rowCount}
+        rowCount={getFilteredRowCount(totalRecords)}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
         pageSizeOptions={[100, 500, 1000, 1500]}

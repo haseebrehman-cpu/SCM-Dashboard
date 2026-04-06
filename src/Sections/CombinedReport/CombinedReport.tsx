@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { DataGridPremium, GridPaginationModel } from "@mui/x-data-grid-premium";
+import { useGridFilterCount } from "../../hooks/useGridFilterCount";
 import { useTheme } from "../../hooks/useTheme";
 import { getDataGridStyles } from "../../styles/productionReportStyles";
 import { useCombinedReport, usePrefetchContainerReport, ContainerReportFilters } from "../../api/containerDetailReport";
@@ -39,7 +40,6 @@ const CombinedReportGrid = ({ filters = {} }: CombinedReportGridProps) => {
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(COMBINED_REPORT_PAGINATION_MODEL);
   const [isChangingPage, setIsChangingPage] = useState(false);
 
-  // Show a brief loader when changing pages to provide feedback
   useEffect(() => {
     setIsChangingPage(true);
     const timer = setTimeout(() => {
@@ -57,7 +57,8 @@ const CombinedReportGrid = ({ filters = {} }: CombinedReportGridProps) => {
   const isAnyLoading = isLoading || isChangingPage;
 
   const totalPages = data?.pagination?.total_pages;
-  const rowCount = data?.pagination?.total_records ?? 0;
+  const totalRecords = data?.pagination?.total_records ?? 0;
+  const { apiRef, filterModel, onFilterModelChange, getFilteredRowCount } = useGridFilterCount();
 
   const rows: CombinedReportRow[] = useMemo(() => {
     const list = data?.data ?? [];
@@ -93,11 +94,14 @@ const CombinedReportGrid = ({ filters = {} }: CombinedReportGridProps) => {
       <BrandedLogoLoader isLoading={isAnyLoading} isDark={isDark} message="Loading Combined Report..." />
 
       <DataGridPremium
+        apiRef={apiRef}
         label="Combined Report"
         rows={rows}
         columns={columns}
+        filterModel={filterModel}
+        onFilterModelChange={onFilterModelChange}
         paginationMode="server"
-        rowCount={rowCount}
+        rowCount={getFilteredRowCount(totalRecords)}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
         pageSizeOptions={[100, 200, 500]}

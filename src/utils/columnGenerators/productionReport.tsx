@@ -95,6 +95,7 @@ export const generateProductionColumns = ({
       filterable: true,
       headerAlign: "center",
       align: "center",
+      type: "number",
       renderCell,
     };
   });

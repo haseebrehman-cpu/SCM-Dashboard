@@ -6,7 +6,8 @@ import { generateStockPerformanceColumns } from '../../utils/columnGenerators/st
 import { getDataGridStyles } from '../../styles/productionReportStyles';
 import { ProductionReportHeader } from '../ProductionReport/ProductionReportHeader';
 import ArchieveDialog from "../SummaryDash/ArchieveDialog";
-import { DataGridPremium } from "@mui/x-data-grid-premium";
+import { DataGridPremium, useGridApiRef } from "@mui/x-data-grid-premium";
+import { useGridFilterCount } from "../../hooks/useGridFilterCount";
 import { useTheme } from "../../hooks/useTheme";
 import { useStockPerfomanceReport, usePrefetchStockPerformance, useLoadStockPerformanceReport } from "../../api/stockPerfomance";
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
@@ -18,6 +19,7 @@ import { useDeleteRunningReport } from "../../api/containerDetailReport";
 import toast from "react-hot-toast";
 
 export default function StockPerformance() {
+  const apiRef = useGridApiRef();
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const sessionId = useLatestSessionId();
@@ -35,7 +37,7 @@ export default function StockPerformance() {
   const [loadStatus, setLoadStatus] = useState<LoadStatus>("idle");
   const [loadProgress, setLoadProgress] = useState(1);
   const [loadErrorMessage, setLoadErrorMessage] = useState<string | undefined>();
-
+  const { filterModel, onFilterModelChange, getFilteredRowCount } = useGridFilterCount(apiRef);
   const loadReportMutation = useLoadStockPerformanceReport();
   const deleteMutation = useDeleteRunningReport();
 
@@ -65,7 +67,6 @@ export default function StockPerformance() {
     if (loadStatus === "loading") {
       interval = setInterval(() => {
         setLoadProgress((prev) => {
-          // Cap at 90% while loading to keep "room" for the final completion
           if (prev >= 90) return 90;
           const increment = Math.random() * 3 + 1;
           return Math.min(prev + increment, 90);
@@ -227,13 +228,16 @@ export default function StockPerformance() {
         )}
 
         <DataGridPremium
+          apiRef={apiRef}
           label="Stock Performance Report"
           rows={tableData}
           columns={columns}
+          filterModel={filterModel}
+          onFilterModelChange={onFilterModelChange}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           paginationMode="server"
-          rowCount={totalRecords}
+          rowCount={getFilteredRowCount(totalRecords)}
           pageSizeOptions={[500, 1000, 5000, { value: ALL_VALUE, label: `Show All` }]}
           pagination
           loading={isAnyLoading}

@@ -51,11 +51,12 @@ export const generateWarehouseColumns = (isDark: boolean): GridColDef[] => [
     field: "IntransitQuantity",
     headerName: "Intransit Qty",
     flex: 1,
-    minWidth: 110,
+    minWidth: 150,
     sortable: true,
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
   },
   {
     field: "ContainerNumber",
@@ -98,6 +99,7 @@ export const generateWarehouseColumns = (isDark: boolean): GridColDef[] => [
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
   },
   {
     field: "UploadDate",

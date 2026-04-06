@@ -1,4 +1,5 @@
 import { DataGridPremium, GridPaginationModel } from "@mui/x-data-grid-premium"
+import { useGridFilterCount } from "../../hooks/useGridFilterCount";
 import { getDataGridStyles } from "../../styles/productionReportStyles"
 import { useTheme } from "../../hooks/useTheme";
 import { generateWarehouseColumns } from "../../utils/columnGenerators/whContainerReport";
@@ -57,7 +58,8 @@ const WHContainerGrid = ({ filters = {} }: WHContainerGridProps) => {
   const totalPages = data?.pagination?.total_pages;
   usePrefetchContainerReport("container", page, pageSize, sessionId, totalPages, 6, filters);
 
-  const rowCount = data?.pagination?.total_records ?? 0;
+  const totalRecords = data?.pagination?.total_records ?? 0;
+  const { apiRef, filterModel, onFilterModelChange, getFilteredRowCount } = useGridFilterCount();
 
   const rows: WHContainerReportRow[] = useMemo(
     () => (data?.data ?? []).map(mapApiRowToGridRow),
@@ -72,11 +74,14 @@ const WHContainerGrid = ({ filters = {} }: WHContainerGridProps) => {
       <BrandedLogoLoader isLoading={isAnyLoading} isDark={isDark} message="Loading Container Report..." />
 
       <DataGridPremium
+        apiRef={apiRef}
         label="Warehouse Container Report"
         rows={rows}
         columns={columns}
+        filterModel={filterModel}
+        onFilterModelChange={onFilterModelChange}
         paginationMode="server"
-        rowCount={rowCount}
+        rowCount={getFilteredRowCount(totalRecords)}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
         pageSizeOptions={[100, 500, 1000, 1500]}

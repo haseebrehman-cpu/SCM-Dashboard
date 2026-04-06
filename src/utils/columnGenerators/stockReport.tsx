@@ -45,6 +45,7 @@ export const generateStockReportColumns = (): GridColDef[] => [
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
   },
   {
     field: "Available",
@@ -54,5 +55,6 @@ export const generateStockReportColumns = (): GridColDef[] => [
     filterable: true,
     headerAlign: "center",
     align: "center",
+    type: "number",
   },
 ];

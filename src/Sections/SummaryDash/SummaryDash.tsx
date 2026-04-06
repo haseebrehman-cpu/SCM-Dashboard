@@ -8,6 +8,7 @@ import { getDataGridStyles } from "../../styles/productionReportStyles";
 import { ProductionReportHeader } from "../ProductionReport/ProductionReportHeader";
 import ArchieveDialog from "./ArchieveDialog";
 import { DataGridPremium } from "@mui/x-data-grid-premium";
+import { useGridFilterCount } from "../../hooks/useGridFilterCount";
 import { Warehouse } from "../../types/common";
 import { SelectChangeEvent } from "@mui/material";
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
@@ -84,6 +85,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
   }, [isDark, editingRowId, editValues, handleStatusChange, handleCommentsChange, handleEdit, handleSave, handleCancel, rows]);
 
   const isAnyLoading = isLoading || isChangingPage;
+  const { apiRef, filterModel, onFilterModelChange, getFilteredRowCount } = useGridFilterCount();
 
   return (
     <>
@@ -108,13 +110,16 @@ const SummaryDashGrid: React.FC = React.memo(() => {
         </>}
 
         <DataGridPremium
+          apiRef={apiRef}
           label="Summary Dashboard Report"
           rows={rows}
           columns={columns}
+          filterModel={filterModel}
+          onFilterModelChange={onFilterModelChange}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           paginationMode="server"
-          rowCount={rowCount}
+          rowCount={getFilteredRowCount(rowCount)}
           pageSizeOptions={[500, 1000, 5000, { value: ALL_VALUE, label: `Show All` }]}
           pagination
           rowBufferPx={100}

@@ -72,6 +72,7 @@ export const createSummaryDashboardColumns = (
       width: 100,
       sortable: true,
       filterable: true,
+      type: "number",
       renderHeader: () => renderHeader("WH Stock"),
     },
     {
@@ -80,6 +81,7 @@ export const createSummaryDashboardColumns = (
       width: 160,
       sortable: true,
       filterable: true,
+      type: "number",
       valueFormatter: (value: number) => value?.toFixed(2) || "0",
       renderHeader: () => renderHeader("FBA+WH Cover Day"),
     },
@@ -89,6 +91,7 @@ export const createSummaryDashboardColumns = (
       width: 100,
       sortable: true,
       filterable: true,
+      type: "number",
       renderHeader: () => renderHeader("All Stock"),
     },
     {
@@ -97,6 +100,7 @@ export const createSummaryDashboardColumns = (
       width: 110,
       sortable: true,
       filterable: true,
+      type: "number",
       renderHeader: () => renderHeader("Remaining"),
     },
     {
@@ -105,6 +109,7 @@ export const createSummaryDashboardColumns = (
       width: 160,
       sortable: true,
       filterable: true,
+      type: "number",
       valueFormatter: (value: number) => value?.toFixed(2) || "0",
       renderHeader: () => renderHeader("Dispatch Date Cover"),
     },
@@ -114,6 +119,7 @@ export const createSummaryDashboardColumns = (
       width: 220,
       sortable: true,
       filterable: true,
+      type: "number",
       valueFormatter: (value: number) => value?.toFixed(2) || "0",
       renderHeader: () => renderHeader("Max Daily Consumption"),
     },
