@@ -131,7 +131,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
             toolbar: {
               printOptions: { disableToolbarButton: true },
               excelOptions: { disableToolbarButton: true },
-              csvOptions: { disableToolbarButton: false, escapeFormulas: false, fileName: "Summary_Dashboard_SCM_Dashboard" },
+              csvOptions: { disableToolbarButton: false, escapeFormulas: false, fileName: `${selectedWarehouse}_Summary_Dashboard_SCM_Dashboard` },
             }
           }}
         />

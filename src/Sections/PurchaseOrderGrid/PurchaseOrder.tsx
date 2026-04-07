@@ -157,10 +157,10 @@ export default function PurchaseOrder() {
             slotProps={{
               toolbar: {
                 printOptions: { disableToolbarButton: true },
-                excelOptions: { disableToolbarButton: true, fileName: "PurchaseOrder" },
+                excelOptions: { disableToolbarButton: true, fileName: `${selectedWarehouse}_PurchaseOrder` },
                 csvOptions: {
                   disableToolbarButton: false,
-                  fileName: "Purchase_Order_SCM Dashboard",
+                  fileName: `${selectedWarehouse}_Purchase_Order_SCM Dashboard`,
                   escapeFormulas: false,
                 },
               },

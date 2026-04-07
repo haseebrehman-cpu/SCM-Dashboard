@@ -249,7 +249,7 @@ export default function StockPerformance() {
             toolbar: {
               printOptions: { disableToolbarButton: true },
               excelOptions: { disableToolbarButton: true },
-              csvOptions: { disableToolbarButton: false, escapeFormulas: false, fileName: "Stock_Performance_SCM_Dashboard" },
+              csvOptions: { disableToolbarButton: false, escapeFormulas: false, fileName: `${selectedWarehouse}_Stock_Performance_SCM_Dashboard` },
             }
           }}
         />
