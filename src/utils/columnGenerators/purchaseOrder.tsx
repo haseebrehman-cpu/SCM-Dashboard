@@ -30,17 +30,17 @@ const calculateAverageDeliveryDays = (rows: PurchaseOrderData[]) => {
         ? row.arrival_date.split(' ')[0]
         : row.arrival_date;
 
-      const arrival = new Date(arrivalBoundary + 'T00:00:00');
+
+      const arrival = new Date(arrivalBoundary);
       const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const isDelivered = !isNaN(arrival.getTime()) && arrival <= today;
+      const isDelivered = arrival <= today;
 
       if (!regionStats[row.container_region]) {
         regionStats[row.container_region] = { totalDays: 0, count: 0, hasDelivered: false };
       }
 
       if (isDelivered) {
-        const departure = new Date(departureBoundary + 'T00:00:00');
+        const departure = new Date(departureBoundary);
 
         if (!isNaN(departure.getTime()) && !isNaN(arrival.getTime())) {
           const diffTime = arrival.getTime() - departure.getTime();
@@ -217,22 +217,6 @@ export const generatePurchaseOrderColumns = ({
       sortable: true,
       filterable: true,
       valueGetter: (_value, row) => {
-        const arrivalDate = row.arrival_date;
-        let isDelivered = false;
-
-        if (arrivalDate) {
-          const arrival = new Date(arrivalDate + 'T00:00:00');
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-
-          if (arrival <= today) {
-            isDelivered = true;
-          }
-        }
-
-        if (!isDelivered) {
-          return null;
-        }
 
         if (row.container_region && regionAverages[row.container_region]) {
           const avg = regionAverages[row.container_region];
