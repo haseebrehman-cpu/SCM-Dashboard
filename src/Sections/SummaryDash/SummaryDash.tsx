@@ -16,9 +16,6 @@ import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
 import { useSummaryDashboardData } from "../../hooks/useSummaryDashboardData";
 import { usePatchSummaryDashboard } from "../../api/stockPerfomance";
 
-/**
- * Summary Dashboard Grid Component
- */
 const SummaryDashGrid: React.FC = React.memo(() => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -28,6 +25,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>("UK");
   const ALL_VALUE = -1;
+  const [editingField, setEditingField] = useState<"status" | "factory_comment" | null>(null);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 500,
@@ -54,7 +52,6 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     pageSize: paginationModel.pageSize,
   });
 
-  // Keep local rows state in sync with summaryRows for editing logic
   useEffect(() => {
     setRows(summaryRows);
   }, [summaryRows]);
@@ -71,18 +68,49 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     handleCommentsChange,
   } = useSummaryEdit(setRows, patchSummaryDashboardMutation, refetchSummary);
 
+  const editableColumnsOnDoubleClick = ["status", "factory_comment"];
+
+  const startEdit = (id: number, field: "status" | "factory_comment") => {
+    setEditingField(field);
+    handleEdit(id, rows);
+  };
+
+  const startRowEdit = (id: number) => {
+    setEditingField(null);
+    handleEdit(id, rows);
+  };
+
+  const handleSaveWithFieldReset = (id: number) => {
+    const row = rows.find((r) => r.id === id);
+    if (!row) return;
+    handleSave(id, row.warehouse_code);
+    setEditingField(null);
+  };
+
+  const handleCancelWithFieldReset = () => {
+    handleCancel();
+    setEditingField(null);
+  };
+
+  const handleCellDoubleClick = (params: any) => {
+    if (!editableColumnsOnDoubleClick.includes(params.field)) return;
+    if (editingRowId !== null) return;
+    startEdit(params.id as number, params.field as "status" | "factory_comment");
+  };
+
   const columns = useMemo(() => {
     return createSummaryDashboardColumns(
       isDark,
       editingRowId,
+      editingField,
       editValues,
       handleStatusChange,
       handleCommentsChange,
-      (id: number) => handleEdit(id, rows),
-      handleSave,
-      handleCancel
+      startRowEdit,
+      handleSaveWithFieldReset,
+      handleCancelWithFieldReset
     );
-  }, [isDark, editingRowId, editValues, handleStatusChange, handleCommentsChange, handleEdit, handleSave, handleCancel, rows]);
+  }, [isDark, editingRowId, editingField, editValues, handleStatusChange, handleCommentsChange, handleSaveWithFieldReset, handleCancelWithFieldReset]);
 
   const isAnyLoading = isLoading || isChangingPage;
   const { apiRef, filterModel, onFilterModelChange, getFilteredRowCount } = useGridFilterCount();
@@ -99,6 +127,14 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           isShowUpload={false}
           onArchiveClick={() => setIsDialogOpen(true)}
         />
+      </div>
+      <div className="p-3 bg-[#047ADB]/10 dark:bg-[#047ADB]/20 border border-[#047ADB]/20 dark:border-[#047ADB]/40 rounded-lg mb-4">
+        <p className="text-sm font-semibold text-[#047ADB] dark:text-white">
+          ⓘ &nbsp;  Information
+        </p>
+        <p className="text-xs text-[#047ADB] dark:text-white mt-2">
+          Click the Load Report Button in the Stock Performance Report to Generate the Report.
+        </p>
       </div>
       <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden min-h-[400px]">
 
@@ -118,6 +154,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           onFilterModelChange={onFilterModelChange}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
+          onCellDoubleClick={handleCellDoubleClick}
           paginationMode="server"
           rowCount={getFilteredRowCount(rowCount)}
           pageSizeOptions={[500, 1000, 5000, { value: ALL_VALUE, label: `Show All` }]}

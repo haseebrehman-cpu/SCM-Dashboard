@@ -22,6 +22,7 @@ import type { Warehouse } from "../types/productionReport";
 import { LoadStatus } from "../Sections/PurchaseOrderGrid/LoadReportProgressDialog";
 import type { PurchaseOrderData } from "../types/Interfaces/interfaces";
 import type { GridColDef } from "@mui/x-data-grid";
+import { EditableFields } from "../types/purchaseOrder";
 
 interface UsePurchaseOrderControllerResult {
   isDialogOpen: boolean;
@@ -69,6 +70,11 @@ interface UsePurchaseOrderControllerResult {
 
   // File upload dialog handler
   handlePurchaseOrderUpload: (file: File) => Promise<void>;
+
+  // Inline edit handlers for double-click support
+  startEdit: (row: PurchaseOrderData) => void;
+  isEditing?: (rowId: number) => boolean;
+  editedData: EditableFields | null;
 }
 
 function isBlankValue(value: string | null | undefined): boolean {
@@ -84,7 +90,9 @@ function countBlankValues(values: Array<string | null | undefined>): number {
   return count;
 }
 
-export const usePurchaseOrderController = (isDark: boolean): UsePurchaseOrderControllerResult => {
+export const usePurchaseOrderController = (
+  isDark: boolean,
+): UsePurchaseOrderControllerResult => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoadReportDialogOpen, setIsLoadReportDialogOpen] = useState(false);
 
@@ -108,9 +116,13 @@ export const usePurchaseOrderController = (isDark: boolean): UsePurchaseOrderCon
   const [loadStatus, setLoadStatus] = useState<LoadStatus>("idle");
   const [loadProgress, setLoadProgress] = useState(1);
   const [currentLoadStep, setCurrentLoadStep] = useState(0);
-  const [loadErrorMessage, setLoadErrorMessage] = useState<string | undefined>();
+  const [loadErrorMessage, setLoadErrorMessage] = useState<
+    string | undefined
+  >();
 
-  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(PURCHASE_ORDER_PAGINATION_MODEL);
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(
+    PURCHASE_ORDER_PAGINATION_MODEL,
+  );
   const [isChangingPage, setIsChangingPage] = useState(false);
 
   const {
@@ -123,7 +135,12 @@ export const usePurchaseOrderController = (isDark: boolean): UsePurchaseOrderCon
     updateEditedData,
   } = useInlineEdit();
 
-  const { data: purchaseOrderResponse, isLoading, refetch, isRefetching } = usePurchaseOrderReport();
+  const {
+    data: purchaseOrderResponse,
+    isLoading,
+    refetch,
+    isRefetching,
+  } = usePurchaseOrderReport();
   const patchMutation = usePatchPurchaseOrderReport();
   const uploadMutation = useUploadPurchaseOrderFiles();
   const deleteMutation = useDeleteRunningReport();
@@ -153,7 +170,8 @@ export const usePurchaseOrderController = (isDark: boolean): UsePurchaseOrderCon
       if (editedData) {
         await patchMutation.mutateAsync({
           rowId: editingRowId,
-          arrivalDate: editedData.arrivalDate === "" ? null : editedData.arrivalDate,
+          arrivalDate:
+            editedData.arrivalDate === "" ? null : editedData.arrivalDate,
         });
       }
 
@@ -161,7 +179,8 @@ export const usePurchaseOrderController = (isDark: boolean): UsePurchaseOrderCon
       toast.success("Record Updated Successfully!");
     } catch (error) {
       console.error("Failed to save data:", error);
-      const message = error instanceof Error ? error.message : "Failed to save data";
+      const message =
+        error instanceof Error ? error.message : "Failed to save data";
       toast.error(message);
     } finally {
       setIsUpdatingDate(false);
@@ -218,15 +237,17 @@ export const usePurchaseOrderController = (isDark: boolean): UsePurchaseOrderCon
       if (result.isSuccess) {
         toast.success("Data Refetched Successfully!");
       } else if (result.isError) {
-        const message = result.error instanceof Error
-          ? result.error.message
-          : "Failed to refetch data. Please try again.";
+        const message =
+          result.error instanceof Error
+            ? result.error.message
+            : "Failed to refetch data. Please try again.";
         toast.error(message);
       }
     } catch (error) {
-      const message = error instanceof Error
-        ? error.message
-        : "An error occurred while refetching data.";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "An error occurred while refetching data.";
       toast.error(message);
       console.error("Refetch error:", error);
     }
@@ -325,7 +346,8 @@ export const usePurchaseOrderController = (isDark: boolean): UsePurchaseOrderCon
       setLoadStatus("success");
     } catch (error) {
       setLoadStatus("error");
-      const apiError = error instanceof Error ? error.message : "An unknown error occurred";
+      const apiError =
+        error instanceof Error ? error.message : "An unknown error occurred";
       setLoadErrorMessage(
         `${currentTaskName} failed: ${apiError}. Click Retry to continue the process.`,
       );
@@ -356,10 +378,14 @@ export const usePurchaseOrderController = (isDark: boolean): UsePurchaseOrderCon
       try {
         await uploadMutation.mutateAsync({ file });
       } catch (error) {
-        toast.error("Unable to process the file. Please try again by checking the file format.");
-      throw error;
-    }
-  }, [uploadMutation]);
+        toast.error(
+          "Unable to process the file. Please try again by checking the file format.",
+        );
+        throw error;
+      }
+    },
+    [uploadMutation],
+  );
 
   return {
     isDialogOpen,
@@ -401,6 +427,8 @@ export const usePurchaseOrderController = (isDark: boolean): UsePurchaseOrderCon
     loadReportMutationStatus: loadReportMutation.status,
 
     handlePurchaseOrderUpload,
+    startEdit,
+    isEditing,
+    editedData,
   };
 };
-

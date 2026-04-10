@@ -35,7 +35,6 @@ const StockReportGrid = ({ filters = {} }: StockReportGridProps) => {
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(STOCK_REPORT_PAGINATION_MODEL);
   const [isChangingPage, setIsChangingPage] = useState(false);
 
-  // Show a brief loader when changing pages to provide feedback
   useEffect(() => {
     setIsChangingPage(true);
     const timer = setTimeout(() => {

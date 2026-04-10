@@ -6,6 +6,7 @@ interface EditableStatusCellProps {
   options: readonly string[];
   onChange: (value: string) => void;
   isDark: boolean;
+  onEnter?: () => void;
 }
 
 /**
@@ -17,11 +18,19 @@ export const EditableStatusCell: React.FC<EditableStatusCellProps> = React.memo(
   options,
   onChange,
   isDark,
+  onEnter,
 }) => {
   return (
     <Select
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+          onEnter?.();
+        }
+      }}
       size="small"
       fullWidth
       variant="outlined"

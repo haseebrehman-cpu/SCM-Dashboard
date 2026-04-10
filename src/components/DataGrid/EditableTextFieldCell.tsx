@@ -5,6 +5,7 @@ interface EditableTextFieldCellProps {
   value: string;
   onChange: (value: string) => void;
   isDark: boolean;
+  onEnter?: () => void;
 }
 
 /**
@@ -15,6 +16,7 @@ export const EditableTextFieldCell: React.FC<EditableTextFieldCellProps> = React
   value,
   onChange,
   isDark,
+  onEnter,
 }) => {
   return (
     <TextField
@@ -24,6 +26,11 @@ export const EditableTextFieldCell: React.FC<EditableTextFieldCellProps> = React
         // Prevent spacebar and arrow keys from triggering grid navigation
         if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
           e.stopPropagation();
+        }
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+          onEnter?.();
         }
       }}
       size="small"

@@ -24,7 +24,17 @@ const WHContainerReportView = () => {
 
   return (
     <Box>
-      <Paper sx={{ p: 2, mb: 3, display: 'flex', flexDirection: 'column', gap: 1 }}>
+      <Paper sx={{
+        p: 2,
+        mb: 3,
+        display: "flex",
+        flexDirection: "column",
+        gap: 1,
+        position: "sticky",
+        top: 0,
+        zIndex: 1,
+        bgcolor: "background.paper"
+      }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
           <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Filter Options:</Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>

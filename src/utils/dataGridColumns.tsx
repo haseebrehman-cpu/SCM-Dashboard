@@ -4,13 +4,10 @@ import { EditableStatusCell } from "../components/DataGrid/EditableStatusCell";
 import { EditableTextFieldCell } from "../components/DataGrid/EditableTextFieldCell";
 import { STATUS_OPTIONS } from "../config/summaryDashboard";
 
-/**
- * Utility function to create DataGrid columns
- * Separated to follow Single Responsibility Principle
- */
 export const createSummaryDashboardColumns = (
   isDark: boolean,
   editingRowId: number | null,
+  editingField: "status" | "factory_comment" | null,
   editValues: { status: string; reason1: string; reason2: string; reason3: string; reason4: string; factory_comment: string } | null,
   onStatusChange: (value: string) => void,
   onCommentsChange: (value: string) => void,
@@ -222,12 +219,17 @@ export const createSummaryDashboardColumns = (
       renderHeader: () => renderHeader("Status"),
       renderCell: (params) => {
         const isEditing = editingRowId === params.row.id;
-        if (isEditing && editValues) {
+        if (
+          isEditing &&
+          (editingField === null || editingField === "status") &&
+          editValues
+        ) {
           return (
             <EditableStatusCell
               value={editValues.status}
               options={STATUS_OPTIONS}
               onChange={onStatusChange}
+              onEnter={() => onSave(editingRowId!, '')}
               isDark={isDark}
             />
           );
@@ -245,11 +247,16 @@ export const createSummaryDashboardColumns = (
       align: "left",
       renderCell: (params) => {
         const isEditing = editingRowId === params.row.id;
-        if (isEditing && editValues) {
+        if (
+          isEditing &&
+          (editingField === null || editingField === "factory_comment") &&
+          editValues
+        ) {
           return (
             <EditableTextFieldCell
               value={editValues.factory_comment}
               onChange={onCommentsChange}
+              onEnter={() => onSave(editingRowId!, '')}
               isDark={isDark}
             />
           );

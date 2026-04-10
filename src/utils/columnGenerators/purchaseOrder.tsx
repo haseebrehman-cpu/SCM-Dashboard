@@ -1,9 +1,9 @@
 import { GridColDef } from "@mui/x-data-grid";
 import Badge from "../../components/ui/badge/Badge";
-import { EditableFields } from '../../types/purchaseOrder';
+import { EditableFields } from "../../types/purchaseOrder";
 import { PurchaseOrderData } from "../../types/Interfaces/interfaces";
-import { DateEditor } from '../../Sections/PurchaseOrderGrid/DateEditor';
-import { ActionButtons } from '../../Sections/PurchaseOrderGrid/ActionButtons';
+import { DateEditor } from "../../Sections/PurchaseOrderGrid/DateEditor";
+import { ActionButtons } from "../../Sections/PurchaseOrderGrid/ActionButtons";
 
 interface ColumnGeneratorParams {
   isDark: boolean;
@@ -69,21 +69,45 @@ const calculateAverageDeliveryDays = (rows: PurchaseOrderData[]) => {
   return regionAverages;
 };
 const renderDateHeader = (title: string, isDark: boolean) => (
-  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-    <span style={{ fontWeight: 500, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)', fontSize: '0.7rem' }}>
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "flex-start",
+    }}
+  >
+    <span
+      style={{
+        fontWeight: 500,
+        color: isDark ? "rgba(255, 255, 255, 0.9)" : "rgb(31 41 55)",
+        fontSize: "0.7rem",
+      }}
+    >
       {title}
     </span>
-    <span style={{ fontSize: '0.5rem', opacity: 0.7, fontWeight: 400, color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>
+    <span
+      style={{
+        fontSize: "0.5rem",
+        opacity: 0.7,
+        fontWeight: 400,
+        color: isDark ? "rgba(255, 255, 255, 0.9)" : "rgb(31 41 55)",
+      }}
+    >
       (YYYY/MM/DD)
     </span>
   </div>
 );
 
 const formatDate = (value: string | null | undefined) => {
-  if (!value) return '';
+  if (!value) return "";
 
-  const cleanValue = value.toString().trim().replace(/\u200B|\u200C|\u200D|\uFEFF/g, '');
-  const parts = cleanValue.includes('-') ? cleanValue.split('-') : cleanValue.split('/');
+  const cleanValue = value
+    .toString()
+    .trim()
+    .replace(/\u200B|\u200C|\u200D|\uFEFF/g, "");
+  const parts = cleanValue.includes("-")
+    ? cleanValue.split("-")
+    : cleanValue.split("/");
 
   if (parts.length === 3) {
     let day, month, year;
@@ -96,8 +120,8 @@ const formatDate = (value: string | null | undefined) => {
       [day, month, year] = parts;
     }
 
-    const d = parseInt(day, 10).toString().padStart(2, '0');
-    const m = parseInt(month, 10).toString().padStart(2, '0');
+    const d = parseInt(day, 10).toString().padStart(2, "0");
+    const m = parseInt(month, 10).toString().padStart(2, "0");
     const y = year.toString();
 
     return ` ${d}/${m}/${y}`;
@@ -105,7 +129,6 @@ const formatDate = (value: string | null | undefined) => {
 
   return cleanValue;
 };
-
 
 export const generatePurchaseOrderColumns = ({
   isDark,
@@ -178,6 +201,7 @@ export const generatePurchaseOrderColumns = ({
               onChange={(date) => {
                 onDateChange(params.row.id, date);
               }}
+              onEnter={saveEdit}
               isDark={isDark}
               minDate={params.row.departure_date}
             />
@@ -197,8 +221,8 @@ export const generatePurchaseOrderColumns = ({
           const departureBoundary = row.departure_date.includes(' ') ? row.departure_date.split(' ')[0] : row.departure_date;
           const arrivalBoundary = row.arrival_date.includes(' ') ? row.arrival_date.split(' ')[0] : row.arrival_date;
 
-          const departure = new Date(departureBoundary + 'T00:00:00');
-          const arrival = new Date(arrivalBoundary + 'T00:00:00');
+        const departure = new Date(departureBoundary + "T00:00:00");
+        const arrival = new Date(arrivalBoundary + "T00:00:00");
 
           if (!isNaN(departure.getTime()) && !isNaN(arrival.getTime())) {
             const diffTime = arrival.getTime() - departure.getTime();
@@ -239,56 +263,60 @@ export const generatePurchaseOrderColumns = ({
       valueGetter: (_value, row) => {
         const arrivalDate = row.arrival_date;
 
-        if (arrivalDate) {
-          const arrival = new Date(arrivalDate + 'T00:00:00');
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
+      if (arrivalDate) {
+        const arrival = new Date(arrivalDate + "T00:00:00");
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-          if (arrival <= today) {
-            return "Delivered";
-          }
+        if (arrival <= today) {
+          return "Delivered";
         }
-        return "In Transit";
-      },
-      renderCell: (params) => (
-        <Badge size="sm" color={params.value === "Delivered" ? "success" : "warning"}>
-          {params.value}
-        </Badge>
-      ),
+      }
+      return "In Transit";
     },
-    {
-      field: "modified_by",
-      headerName: "Edited By",
-      width: 180,
-      sortable: true,
-      filterable: true,
-    },
-    {
-      field: "actions",
-      headerName: "Actions",
-      width: 120,
-      sortable: false,
-      filterable: false,
-      disableExport: true,
-      renderCell: (params) => {
-        const isCurrentRowUpdating = params.row.id === updatingRowId && isUpdatingDate;
+    renderCell: (params) => (
+      <Badge
+        size="sm"
+        color={params.value === "Delivered" ? "success" : "warning"}
+      >
+        {params.value}
+      </Badge>
+    ),
+  },
+  {
+    field: "modified_by",
+    headerName: "Edited By",
+    width: 180,
+    sortable: true,
+    filterable: true,
+  },
+  {
+    field: "actions",
+    headerName: "Actions",
+    width: 120,
+    sortable: false,
+    filterable: false,
+    disableExport: true,
+    renderCell: (params) => {
+      const isCurrentRowUpdating =
+        params.row.id === updatingRowId && isUpdatingDate;
 
-        if (isCurrentRowUpdating) {
-          return (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '100%',
-                width: '100%',
-                position: 'relative'
-              }}
-            >
-              <span className="h-4 w-4 border-2 border-white/60 border-t-transparent rounded-full animate-spin" />
-            </div>
-          );
-        }
+      if (isCurrentRowUpdating) {
+        return (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              width: "100%",
+              position: "relative",
+            }}
+          >
+            <span className="h-4 w-4 border-2 border-white/60 border-t-transparent rounded-full animate-spin" />
+          </div>
+        );
+      }
 
         return (
           <ActionButtons

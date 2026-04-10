@@ -46,6 +46,9 @@ export default function PurchaseOrder() {
     loadErrorMessage,
     loadReportMutationStatus,
     handlePurchaseOrderUpload,
+    startEdit,
+    isEditing,
+    editedData,
   } = usePurchaseOrderController(isDark);
 
   const isLoadReportsDisabled =
@@ -54,6 +57,22 @@ export default function PurchaseOrder() {
     isRefetching ||
     isFlagsDisabled ||
     isFlagsLoading;
+
+  const editableColumnsOnDoubleClick = ["arrival_date"];
+
+  const handleCellDoubleClick = (params: any) => {
+    if (editableColumnsOnDoubleClick.includes(params.field)) {
+      const rowData = rows.find((row) => row.id === params.id);
+      if (rowData) {
+        isEditing &&
+          isEditing(rowData.id) &&
+          editedData &&
+          editedData.arrivalDate
+          ? null
+          : startEdit(rowData);
+      }
+    }
+  };
 
   return (
     <>
@@ -96,13 +115,37 @@ export default function PurchaseOrder() {
         />
       </div>
 
-      {!isArrivalEmpty && (
-        <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-          <p className="text-sm font-semibold text-yellow-900 dark:text-yellow-100">
-            ⚠️ Attention
+      {isLoadReportsDisabled && (
+        <div className="p-3 bg-[#047ADB]/10 dark:bg-[#047ADB]/20 border border-[#047ADB]/20 dark:border-[#047ADB]/40 rounded-lg mb-4">
+          <p className="text-sm font-semibold text-[#047ADB] dark:text-white">
+            ⓘ &nbsp; Information
           </p>
-          <p className="text-xs text-yellow-800 dark:text-yellow-200 mt-1">
-            Arrival Dates cannot be empty, please make sure to fill the arrival dates for all records.
+          <p className="text-xs text-[#047ADB] dark:text-white mt-2">
+            The Process with current data is completed, please uplaod new files to continue.
+          </p>
+        </div>
+      )}
+
+      {!isLoadReportsDisabled && isArrivalEmpty && (
+        <div className="p-3 bg-[#047ADB]/10 dark:bg-[#047ADB]/20 border border-[#047ADB]/20 dark:border-[#047ADB]/40 rounded-lg mb-4">
+          <p className="text-sm font-semibold text-[#047ADB] dark:text-white">
+            ⓘ &nbsp;  Information
+          </p>
+          <p className="text-xs text-[#047ADB] dark:text-white mt-2">
+            All Arrival Dates are filled for all records. Please click the load
+            report button to hydrate next reports.
+          </p>
+        </div>
+      )}
+
+      {!isArrivalEmpty && (
+        <div className="p-3 bg-[#047ADB]/10 dark:bg-[#047ADB]/20 border border-[#047ADB]/20 dark:border-[#047ADB]/40 rounded-lg">
+          <p className="text-sm font-semibold text-[#047ADB] dark:text-white">
+            ⓘ &nbsp; Information
+          </p>
+          <p className="text-xs text-[#047ADB] dark:text-white mt-1">
+            Arrival Dates cannot be empty, please make sure to fill the arrival
+            dates for all records.
             {` Count of missing arrival dates: ${emptyItemCount}`}
           </p>
         </div>
@@ -148,6 +191,7 @@ export default function PurchaseOrder() {
             columns={columns}
             paginationModel={paginationModel}
             onPaginationModelChange={setPaginationModel}
+            onCellDoubleClick={handleCellDoubleClick}
             pageSizeOptions={[100, 250, 500, 1000, 1500]}
             rowBufferPx={100}
             pagination

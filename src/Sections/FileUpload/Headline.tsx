@@ -2,11 +2,11 @@
 const Headline = ({ alertMessage }: { alertMessage: string }) => {
 
   return (
-    <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-red-400 dark:border-yellow-800 rounded-lg">
-      <p className="text-sm font-semibold text-yellow-900 dark:text-yellow-100">
-        ⚠️ High Alert!
+    <div className="p-3 bg-[#047ADB]/10 dark:bg-[#047ADB]/20 border border-[#047ADB]/20 dark:border-[#047ADB]/40 rounded-lg">
+      <p className="text-sm font-semibold text-[#047ADB] dark:text-white">
+        ⓘ &nbsp; Information
       </p>
-      <p className="text-xs text-yellow-800 dark:text-yellow-200 mt-1">
+      <p className="text-xs text-[#047ADB] dark:text-white mt-1">
         {alertMessage}
       </p>
     </div>

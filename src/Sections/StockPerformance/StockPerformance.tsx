@@ -192,6 +192,7 @@ export default function StockPerformance() {
         >
           {isAnyLoading ? "Checking Status" : "Load Report"}
         </Button>
+
         <ProductionReportHeader
           selectedWarehouse={selectedWarehouse}
           isDark={isDark}
@@ -202,6 +203,26 @@ export default function StockPerformance() {
           onArchiveClick={() => setIsDialogOpen(true)}
         />
       </div>
+      {reportResponse?.spr && (
+        <div className="p-3 bg-[#047ADB]/10 dark:bg-[#047ADB]/20 border border-[#047ADB]/20 dark:border-[#047ADB]/40 rounded-lg mb-4">
+          <p className="text-sm font-semibold text-[#047ADB] dark:text-white">
+            ⓘ &nbsp;  Information
+          </p>
+          <p className="text-xs text-[#047ADB] dark:text-white mt-2">
+            Stock Performance Report and Summary Dashboard Report is already generated.
+          </p>
+        </div>
+      )}
+      {!reportResponse?.spr && (
+        <div className="p-3 bg-[#047ADB]/10 dark:bg-[#047ADB]/20 border border-[#047ADB]/20 dark:border-[#047ADB]/40 rounded-lg mb-4">
+          <p className="text-sm font-semibold text-[#047ADB] dark:text-white">
+            ⓘ &nbsp;  Information
+          </p>
+          <p className="text-xs text-[#047ADB] dark:text-white mt-2">
+            Click on "Load Report" button to load the report.
+          </p>
+        </div>
+      )}
       <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden min-h-[400px]">
 
         {/* Loading Overlay */}

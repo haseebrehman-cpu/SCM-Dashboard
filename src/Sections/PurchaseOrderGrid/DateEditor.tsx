@@ -6,6 +6,7 @@ import { format, parseISO } from 'date-fns';
 interface DateEditorProps {
   value: string;
   onChange: (date: string) => void;
+  onEnter?: () => void;
   isDark: boolean;
   max?: string;
   minDate?: string;
@@ -44,7 +45,7 @@ const getDatePickerTheme = (isDark: boolean) => createTheme({
   },
 });
 
-export const DateEditor: React.FC<DateEditorProps> = ({ value, onChange, isDark, max, minDate, disabled }) => {
+export const DateEditor: React.FC<DateEditorProps> = ({ value, onChange, onEnter, isDark, max, minDate, disabled }) => {
   const theme = useMemo(() => getDatePickerTheme(isDark), [isDark]);
 
   return (
@@ -76,6 +77,13 @@ export const DateEditor: React.FC<DateEditorProps> = ({ value, onChange, isDark,
             },
             textField: {
               size: "small",
+              onKeyDown: (e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onEnter?.();
+                }
+              },
               sx: {
                 '& input': {
                   color: isDark ? '#ffffff' : 'rgb(31 41 55)',
