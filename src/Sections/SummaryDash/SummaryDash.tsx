@@ -14,8 +14,9 @@ import { SelectChangeEvent } from "@mui/material";
 import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
 import { useSummaryDashboardData } from "../../hooks/useSummaryDashboardData";
-import { usePatchSummaryDashboard } from "../../api/stockPerfomance";
+import { usePatchSummaryDashboard, useUploadForecastedFile } from "../../api/stockPerfomance";
 import { FileUploadDialog } from "../ProductionReport/FileUploadDialog";
+import toast from "react-hot-toast";
 
 const SummaryDashGrid: React.FC = React.memo(() => {
   const { theme } = useTheme();
@@ -137,7 +138,30 @@ const SummaryDashGrid: React.FC = React.memo(() => {
   const { apiRef, filterModel, onFilterModelChange, getFilteredRowCount } =
     useGridFilterCount();
 
-  const handleFileUpload = async () => {};
+  const { mutate: uploadFile } = useUploadForecastedFile();
+
+  const handleFileUpload = async (file: File) => {
+    try {
+      uploadFile(
+        {
+          file,
+          warehouse_code: selectedWarehouse,
+        },
+        {
+          onSuccess: () => {
+            toast.success("File uploaded successfully");
+            setIsUploadDialogOpen(false);
+            refetchSummary();
+          },
+          onError: (error) => {
+            toast.error(error.message || "Failed to upload file");
+          },
+        }
+      );
+    } catch (error) {
+      toast.error("An error occurred during upload");
+    }
+  };
 
   return (
     <>

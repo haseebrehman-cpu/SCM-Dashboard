@@ -258,7 +258,7 @@ export const createSummaryDashboardColumns = (
           );
         }
         return (
-          <span>{params.value === null ? "Not Available" : params.value}</span>
+          <span>{params?.value }</span>
         );
       },
     },

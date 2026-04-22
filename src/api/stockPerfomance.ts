@@ -1,10 +1,22 @@
-import { UseMutationResult, UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  UseMutationResult,
+  UseQueryResult,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useEffect } from "react";
-import { PatchSummaryDashboardResponse, StockPerformanceResponse } from "../types/Interfaces/interfaces";
+import {
+  PatchSummaryDashboardResponse,
+  ProductionRemainingUploadFileResponse,
+  StockPerformanceResponse,
+} from "../types/Interfaces/interfaces";
 import { API_BASE_URL } from "./purchaseOrder";
 import toast from "react-hot-toast";
 
-export const STOCK_PERFORMANCE_REPORT_QUERY_KEY = ["stockPerformanceReport"] as const;
+export const STOCK_PERFORMANCE_REPORT_QUERY_KEY = [
+  "stockPerformanceReport",
+] as const;
 
 export async function fetchStockPerformanceReportData(
   warehouse_code: string,
@@ -12,12 +24,12 @@ export async function fetchStockPerformanceReportData(
   p: string,
   page: number = 1,
   page_size: number | string = 500,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<StockPerformanceResponse> {
   const queryParams = new URLSearchParams({
     warehouse_code,
     p,
-  })
+  });
 
   if (page_size === "all") {
     queryParams.append("page_size", "all");
@@ -27,23 +39,24 @@ export async function fetchStockPerformanceReportData(
   }
 
   if (session_id !== null && session_id !== undefined) {
-    queryParams.append("session_id", String(session_id))
+    queryParams.append("session_id", String(session_id));
   }
 
   const url = `${API_BASE_URL}/stock-performance/?${queryParams.toString()}`;
 
   const response = await fetch(url, {
-    method: 'GET',
+    method: "GET",
     signal,
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
   });
 
-
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(errorText || `Failed to fetch report. Status: ${response.status}`)
+    throw new Error(
+      errorText || `Failed to fetch report. Status: ${response.status}`,
+    );
   }
 
   const data = (await response.json()) as StockPerformanceResponse;
@@ -60,14 +73,29 @@ export const useStockPerfomanceReport = (
   session_id: number | null,
   p: string,
   page: number = 1,
-  page_size: number | string = 1000
+  page_size: number | string = 1000,
 ): UseQueryResult<StockPerformanceResponse, Error> =>
   useQuery<StockPerformanceResponse, Error>({
-    queryKey: [...STOCK_PERFORMANCE_REPORT_QUERY_KEY, warehouse_code, session_id, p, page, page_size],
-    queryFn: ({ signal }) => fetchStockPerformanceReportData(warehouse_code, session_id, p, page, page_size, signal),
+    queryKey: [
+      ...STOCK_PERFORMANCE_REPORT_QUERY_KEY,
+      warehouse_code,
+      session_id,
+      p,
+      page,
+      page_size,
+    ],
+    queryFn: ({ signal }) =>
+      fetchStockPerformanceReportData(
+        warehouse_code,
+        session_id,
+        p,
+        page,
+        page_size,
+        signal,
+      ),
     staleTime: 60_000,
     enabled: !!warehouse_code,
-  })
+  });
 
 export const usePrefetchStockPerformance = (
   warehouse_code: string,
@@ -76,7 +104,7 @@ export const usePrefetchStockPerformance = (
   currentPage: number,
   pageSize: number | string = 1000,
   isSuccess: boolean = false,
-  totalPages: number = 1
+  totalPages: number = 1,
 ) => {
   const queryClient = useQueryClient();
 
@@ -88,25 +116,50 @@ export const usePrefetchStockPerformance = (
       if (nextPage > totalPages) break;
 
       queryClient.prefetchQuery({
-        queryKey: [...STOCK_PERFORMANCE_REPORT_QUERY_KEY, warehouse_code, session_id, p, nextPage, pageSize],
-        queryFn: ({ signal }) => fetchStockPerformanceReportData(warehouse_code, session_id, p, nextPage, pageSize, signal),
+        queryKey: [
+          ...STOCK_PERFORMANCE_REPORT_QUERY_KEY,
+          warehouse_code,
+          session_id,
+          p,
+          nextPage,
+          pageSize,
+        ],
+        queryFn: ({ signal }) =>
+          fetchStockPerformanceReportData(
+            warehouse_code,
+            session_id,
+            p,
+            nextPage,
+            pageSize,
+            signal,
+          ),
         staleTime: 60_000,
       });
     }
-  }, [warehouse_code, session_id, p, currentPage, pageSize, queryClient, isSuccess, totalPages]);
+  }, [
+    warehouse_code,
+    session_id,
+    p,
+    currentPage,
+    pageSize,
+    queryClient,
+    isSuccess,
+    totalPages,
+  ]);
 };
 
-export async function postLoadStockPerformanceReport(session_id: number, signal?: AbortSignal | null): Promise<StockPerformanceResponse> {
+export async function postLoadStockPerformanceReport(
+  session_id: number,
+  signal?: AbortSignal | null,
+): Promise<StockPerformanceResponse> {
   const formData = new FormData();
   formData.append("session_id", String(session_id));
 
-
   const response = await fetch(`${API_BASE_URL}/stock-performance/`, {
-    method: 'POST',
+    method: "POST",
     body: formData,
-    signal: signal || undefined
+    signal: signal || undefined,
   });
-
 
   const responseText = await response.text();
   let data: StockPerformanceResponse;
@@ -114,9 +167,11 @@ export async function postLoadStockPerformanceReport(session_id: number, signal?
   try {
     data = JSON.parse(responseText) as StockPerformanceResponse;
   } catch (error) {
-    if ((error as Error).name === 'AbortError') throw error;
+    if ((error as Error).name === "AbortError") throw error;
     if (response.status === 524) {
-      throw new Error("Cloudflare 524: Server Timeout. The server is taking too long to respond. Please try again later.");
+      throw new Error(
+        "Cloudflare 524: Server Timeout. The server is taking too long to respond. Please try again later.",
+      );
     }
     if (!response.ok) {
       throw new Error(responseText || response.statusText);
@@ -124,32 +179,49 @@ export async function postLoadStockPerformanceReport(session_id: number, signal?
     throw error;
   }
 
-  return data
+  return data;
 }
 
-export const useLoadStockPerformanceReport = (): UseMutationResult<StockPerformanceResponse, Error, { session_id: number; signal?: AbortSignal }> => {
+export const useLoadStockPerformanceReport = (): UseMutationResult<
+  StockPerformanceResponse,
+  Error,
+  { session_id: number; signal?: AbortSignal }
+> => {
   const queryClient = useQueryClient();
 
-  return useMutation<StockPerformanceResponse, Error, { session_id: number; signal?: AbortSignal }>({
-    mutationFn: ({ session_id, signal }) => postLoadStockPerformanceReport(session_id, signal),
+  return useMutation<
+    StockPerformanceResponse,
+    Error,
+    { session_id: number; signal?: AbortSignal }
+  >({
+    mutationFn: ({ session_id, signal }) =>
+      postLoadStockPerformanceReport(session_id, signal),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: STOCK_PERFORMANCE_REPORT_QUERY_KEY })
-    }
-  })
-}
+      await queryClient.invalidateQueries({
+        queryKey: STOCK_PERFORMANCE_REPORT_QUERY_KEY,
+      });
+    },
+  });
+};
 
 // Patch api for summary dashbaord for update status and factory comment
-export async function patchSummaryDashboard(id: number, status: string, factory_comment: string, warehouse_code: string, signal?: AbortSignal): Promise<PatchSummaryDashboardResponse> {
+export async function patchSummaryDashboard(
+  id: number,
+  status: string,
+  factory_comment: string,
+  warehouse_code: string,
+  signal?: AbortSignal,
+): Promise<PatchSummaryDashboardResponse> {
   const formData = new FormData();
   formData.append("id", String(id));
   formData.append("status", status);
   formData.append("factory_comment", factory_comment);
-  formData.append('warehouse_code', warehouse_code)
+  formData.append("warehouse_code", warehouse_code);
 
   const response = await fetch(`${API_BASE_URL}/stock-performance/?p=sd`, {
-    method: 'PATCH',
+    method: "PATCH",
     body: formData,
-    signal: signal || undefined
+    signal: signal || undefined,
   });
 
   const responseText = await response.text();
@@ -158,9 +230,11 @@ export async function patchSummaryDashboard(id: number, status: string, factory_
   try {
     data = JSON.parse(responseText) as PatchSummaryDashboardResponse;
   } catch (error) {
-    if ((error as Error).name === 'AbortError') throw error;
+    if ((error as Error).name === "AbortError") throw error;
     if (response.status === 524) {
-      throw new Error("Cloudflare 524: Server Timeout. The server is taking too long to respond. Please try again later.");
+      throw new Error(
+        "Cloudflare 524: Server Timeout. The server is taking too long to respond. Please try again later.",
+      );
     }
     if (!response.ok) {
       throw new Error(responseText || response.statusText);
@@ -175,15 +249,98 @@ export async function patchSummaryDashboard(id: number, status: string, factory_
   return data;
 }
 
-export const usePatchSummaryDashboard = (): UseMutationResult<PatchSummaryDashboardResponse, Error, { id: number; status: string; factory_comment: string; warehouse_code: string; signal?: AbortSignal }> => {
-  return useMutation<PatchSummaryDashboardResponse, Error, { id: number; status: string; factory_comment: string; warehouse_code: string; signal?: AbortSignal }>({
+export const usePatchSummaryDashboard = (): UseMutationResult<
+  PatchSummaryDashboardResponse,
+  Error,
+  {
+    id: number;
+    status: string;
+    factory_comment: string;
+    warehouse_code: string;
+    signal?: AbortSignal;
+  }
+> => {
+  return useMutation<
+    PatchSummaryDashboardResponse,
+    Error,
+    {
+      id: number;
+      status: string;
+      factory_comment: string;
+      warehouse_code: string;
+      signal?: AbortSignal;
+    }
+  >({
     mutationFn: ({ id, status, factory_comment, warehouse_code, signal }) =>
-      patchSummaryDashboard(id, status, factory_comment, warehouse_code, signal),
+      patchSummaryDashboard(
+        id,
+        status,
+        factory_comment,
+        warehouse_code,
+        signal,
+      ),
     onSuccess: () => {
       toast.success("Data Updated Successfully");
     },
     onError: (error) => {
       toast.error(error.message || "Unable to Update at the moment");
     },
-  })
+  });
+};
+
+// Patch api to upload file in the summary dashbaord
+
+async function uploadSummaryDashboardFile({
+  file,
+  warehouse_code,
+  signal,
+}: {
+  file: File;
+  warehouse_code: string;
+  signal?: AbortSignal;
+}): Promise<ProductionRemainingUploadFileResponse> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const queryParams = new URLSearchParams({
+    warehouse_code,
+  });
+  const response = await fetch(
+    `${API_BASE_URL}/stock-performance/?p=sd&${queryParams.toString()}`,
+    {
+      method: "PUT",
+      body: formData,
+      signal: signal || undefined,
+    },
+  );
+
+  const responseText = await response.text();
+  let data: ProductionRemainingUploadFileResponse;
+
+  try {
+    data = JSON.parse(responseText) as ProductionRemainingUploadFileResponse;
+  } catch (error) {
+    if ((error as Error).name === "AbortError") throw error;
+    if (!response.ok) {
+      throw new Error(responseText || response.statusText);
+    }
+    throw error;
+  }
+  if (!response.ok || data.success === false) {
+    const message = (data as ProductionRemainingUploadFileResponse).message;
+    throw new Error(message || responseText || response.statusText);
+  }
+
+  return data;
 }
+
+export const useUploadForecastedFile = (): UseMutationResult<ProductionRemainingUploadFileResponse, Error, { file: File; warehouse_code: string; signal?: AbortSignal }> => {
+  const queryClient = useQueryClient();
+
+  return useMutation<ProductionRemainingUploadFileResponse, Error, { file: File; warehouse_code: string; signal?: AbortSignal }>({
+    mutationFn: ({ file, warehouse_code, signal }) => uploadSummaryDashboardFile({ file, warehouse_code, signal }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: STOCK_PERFORMANCE_REPORT_QUERY_KEY });
+    }
+  });
+};
