@@ -15,6 +15,7 @@ import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
 import { useSummaryDashboardData } from "../../hooks/useSummaryDashboardData";
 import { usePatchSummaryDashboard } from "../../api/stockPerfomance";
+import { FileUploadDialog } from "../ProductionReport/FileUploadDialog";
 
 const SummaryDashGrid: React.FC = React.memo(() => {
   const { theme } = useTheme();
@@ -23,9 +24,12 @@ const SummaryDashGrid: React.FC = React.memo(() => {
 
   const [rows, setRows] = useState<SummaryDashboardRow[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>("UK");
   const ALL_VALUE = -1;
-  const [editingField, setEditingField] = useState<"status" | "factory_comment" | null>(null);
+  const [editingField, setEditingField] = useState<
+    "status" | "factory_comment" | null
+  >(null);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 500,
@@ -45,7 +49,12 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     setPaginationModel((prev) => ({ ...prev, page: 0 }));
   };
 
-  const { rows: summaryRows, rowCount, isLoading, refetchSummary } = useSummaryDashboardData({
+  const {
+    rows: summaryRows,
+    rowCount,
+    isLoading,
+    refetchSummary,
+  } = useSummaryDashboardData({
     selectedWarehouse,
     sessionId,
     page: paginationModel.page,
@@ -95,7 +104,10 @@ const SummaryDashGrid: React.FC = React.memo(() => {
   const handleCellDoubleClick = (params: any) => {
     if (!editableColumnsOnDoubleClick.includes(params.field)) return;
     if (editingRowId !== null) return;
-    startEdit(params.id as number, params.field as "status" | "factory_comment");
+    startEdit(
+      params.id as number,
+      params.field as "status" | "factory_comment",
+    );
   };
 
   const columns = useMemo(() => {
@@ -108,12 +120,24 @@ const SummaryDashGrid: React.FC = React.memo(() => {
       handleCommentsChange,
       startRowEdit,
       handleSaveWithFieldReset,
-      handleCancelWithFieldReset
+      handleCancelWithFieldReset,
     );
-  }, [isDark, editingRowId, editingField, editValues, handleStatusChange, handleCommentsChange, handleSaveWithFieldReset, handleCancelWithFieldReset]);
+  }, [
+    isDark,
+    editingRowId,
+    editingField,
+    editValues,
+    handleStatusChange,
+    handleCommentsChange,
+    handleSaveWithFieldReset,
+    handleCancelWithFieldReset,
+  ]);
 
   const isAnyLoading = isLoading || isChangingPage;
-  const { apiRef, filterModel, onFilterModelChange, getFilteredRowCount } = useGridFilterCount();
+  const { apiRef, filterModel, onFilterModelChange, getFilteredRowCount } =
+    useGridFilterCount();
+
+  const handleFileUpload = async (file: File) => {};
 
   return (
     <>
@@ -124,26 +148,42 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           onWarehouseChange={handleWarehouseChange}
           isArchived={true}
           isSelectWarehouse={true}
-          isShowUpload={false}
+          isShowUpload={true}
           onArchiveClick={() => setIsDialogOpen(true)}
+          onUploadClick={() => setIsUploadDialogOpen(true)}
         />
       </div>
       <div className="p-3 bg-[#047ADB]/10 dark:bg-[#047ADB]/20 border border-[#047ADB]/20 dark:border-[#047ADB]/40 rounded-lg mb-4">
+        {isUploadDialogOpen && (
+          <FileUploadDialog
+            isOpen={isUploadDialogOpen}
+            onClose={() => setIsUploadDialogOpen(false)}
+            onUpload={handleFileUpload}
+          />
+        )}
         <p className="text-sm font-semibold text-[#047ADB] dark:text-white">
-          ⓘ &nbsp;  Information
+          ⓘ &nbsp; Information
         </p>
         <p className="text-xs text-[#047ADB] dark:text-white mt-2">
-          Click the Load Report Button in the Stock Performance Report to Generate the Report.
+          Click the Load Report Button in the Stock Performance Report to
+          Generate the Report.
         </p>
       </div>
       <div className="relative border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 rounded-xl overflow-hidden min-h-[400px]">
+        <BrandedLogoLoader
+          isLoading={isAnyLoading}
+          isDark={isDark}
+          message="Loading Summary Dashboard"
+        />
 
-        <BrandedLogoLoader isLoading={isAnyLoading} isDark={isDark} message="Loading Summary Dashboard" />
-
-        {isDialogOpen && <>
-          <ArchieveDialog isOpen={isDialogOpen}
-            onClose={() => setIsDialogOpen(false)} />
-        </>}
+        {isDialogOpen && (
+          <>
+            <ArchieveDialog
+              isOpen={isDialogOpen}
+              onClose={() => setIsDialogOpen(false)}
+            />
+          </>
+        )}
 
         <DataGridPremium
           apiRef={apiRef}
@@ -156,8 +196,14 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           onPaginationModelChange={setPaginationModel}
           onCellDoubleClick={handleCellDoubleClick}
           paginationMode="server"
+          columnVisibilityModel={{ id: false }}
           rowCount={getFilteredRowCount(rowCount)}
-          pageSizeOptions={[500, 1000, 5000, { value: ALL_VALUE, label: `Show All` }]}
+          pageSizeOptions={[
+            500,
+            1000,
+            5000,
+            { value: ALL_VALUE, label: `Show All` },
+          ]}
           pagination
           rowBufferPx={100}
           loading={isAnyLoading}
@@ -168,8 +214,13 @@ const SummaryDashGrid: React.FC = React.memo(() => {
             toolbar: {
               printOptions: { disableToolbarButton: true },
               excelOptions: { disableToolbarButton: true },
-              csvOptions: { disableToolbarButton: false, escapeFormulas: false, fileName: `${selectedWarehouse}_Summary_Dashboard_SCM_Dashboard` },
-            }
+              csvOptions: {
+                disableToolbarButton: false,
+                escapeFormulas: false,
+                fileName: `${selectedWarehouse}_Summary_Dashboard_SCM_Dashboard`,
+                allColumns: true,
+              },
+            },
           }}
         />
       </div>
@@ -178,4 +229,3 @@ const SummaryDashGrid: React.FC = React.memo(() => {
 });
 
 export default SummaryDashGrid;
-

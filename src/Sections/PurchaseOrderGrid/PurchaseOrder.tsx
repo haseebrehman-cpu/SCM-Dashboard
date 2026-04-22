@@ -65,9 +65,9 @@ export default function PurchaseOrder() {
       const rowData = rows.find((row) => row.id === params.id);
       if (rowData) {
         isEditing &&
-          isEditing(rowData.id) &&
-          editedData &&
-          editedData.arrivalDate
+        isEditing(rowData.id) &&
+        editedData &&
+        editedData.arrivalDate
           ? null
           : startEdit(rowData);
       }
@@ -121,7 +121,8 @@ export default function PurchaseOrder() {
             ⓘ &nbsp; Information
           </p>
           <p className="text-xs text-[#047ADB] dark:text-white mt-2">
-            The Process with current data is completed, please uplaod new files to continue.
+            The Process with current data is completed, please uplaod new files
+            to continue.
           </p>
         </div>
       )}
@@ -129,7 +130,7 @@ export default function PurchaseOrder() {
       {!isLoadReportsDisabled && isArrivalEmpty && (
         <div className="p-3 bg-[#047ADB]/10 dark:bg-[#047ADB]/20 border border-[#047ADB]/20 dark:border-[#047ADB]/40 rounded-lg mb-4">
           <p className="text-sm font-semibold text-[#047ADB] dark:text-white">
-            ⓘ &nbsp;  Information
+            ⓘ &nbsp; Information
           </p>
           <p className="text-xs text-[#047ADB] dark:text-white mt-2">
             All Arrival Dates are filled for all records. Please click the load
@@ -201,7 +202,10 @@ export default function PurchaseOrder() {
             slotProps={{
               toolbar: {
                 printOptions: { disableToolbarButton: true },
-                excelOptions: { disableToolbarButton: true, fileName: `${selectedWarehouse}_PurchaseOrder` },
+                excelOptions: {
+                  disableToolbarButton: true,
+                  fileName: `${selectedWarehouse}_PurchaseOrder`,
+                },
                 csvOptions: {
                   disableToolbarButton: false,
                   fileName: `${selectedWarehouse}_Purchase_Order_SCM Dashboard`,

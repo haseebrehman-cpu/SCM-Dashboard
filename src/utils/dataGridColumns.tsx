@@ -8,21 +8,44 @@ export const createSummaryDashboardColumns = (
   isDark: boolean,
   editingRowId: number | null,
   editingField: "status" | "factory_comment" | null,
-  editValues: { status: string; reason1: string; reason2: string; reason3: string; reason4: string; factory_comment: string } | null,
+  editValues: {
+    status: string;
+    reason1: string;
+    reason2: string;
+    reason3: string;
+    reason4: string;
+    factory_comment: string;
+  } | null,
   onStatusChange: (value: string) => void,
   onCommentsChange: (value: string) => void,
   onEdit: (id: number) => void,
   onSave: (id: number, warehouse_code: string) => void,
-  onCancel: () => void
+  onCancel: () => void,
 ): GridColDef[] => {
   const renderHeader = (headerName: string) => (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "4px",
+      }}
+    >
       <span>{headerName}</span>
-      <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>▼</span>
+      <span style={{ fontSize: "0.7rem", opacity: 0.7 }}>▼</span>
     </div>
   );
 
   return [
+    {
+      field: "id",
+      headerName: "ID",
+      width: 100,
+      sortable: true,
+      filterable: true,
+      renderHeader: () => renderHeader("ID"),
+      hideable: false,
+    },
     {
       field: "upload_date",
       headerName: "Upload Date",
@@ -229,12 +252,14 @@ export const createSummaryDashboardColumns = (
               value={editValues.status}
               options={STATUS_OPTIONS}
               onChange={onStatusChange}
-              onEnter={() => onSave(editingRowId!, '')}
+              onEnter={() => onSave(editingRowId!, "")}
               isDark={isDark}
             />
           );
         }
-        return <span>{params.value === null ? "Not Available" : params.value}</span>;
+        return (
+          <span>{params.value === null ? "Not Available" : params.value}</span>
+        );
       },
     },
     {
@@ -256,7 +281,7 @@ export const createSummaryDashboardColumns = (
             <EditableTextFieldCell
               value={editValues.factory_comment}
               onChange={onCommentsChange}
-              onEnter={() => onSave(editingRowId!, '')}
+              onEnter={() => onSave(editingRowId!, "")}
               isDark={isDark}
             />
           );
@@ -270,7 +295,6 @@ export const createSummaryDashboardColumns = (
       headerName: "Action",
       width: 120,
 
-
       getActions: (params) => {
         const isEditing = editingRowId === params.id;
         if (isEditing) {
@@ -281,9 +305,11 @@ export const createSummaryDashboardColumns = (
                 <IconButton
                   size="small"
                   sx={{
-                    color: isDark ? '#10b981' : '#059669',
-                    '&:hover': {
-                      backgroundColor: isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(5, 150, 105, 0.1)',
+                    color: isDark ? "#10b981" : "#059669",
+                    "&:hover": {
+                      backgroundColor: isDark
+                        ? "rgba(16, 185, 129, 0.1)"
+                        : "rgba(5, 150, 105, 0.1)",
                     },
                   }}
                 >
@@ -302,7 +328,12 @@ export const createSummaryDashboardColumns = (
                 </IconButton>
               }
               label="Save"
-              onClick={() => onSave(params.id as number, (params.row as { warehouse_code: string }).warehouse_code)}
+              onClick={() =>
+                onSave(
+                  params.id as number,
+                  (params.row as { warehouse_code: string }).warehouse_code,
+                )
+              }
             />,
             <GridActionsCellItem
               key="cancel"
@@ -311,9 +342,11 @@ export const createSummaryDashboardColumns = (
                   size="small"
                   onClick={onCancel}
                   sx={{
-                    color: isDark ? '#ef4444' : '#dc2626',
-                    '&:hover': {
-                      backgroundColor: isDark ? 'rgba(239, 68, 68, 0.1)' : 'rgba(220, 38, 38, 0.1)',
+                    color: isDark ? "#ef4444" : "#dc2626",
+                    "&:hover": {
+                      backgroundColor: isDark
+                        ? "rgba(239, 68, 68, 0.1)"
+                        : "rgba(220, 38, 38, 0.1)",
                     },
                   }}
                 >
@@ -345,9 +378,11 @@ export const createSummaryDashboardColumns = (
                 size="small"
                 onClick={() => onEdit(params.id as number)}
                 sx={{
-                  color: isDark ? '#60a5fa' : '#2563eb',
-                  '&:hover': {
-                    backgroundColor: isDark ? 'rgba(96, 165, 250, 0.1)' : 'rgba(37, 99, 235, 0.1)',
+                  color: isDark ? "#60a5fa" : "#2563eb",
+                  "&:hover": {
+                    backgroundColor: isDark
+                      ? "rgba(96, 165, 250, 0.1)"
+                      : "rgba(37, 99, 235, 0.1)",
                   },
                 }}
               >
