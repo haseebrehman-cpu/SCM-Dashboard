@@ -137,7 +137,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
   const { apiRef, filterModel, onFilterModelChange, getFilteredRowCount } =
     useGridFilterCount();
 
-  const handleFileUpload = async (file: File) => {};
+  const handleFileUpload = async () => {};
 
   return (
     <>
