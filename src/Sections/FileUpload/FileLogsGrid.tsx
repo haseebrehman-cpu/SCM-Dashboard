@@ -9,6 +9,7 @@ import { IconButton } from "@mui/material";
 import { TrashBinIcon } from "../../icons";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import { useFileLogsSessions } from "../../hooks/useFileLogsSessions";
+
 /**
  * FileLogsGrid Component
  * Displays upload sessions in a hierarchical grid with expandable detail rows.

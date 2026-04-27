@@ -14,8 +14,6 @@ export const usePermissions = () => {
   const isFactory = departmentCode === "FACTORY";
 
   /**
-   * Checks if the user can perform write operations (POST, PUT, PATCH, DELETE).
-   * 
    * @param endpoint - Optional endpoint name to check specific permissions
    * @param paramP - Optional 'p' query parameter value for context-specific rules (e.g., 'sd' for stock-performance)
    * @param method - The HTTP method being attempted (defaults to 'POST' for general write operations)
@@ -24,37 +22,30 @@ export const usePermissions = () => {
   const canWrite = (
     endpoint?: string,
     paramP?: string,
-    method: "POST" | "PUT" | "PATCH" | "DELETE" = "POST"
+    method: "POST" | "PUT" | "PATCH" | "DELETE" = "POST",
   ): boolean => {
-    // ADMIN, SCM, and DEVELOPMENT have full CRUD access everywhere
     if (isAdmin || isScm || isDevelopment) {
       return true;
     }
 
-    // FACTORY has read-only access everywhere EXCEPT stock-performance when p=sd for PUT specifically
     if (isFactory) {
-      if (endpoint === "stock-performance" && paramP === "sd" && method === "PUT") {
+      if (
+        endpoint === "stock-performance" &&
+        paramP === "sd" &&
+        (method === "PUT" || method === "PATCH")
+      ) {
         return true;
       }
       return false;
     }
 
-    // MANAGEMENT and users with no group have no write access
     return false;
   };
 
-  /**
-   * Checks if the user can perform delete operations.
-   * Only ADMIN, SCM, and DEVELOPMENT can delete.
-   */
   const canDelete = (): boolean => {
     return isAdmin || isScm || isDevelopment;
   };
 
-  /**
-   * Checks if the user can perform read operations (GET).
-   * Authorized departments can read, others (no group) get 403 (false).
-   */
   const canRead = (): boolean => {
     return true;
   };
