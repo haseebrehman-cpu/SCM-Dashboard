@@ -17,6 +17,7 @@ import { showToast } from "../../utils/toastNotification";
 import StockPerformanceLoadProgressDialog, { LoadStatus } from "./StockPerformanceLoadProgressDialog";
 import { useDeleteRunningReport } from "../../api/containerDetailReport";
 import toast from "react-hot-toast";
+import { usePermissions } from "../../hooks/usePermissions";
 
 export default function StockPerformance() {
   const apiRef = useGridApiRef();
@@ -40,6 +41,10 @@ export default function StockPerformance() {
   const { filterModel, onFilterModelChange, getFilteredRowCount } = useGridFilterCount(apiRef);
   const loadReportMutation = useLoadStockPerformanceReport();
   const deleteMutation = useDeleteRunningReport();
+
+  const { canWrite, canDelete } = usePermissions();
+  const canEditStockPerf = useMemo(() => canWrite("stock-performance", "spr"), [canWrite]);
+  const canDeleteStockPerf = useMemo(() => canDelete(), [canDelete]);
 
   useEffect(() => {
     setIsChangingPage(true);
@@ -77,6 +82,10 @@ export default function StockPerformance() {
   }, [loadStatus]);
 
   const handleLoadReportClick = () => {
+    if (!canEditStockPerf) {
+      showToast.error("You do not have permission to load reports.");
+      return;
+    }
     if (sessionId === null || sessionId === undefined) {
       showToast.error("No active session found. Please upload a file first.");
       return;
@@ -88,6 +97,10 @@ export default function StockPerformance() {
   };
 
   const handleConfirmLoadReport = async () => {
+    if (!canEditStockPerf) {
+      showToast.error("You do not have permission to perform this action.");
+      return;
+    }
     if (sessionId === null || sessionId === undefined) return;
     setLoadStatus("loading");
     setLoadErrorMessage(undefined);
@@ -109,6 +122,10 @@ export default function StockPerformance() {
   };
 
   const handleCancelLoadReport = async () => {
+    if (!canDeleteStockPerf) {
+      showToast.error("You do not have permission to cancel reports.");
+      return;
+    }
     if (sessionId === null || sessionId === undefined) return;
     try {
       await deleteMutation.mutateAsync({ session_id: sessionId });

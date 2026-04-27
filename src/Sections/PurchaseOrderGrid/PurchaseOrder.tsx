@@ -6,8 +6,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Button } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CachedIcon from "@mui/icons-material/Cached";
-import { LoaderIcon } from "react-hot-toast";
-
+import toast, { LoaderIcon } from "react-hot-toast";
 import { ProductionReportHeader } from "../ProductionReport/ProductionReportHeader";
 import { FileUploadDialog } from "../ProductionReport/FileUploadDialog";
 import { getDataGridStyles } from "../../styles/productionReportStyles";
@@ -49,6 +48,7 @@ export default function PurchaseOrder() {
     startEdit,
     isEditing,
     editedData,
+    canWrite,
   } = usePurchaseOrderController(isDark);
 
   const isLoadReportsDisabled =
@@ -60,10 +60,16 @@ export default function PurchaseOrder() {
 
   const editableColumnsOnDoubleClick = ["arrival_date"];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleCellDoubleClick = (params: any) => {
+    if (!canWrite) {
+      toast.error("Permission not allowed: You do not have permission to edit records.");
+      return;
+    }
     if (editableColumnsOnDoubleClick.includes(params.field)) {
       const rowData = rows.find((row) => row.id === params.id);
       if (rowData) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         isEditing &&
         isEditing(rowData.id) &&
         editedData &&
@@ -109,7 +115,13 @@ export default function PurchaseOrder() {
           selectedWarehouse={selectedWarehouse}
           isDark={isDark}
           onWarehouseChange={handleWarehouseChange}
-          onUploadClick={() => setIsDialogOpen(true)}
+          onUploadClick={() => {
+            if (!canWrite) {
+              toast.error("Permission not allowed: You do not have permission to upload files.");
+              return;
+            }
+            setIsDialogOpen(true);
+          }}
           isSelectWarehouse={false}
           isShowUpload={true}
         />

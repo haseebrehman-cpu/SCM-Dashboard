@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { apiClient } from "../utils/apiClient";
 import { API_BASE_URL } from "./purchaseOrder";
 import { UseMutationResult, UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -8,6 +8,7 @@ import {
   CancelRunningReportResponse,
   FilterOptionsResponse,
 } from "../types/Interfaces/interfaces";
+import { useCallback, useEffect } from "react";
 
 export const CONTAINER_DETAIL_REPORT_QUERY_KEY = ["containerDetailReport"] as const;
 
@@ -48,7 +49,7 @@ export async function fetchContainerDetailReport<T = StockReportApiResponse | Co
   appendFilter(queryParams, "container_name", filters.container_name);
   appendFilter(queryParams, "sku", filters.sku);
 
-  const response = await fetch(
+  const response = await apiClient(
     `${API_BASE_URL}/container-report/?${queryParams.toString()}`, {
     method: "GET",
     signal,
@@ -158,10 +159,10 @@ async function deleteRunningReport({ session_id, signal }: { session_id: number;
   const formData = new FormData();
   formData.append("session_id", String(session_id));
 
-  const response = await fetch(`${API_BASE_URL}/container-report/`, {
+  const response = await apiClient(`${API_BASE_URL}/container-report/`, {
     method: "DELETE",
     body: formData,
-    signal
+    signal,
   });
 
   let data: CancelRunningReportResponse;
@@ -211,7 +212,7 @@ export async function fetchFilterOptions(table: string, session_id: number | nul
   appendFilter(queryParams, "container_name", filters.container_name);
   appendFilter(queryParams, "sku", filters.sku);
 
-  const response = await fetch(`${API_BASE_URL}/container-report/?${queryParams.toString()}`, {
+  const response = await apiClient(`${API_BASE_URL}/container-report/?${queryParams.toString()}`, {
     method: "GET",
     signal,
     headers: {

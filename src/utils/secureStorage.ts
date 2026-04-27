@@ -41,6 +41,40 @@ export const secureStorage = {
   },
 
   /**
+   * Set refresh token in secure storage
+   */
+  setRefreshToken(token: string): void {
+    try {
+      sessionStorage.setItem('refresh_token', token);
+    } catch (error) {
+      console.error('Failed to store refresh token:', error);
+    }
+  },
+
+  /**
+   * Retrieve refresh token from secure storage
+   */
+  getRefreshToken(): string | null {
+    try {
+      return sessionStorage.getItem('refresh_token');
+    } catch (error) {
+      console.error('Failed to retrieve refresh token:', error);
+      return null;
+    }
+  },
+
+  /**
+   * Remove refresh token from secure storage
+   */
+  removeRefreshToken(): void {
+    try {
+      sessionStorage.removeItem('refresh_token');
+    } catch (error) {
+      console.error('Failed to remove refresh token:', error);
+    }
+  },
+
+  /**
    * Set user information in secure storage
    */
   setUser(user: Record<string, unknown>): void {

@@ -7,6 +7,8 @@ import { useSubmenu } from "../hooks/useSubmenu";
 import { SidebarHeader } from "../components/sidebar/SidebarHeader";
 import { SidebarMenuItem } from "../components/sidebar/SidebarMenuItem";
 import { useTheme } from "../hooks/useTheme";
+import { usePermissions } from "../hooks/usePermissions";
+import { useMemo } from "react";
 
 
 const AppSidebar: React.FC = () => {
@@ -19,12 +21,21 @@ const AppSidebar: React.FC = () => {
     [location.pathname]
   );
 
+  const { isFactory } = usePermissions();
+
+  const filteredNavItems = useMemo(() => {
+    if (isFactory) {
+      return navItems.filter((item) => item.name === "Summary Dashboard");
+    }
+    return navItems;
+  }, [isFactory]);
+
   const {
     handleSubmenuToggle,
     getSubmenuHeight,
     isSubmenuOpen,
     setSubmenuRef,
-  } = useSubmenu(navItems, isActive);
+  } = useSubmenu(filteredNavItems, isActive);
   return (
     <aside
       className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
@@ -56,7 +67,7 @@ const AppSidebar: React.FC = () => {
                 )}
               </h2>
               <ul className="flex flex-col gap-4">
-                {navItems.map((nav, index) => (
+                {filteredNavItems.map((nav, index) => (
                   <SidebarMenuItem
                     key={nav.name}
                     nav={nav}

@@ -16,6 +16,7 @@ interface ColumnGeneratorParams {
   isUpdatingDate?: boolean;
   updatingRowId?: number | null;
   rows: PurchaseOrderData[];
+  canWrite: boolean;
 }
 
 const calculateAverageDeliveryDays = (rows: PurchaseOrderData[]) => {
@@ -141,10 +142,11 @@ export const generatePurchaseOrderColumns = ({
   isUpdatingDate,
   updatingRowId,
   rows,
+  canWrite,
 }: ColumnGeneratorParams): GridColDef[] => {
   const regionAverages = calculateAverageDeliveryDays(rows);
 
-  return [
+  const baseColumns: GridColDef[] = [
     {
       field: "container_name",
       headerName: "Container Name",
@@ -330,4 +332,10 @@ export const generatePurchaseOrderColumns = ({
       },
     },
   ];
+
+  if (!canWrite) {
+    return baseColumns.filter(col => col.field !== 'actions');
+  }
+
+  return baseColumns;
 };

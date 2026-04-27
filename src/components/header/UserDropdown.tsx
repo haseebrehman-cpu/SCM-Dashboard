@@ -2,6 +2,8 @@ import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { useDropdown } from "../../hooks/useDropdown";
 import React from "react";
+import { logout } from "../../api/auth";
+import useUser from "../../hooks/useUser";
 
 /**
  * User dropdown component
@@ -9,13 +11,21 @@ import React from "react";
  */
 const UserDropdown: React.FC = React.memo(() => {
   const { isOpen, toggleDropdown, closeDropdown } = useDropdown();
+
+  const handleLogout = () => {
+    closeDropdown();
+    logout();
+  };
+
+  const { user } = useUser();
+
   return (
     <div className="relative">
       <button
         onClick={toggleDropdown}
         className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400"
       >
-        <span className="block mr-1 font-medium text-theme-sm">user@gmail.com</span>
+        <span className="block mr-1 font-medium text-theme-sm">{user?.username || "User"}</span>
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
             }`}
@@ -40,6 +50,16 @@ const UserDropdown: React.FC = React.memo(() => {
         onClose={closeDropdown}
         className="absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
       >
+        <div className="flex items-center gap-3 px-3 py-3 border-b border-gray-200 dark:border-gray-800">
+          <div className="flex flex-col">
+            <span className="font-semibold text-gray-800 text-theme-sm dark:text-white/90">
+              {user?.username || "User"}
+            </span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              {user?.email || "user@scm.com"}
+            </span>
+          </div>
+        </div>
 
         <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
           <li>
@@ -69,10 +89,9 @@ const UserDropdown: React.FC = React.memo(() => {
           </li>
           <li>
             <DropdownItem
-              onItemClick={closeDropdown}
-              tag="a"
-              to="/signin"
-              className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+              onItemClick={handleLogout}
+              tag="button"
+              className="flex items-center w-full gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
             >
               <svg
                 className="fill-gray-500 group-hover:fill-gray-700 dark:group-hover:fill-gray-300"
@@ -89,7 +108,6 @@ const UserDropdown: React.FC = React.memo(() => {
                   fill=""
                 />
               </svg>
-
               Sign out
             </DropdownItem>
           </li>

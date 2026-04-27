@@ -261,13 +261,38 @@ export interface PurchaseOrderBulkUpdateSuccessResponse {
   details: PurchaseOrderBulkUpdateDetailRow[];
 }
 
+export interface authLoginResponse {
+  success: boolean;
+  message: string;
+  user: {
+    id: number;
+    username: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    phone_number: string;
+    department: {
+      code: string;
+      label: string;
+    };
+    groups: string[];
+    permissions: string[];
+    bio: string;
+    is_staff: boolean;
+    is_active: boolean;
+    date_joined: string;
+    last_login: string | null;
+  };
+  access: string;
+  refresh: string;
+}
+
 export interface PurchaseOrderBulkUpdateErrorResponse {
   success: false;
   message: string;
   expected_columns?: string[];
 }
 
-// Keep for backward compatibility
 export interface OldLatestUploadSessionResponse {
   success: boolean;
   session: {

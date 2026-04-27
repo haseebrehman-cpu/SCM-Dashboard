@@ -1,6 +1,7 @@
 import { UseMutationResult, useMutation, useQuery, useQueryClient, UseQueryResult } from "@tanstack/react-query";
 import { API_BASE_URL } from "./purchaseOrder";
 import { ProductionRemainingApiResponse, ProductionRemainingUploadFileResponse } from "../types/Interfaces/interfaces";
+import { apiClient } from "../utils/apiClient";
 
 export const PRODUCTION_REMAINING_REPORT_QUERY_KEY = ["productionRemainingReport"] as const;
 
@@ -19,7 +20,7 @@ export async function fetchProductionRemainingReport(
 
   const url = `${API_BASE_URL}/production-remaining/?${queryParams.toString()}`;
 
-  const response = await fetch(url, {
+  const response = await apiClient(url, {
     method: "GET",
     signal,
     headers: {
@@ -65,10 +66,10 @@ async function uploadForecastedFile({ file, warehouse_region, session_id, signal
     queryParams.append("session_id", String(session_id));
   }
 
-  const response = await fetch(`${API_BASE_URL}/production-remaining/?${queryParams.toString()}`, {
+  const response = await apiClient(`${API_BASE_URL}/production-remaining/?${queryParams.toString()}`, {
     method: "PATCH",
     body: formData,
-    signal
+    signal,
   });
 
   const responseText = await response.text();

@@ -7,6 +7,7 @@ import { PURCHASE_ORDER_PAGINATION_MODEL } from "../constants/pagination";
 import { WAREHOUSE_OPTIONS } from "../constants/productionReport";
 import { useLatestSessionId } from "./useLatestSessionId";
 import { useLoadReportflagCheck } from "./useLoadReportflagCheck";
+import { usePermissions } from "./usePermissions";
 
 import { useInlineEdit } from "./useInlineEdit";
 import {
@@ -75,6 +76,10 @@ interface UsePurchaseOrderControllerResult {
   startEdit: (row: PurchaseOrderData) => void;
   isEditing?: (rowId: number) => boolean;
   editedData: EditableFields | null;
+
+  // Permissions
+  canWrite: boolean;
+  canDelete: boolean;
 }
 
 function isBlankValue(value: string | null | undefined): boolean {
@@ -100,6 +105,8 @@ export const usePurchaseOrderController = (
   const [updatingRowId, setUpdatingRowId] = useState<number | null>(null);
 
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>("UK");
+
+  const { canWrite, canDelete } = usePermissions();
 
   const latestSessionId = useLatestSessionId();
   const sessionId = latestSessionId;
@@ -135,6 +142,13 @@ export const usePurchaseOrderController = (
     updateEditedData,
   } = useInlineEdit();
 
+  // Guard editing based on permissions
+  const canEditPurchaseOrder = useMemo(
+    () => canWrite("purchase-order"),
+    [canWrite],
+  );
+  const canDeletePurchaseOrder = useMemo(() => canDelete(), [canDelete]);
+
   const {
     data: purchaseOrderResponse,
     isLoading,
@@ -161,6 +175,10 @@ export const usePurchaseOrderController = (
   );
 
   const handleSave = useCallback(async () => {
+    if (!canEditPurchaseOrder) {
+      toast.error("You do not have permission to perform this action.");
+      return;
+    }
     if (editingRowId === null) return;
 
     setUpdatingRowId(editingRowId);
@@ -186,20 +204,27 @@ export const usePurchaseOrderController = (
       setIsUpdatingDate(false);
       setUpdatingRowId(null);
     }
-  }, [editingRowId, editedData, patchMutation, saveEdit]);
+  }, [editingRowId, editedData, patchMutation, saveEdit, canEditPurchaseOrder]);
 
   const columns = useMemo((): GridColDef[] => {
     return generatePurchaseOrderColumns({
       isDark,
       editedData,
       isEditing,
-      startEdit,
+      startEdit: (row) => {
+        if (!canEditPurchaseOrder) {
+          toast.error("You do not have permission to edit records.");
+          return;
+        }
+        startEdit(row);
+      },
       saveEdit: handleSave,
       cancelEdit,
       onDateChange: handleDateChange,
       isUpdatingDate,
       updatingRowId,
       rows,
+      canWrite: canEditPurchaseOrder,
     });
   }, [
     isDark,
@@ -212,6 +237,7 @@ export const usePurchaseOrderController = (
     isUpdatingDate,
     updatingRowId,
     rows,
+    canEditPurchaseOrder
   ]);
 
   const arrivalDates = useMemo(
@@ -261,6 +287,10 @@ export const usePurchaseOrderController = (
   );
 
   const handleLoadReportClick = useCallback(() => {
+    if (!canEditPurchaseOrder) {
+      toast.error("You do not have permission to load reports.");
+      return;
+    }
     if (sessionId === null) {
       toast.error("No upload session found. Please upload a file first.");
       return;
@@ -271,7 +301,7 @@ export const usePurchaseOrderController = (
     setCurrentLoadStep(0);
     setLoadErrorMessage(undefined);
     setIsLoadReportDialogOpen(true);
-  }, [sessionId]);
+  }, [sessionId, canEditPurchaseOrder]);
 
   // Show a brief loader when changing pages to provide feedback
   useEffect(() => {
@@ -306,6 +336,10 @@ export const usePurchaseOrderController = (
   }, [loadStatus, currentLoadStep]);
 
   const handleConfirmLoadReport = useCallback(async () => {
+    if (!canEditPurchaseOrder) {
+      toast.error("You do not have permission to perform this action.");
+      return;
+    }
     if (sessionId === null) return;
 
     setLoadStatus("loading");
@@ -359,9 +393,14 @@ export const usePurchaseOrderController = (
     loadReportMutation,
     refetchFlag,
     postProductionLoadReportMutation,
+    canEditPurchaseOrder
   ]);
 
   const handleCancelLoadReport = useCallback(async () => {
+    if (!canDeletePurchaseOrder) {
+      toast.error("You do not have permission to cancel reports.");
+      return;
+    }
     if (sessionId === null) return;
     try {
       await deleteMutation.mutateAsync({ session_id: sessionId });
@@ -371,10 +410,14 @@ export const usePurchaseOrderController = (
       toast.error("Failed to cancel report loading.");
       console.error("Cancel error:", error);
     }
-  }, [sessionId, deleteMutation]);
+  }, [sessionId, deleteMutation, canDeletePurchaseOrder]);
 
   const handlePurchaseOrderUpload = useCallback(
     async (file: File) => {
+      if (!canEditPurchaseOrder) {
+        toast.error("You do not have permission to upload files.");
+        return;
+      }
       try {
         await uploadMutation.mutateAsync({ file });
       } catch (error) {
@@ -384,7 +427,7 @@ export const usePurchaseOrderController = (
         throw error;
       }
     },
-    [uploadMutation],
+    [uploadMutation, canEditPurchaseOrder],
   );
 
   return {
@@ -430,5 +473,7 @@ export const usePurchaseOrderController = (
     startEdit,
     isEditing,
     editedData,
+    canWrite: canEditPurchaseOrder,
+    canDelete: canDeletePurchaseOrder,
   };
 };

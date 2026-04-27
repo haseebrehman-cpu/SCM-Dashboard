@@ -15,6 +15,8 @@ import { useLatestSessionId } from "../../hooks/useLatestSessionId";
 import { BrandedLogoLoader } from "../../components/common/BrandedLogoLoader";
 import { ForecastToolbar } from "./ForecastToolbar";
 import { downloadForecastCSV } from "../../utils/productionRemainingReport/downloadForecastCSV";
+import { usePermissions } from "../../hooks/usePermissions";
+import toast from "react-hot-toast";
 
 export default function ProductionReport() {
   const { theme } = useTheme();
@@ -26,6 +28,9 @@ export default function ProductionReport() {
   const [isChangingPage, setIsChangingPage] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>("UK");
+
+  const { canWrite } = usePermissions();
+  const canUpload = useMemo(() => canWrite("production-report"), [canWrite]);
 
   useEffect(() => {
     setIsChangingPage(true);
@@ -46,6 +51,7 @@ export default function ProductionReport() {
   const isAnyLoading = isLoading || isChangingPage;
 
   const handleFileUpload = async (file: File) => {
+    if (!canUpload) return;
     await uploadMutation.mutateAsync({
       file,
       warehouse_region: selectedWarehouse,
@@ -82,7 +88,13 @@ export default function ProductionReport() {
           selectedWarehouse={selectedWarehouse}
           isDark={isDark}
           onWarehouseChange={handleWarehouseChange}
-          onUploadClick={() => setIsDialogOpen(true)}
+          onUploadClick={() => {
+            if (!canUpload) {
+              toast.error("Permission not allowed: You do not have permission to upload files.");
+              return;
+            }
+            setIsDialogOpen(true);
+          }}
           isSelectWarehouse={true}
           isShowUpload={true}
         />

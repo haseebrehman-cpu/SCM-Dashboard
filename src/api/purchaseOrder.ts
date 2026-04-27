@@ -1,15 +1,14 @@
 import { UseQueryResult, useQuery, useMutation, UseMutationResult, useQueryClient } from "@tanstack/react-query";
 import { PurchaseOrderReportResponse, PurchaseOrderBulkUpdateErrorResponse, PurchaseOrderBulkUpdateSuccessResponse, ProductionRemainingLoadResponse } from "../types/Interfaces/interfaces";
+import { apiClient } from "../utils/apiClient";
 export const API_BASE_URL = import.meta.env.VITE_SCM_API_BASE_URL ?? "/scm/api";
 
 export const PURCHASE_ORDER_REPORT_QUERY_KEY = ["scmPurchaseOrderReport"] as const;
 
 async function fetchPurchaseOrderReport(signal?: AbortSignal): Promise<PurchaseOrderReportResponse> {
-  const response = await fetch(`${API_BASE_URL}/process-data`, {
+  const response = await apiClient(`${API_BASE_URL}/process-data`, {
     method: "GET",
     signal,
-    headers: {
-    },
   });
 
   const responseText = await response.text();
@@ -47,7 +46,7 @@ export const patchPurchaseOrderReportData = async ({ rowId, arrivalDate, signal 
     arrival_date: arrivalDate,
   };
 
-  const response = await fetch(`${API_BASE_URL}/process-data/`, {
+  const response = await apiClient(`${API_BASE_URL}/process-data/`, {
     method: "PATCH",
     signal,
     headers: {
@@ -98,7 +97,7 @@ async function uploadPurchaseOrderFile({ file, signal }: { file: File; signal?: 
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await fetch(`${API_BASE_URL}/bulk-update/`, {
+  const response = await apiClient(`${API_BASE_URL}/bulk-update/`, {
     method: "POST",
     body: formData,
     signal,
@@ -148,7 +147,7 @@ export async function postProductionRemainingLoadReport(warehouse_region: string
     warehouse_region,
   });
 
-  const response = await fetch(`${API_BASE_URL}/production-remaining/?${queryParams.toString()}`, {
+  const response = await apiClient(`${API_BASE_URL}/production-remaining/?${queryParams.toString()}`, {
     method: "POST",
     body: formData,
     signal,
@@ -194,7 +193,7 @@ export async function postUploadPurchaseOrderReport(session_id: number, signal?:
   const formData = new FormData();
   formData.append("session_id", String(session_id));
 
-  const response = await fetch(`${API_BASE_URL}/container-report/`, {
+  const response = await apiClient(`${API_BASE_URL}/container-report/`, {
     method: "POST",
     body: formData,
     signal,

@@ -13,6 +13,7 @@ import {
 } from "../types/Interfaces/interfaces";
 import { API_BASE_URL } from "./purchaseOrder";
 import toast from "react-hot-toast";
+import { apiClient } from "../utils/apiClient";
 
 export const STOCK_PERFORMANCE_REPORT_QUERY_KEY = [
   "stockPerformanceReport",
@@ -44,7 +45,7 @@ export async function fetchStockPerformanceReportData(
 
   const url = `${API_BASE_URL}/stock-performance/?${queryParams.toString()}`;
 
-  const response = await fetch(url, {
+  const response = await apiClient(url, {
     method: "GET",
     signal,
     headers: {
@@ -155,7 +156,7 @@ export async function postLoadStockPerformanceReport(
   const formData = new FormData();
   formData.append("session_id", String(session_id));
 
-  const response = await fetch(`${API_BASE_URL}/stock-performance/`, {
+  const response = await apiClient(`${API_BASE_URL}/stock-performance/`, {
     method: "POST",
     body: formData,
     signal: signal || undefined,
@@ -218,7 +219,7 @@ export async function patchSummaryDashboard(
   formData.append("factory_comment", factory_comment);
   formData.append("warehouse_code", warehouse_code);
 
-  const response = await fetch(`${API_BASE_URL}/stock-performance/?p=sd`, {
+  const response = await apiClient(`${API_BASE_URL}/stock-performance/?p=sd`, {
     method: "PATCH",
     body: formData,
     signal: signal || undefined,
@@ -305,7 +306,7 @@ async function uploadSummaryDashboardFile({
   const queryParams = new URLSearchParams({
     warehouse_code,
   });
-  const response = await fetch(
+  const response = await apiClient(
     `${API_BASE_URL}/stock-performance/?p=sd&${queryParams.toString()}`,
     {
       method: "PUT",

@@ -1,5 +1,6 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { API_BASE_URL } from "./purchaseOrder";
+import { getAuthHeaders } from "../utils/apiHeaders";
 import {
   InTransitVolumeResponse, ContainerKpisResponse,
 } from "../types/Interfaces/interfaces";
@@ -35,6 +36,7 @@ async function fetchContainerChartData<T>(chart: string, session_id: number | nu
     signal,
     headers: {
       "Content-Type": "application/json",
+      ...getAuthHeaders(),
     },
   });
 

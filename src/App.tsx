@@ -6,6 +6,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
+import AccessDenied from "./pages/OtherPage/AccessDenied";
 import AppLayout from "./layout/AppLayout";
 import UserProfiles from "./pages/UserProfiles";
 import PurchaseOrderPage from "./pages/Dashboard/PurchaseOrder";
@@ -41,6 +42,7 @@ export default function App() {
               {/* Auth Layout */}
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
+              <Route path="/access-denied" element={<AccessDenied />} />
 
               {/* Fallback Route */}
               <Route path="*" element={<NotFound />} />

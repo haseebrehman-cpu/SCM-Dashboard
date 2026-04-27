@@ -6,6 +6,7 @@ import { FileUploadStep } from "./FileUploadStep";
 import { useMultiStepUpload } from "../../hooks/useMultiStepUpload";
 import ProcessModal from "./ProcessModal";
 import Header from "./Header";
+import { usePermissions } from "../../hooks/usePermissions";
 
 const FileUpload: React.FC = () => {
 
@@ -26,6 +27,9 @@ const FileUpload: React.FC = () => {
     restrictDailyUpload,
     setRestrictDailyUpload,
   } = useFileUpload();
+
+  const { canWrite } = usePermissions();
+  const canUpload = canWrite("file-upload");
 
   const {
     currentStep,
@@ -82,67 +86,81 @@ const FileUpload: React.FC = () => {
           showSuccessModal={showSuccessModal}
           closeSuccessModal={closeSuccessModal}
           sessionId={sessionId}
-        />        {/* Main Content */}
-        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-3 md:p-4 border border-gray-200 dark:border-gray-700">
-          {currentStep === 1 && (
-            <FileUploadStep
-              stepNumber={1}
-              file={file1}
-              isUploading={isUploading}
-              previousFile={null}
-              formatFileSize={formatFileSize}
-              onUpload={handleUploadStep1}
-              onRemove={handleRemoveFile1}
-              onNext={() => handleNext(1, file1)}
-              showBackButton={false}
-              uploadedToday={uploadedToday}
-              todayUploadErrorMessage={todayUploadErrorMessage}
-              restrictDailyUpload={restrictDailyUpload}
-              setRestrictDailyUpload={setRestrictDailyUpload}
-            />
-          )}
+        />
+        {/* Main Content */}
+        {!canUpload ? (
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 border border-gray-200 dark:border-gray-700 text-center">
+            <div className="p-4 mb-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-xl">
+              <p className="text-sm font-semibold text-orange-900 dark:text-orange-100">
+                Read-Only Access
+              </p>
+              <p className="text-xs text-orange-700 dark:text-orange-300 mt-1">
+                You do not have permission to upload files. Please contact your administrator if you believe this is an error.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-3 md:p-4 border border-gray-200 dark:border-gray-700">
+            {currentStep === 1 && (
+              <FileUploadStep
+                stepNumber={1}
+                file={file1}
+                isUploading={isUploading}
+                previousFile={null}
+                formatFileSize={formatFileSize}
+                onUpload={handleUploadStep1}
+                onRemove={handleRemoveFile1}
+                onNext={() => handleNext(1, file1)}
+                showBackButton={false}
+                uploadedToday={uploadedToday}
+                todayUploadErrorMessage={todayUploadErrorMessage}
+                restrictDailyUpload={restrictDailyUpload}
+                setRestrictDailyUpload={setRestrictDailyUpload}
+              />
+            )}
 
-          {currentStep === 2 && (
-            <FileUploadStep
-              stepNumber={2}
-              file={file2}
-              isUploading={isUploading}
-              previousFile={file1}
-              formatFileSize={formatFileSize}
-              onUpload={handleUploadStep2}
-              onRemove={handleRemoveFile2}
-              onNext={() => handleNext(2, file2)}
-              onBack={handleBack}
-              showBackButton={true}
-              uploadedToday={uploadedToday}
-              todayUploadErrorMessage={todayUploadErrorMessage}
-              restrictDailyUpload={restrictDailyUpload}
-              setRestrictDailyUpload={setRestrictDailyUpload}
-            />
-          )}
+            {currentStep === 2 && (
+              <FileUploadStep
+                stepNumber={2}
+                file={file2}
+                isUploading={isUploading}
+                previousFile={file1}
+                formatFileSize={formatFileSize}
+                onUpload={handleUploadStep2}
+                onRemove={handleRemoveFile2}
+                onNext={() => handleNext(2, file2)}
+                onBack={handleBack}
+                showBackButton={true}
+                uploadedToday={uploadedToday}
+                todayUploadErrorMessage={todayUploadErrorMessage}
+                restrictDailyUpload={restrictDailyUpload}
+                setRestrictDailyUpload={setRestrictDailyUpload}
+              />
+            )}
 
-          {currentStep === 3 && (
-            <FileUploadStep
-              stepNumber={3}
-              file={file3}
-              isUploading={isUploading}
-              previousFile={file2}
-              formatFileSize={formatFileSize}
-              onUpload={handleUploadStep3}
-              onRemove={handleRemoveFile3}
-              onComplete={() =>
-                handleComplete(file1, file2, file3, resetAllFiles, setIsUploading)
-              }
-              onBack={handleBack}
-              showBackButton={true}
-              isLastStep={true}
-              uploadedToday={uploadedToday}
-              todayUploadErrorMessage={todayUploadErrorMessage}
-              restrictDailyUpload={restrictDailyUpload}
-              setRestrictDailyUpload={setRestrictDailyUpload}
-            />
-          )}
-        </div>
+            {currentStep === 3 && (
+              <FileUploadStep
+                stepNumber={3}
+                file={file3}
+                isUploading={isUploading}
+                previousFile={file2}
+                formatFileSize={formatFileSize}
+                onUpload={handleUploadStep3}
+                onRemove={handleRemoveFile3}
+                onComplete={() =>
+                  handleComplete(file1, file2, file3, resetAllFiles, setIsUploading)
+                }
+                onBack={handleBack}
+                showBackButton={true}
+                isLastStep={true}
+                uploadedToday={uploadedToday}
+                todayUploadErrorMessage={todayUploadErrorMessage}
+                restrictDailyUpload={restrictDailyUpload}
+                setRestrictDailyUpload={setRestrictDailyUpload}
+              />
+            )}
+          </div>
+        )}
 
         {/* Success Summary */}
         {allFilesCompleted && (

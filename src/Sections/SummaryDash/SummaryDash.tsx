@@ -17,6 +17,7 @@ import { useSummaryDashboardData } from "../../hooks/useSummaryDashboardData";
 import { usePatchSummaryDashboard, useUploadForecastedFile } from "../../api/stockPerfomance";
 import { FileUploadDialog } from "../ProductionReport/FileUploadDialog";
 import toast from "react-hot-toast";
+import { usePermissions } from "../../hooks/usePermissions";
 
 const SummaryDashGrid: React.FC = React.memo(() => {
   const { theme } = useTheme();
@@ -36,6 +37,10 @@ const SummaryDashGrid: React.FC = React.memo(() => {
     pageSize: 500,
   });
   const [isChangingPage, setIsChangingPage] = useState(false);
+
+  const { canWrite } = usePermissions();
+  const canEditSummary = useMemo(() => canWrite("stock-performance", "sd", "PATCH"), [canWrite]);
+  const canUploadSummary = useMemo(() => canWrite("stock-performance", "sd", "PUT"), [canWrite]);
 
   useEffect(() => {
     setIsChangingPage(true);
@@ -103,6 +108,10 @@ const SummaryDashGrid: React.FC = React.memo(() => {
   };
 
   const handleCellDoubleClick = (params: any) => {
+    if (!canEditSummary) {
+      toast.error("Permission not allowed: You do not have permission to edit this record.");
+      return;
+    }
     if (!editableColumnsOnDoubleClick.includes(params.field)) return;
     if (editingRowId !== null) return;
     startEdit(
@@ -141,6 +150,10 @@ const SummaryDashGrid: React.FC = React.memo(() => {
   const { mutate: uploadFile } = useUploadForecastedFile();
 
   const handleFileUpload = async (file: File) => {
+    if (!canUploadSummary) {
+      toast.error("You do not have permission to upload files.");
+      return;
+    }
     try {
       uploadFile(
         {
@@ -174,7 +187,13 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           isSelectWarehouse={true}
           isShowUpload={true}
           onArchiveClick={() => setIsDialogOpen(true)}
-          onUploadClick={() => setIsUploadDialogOpen(true)}
+          onUploadClick={() => {
+            if (!canUploadSummary) {
+              toast.error("Permission not allowed: You do not have permission to upload files.");
+              return;
+            }
+            setIsUploadDialogOpen(true);
+          }}
         />
       </div>
       <div className="p-3 bg-[#047ADB]/10 dark:bg-[#047ADB]/20 border border-[#047ADB]/20 dark:border-[#047ADB]/40 rounded-lg mb-4">

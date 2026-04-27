@@ -1,14 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 import { DataGridPremium, GridColDef } from "@mui/x-data-grid-premium";
-import { useTheme } from '../../hooks/useTheme';
-import { getDataGridStyles } from '../../styles/productionReportStyles';
-import React from 'react';
-import { Modal } from '../../components/ui/modal';
-import { FileLogsDetailPanel } from './FileLogsDetailPanel';
-import { IconButton } from '@mui/material';
-import { TrashBinIcon } from '../../icons';
-import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
-import { useFileLogsSessions } from '../../hooks/useFileLogsSessions';
+import { useTheme } from "../../hooks/useTheme";
+import { getDataGridStyles } from "../../styles/productionReportStyles";
+import React from "react";
+import { Modal } from "../../components/ui/modal";
+import { FileLogsDetailPanel } from "./FileLogsDetailPanel";
+import { IconButton } from "@mui/material";
+import { TrashBinIcon } from "../../icons";
+import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
+import { useFileLogsSessions } from "../../hooks/useFileLogsSessions";
 /**
  * FileLogsGrid Component
  * Displays upload sessions in a hierarchical grid with expandable detail rows.
@@ -17,10 +17,12 @@ import { useFileLogsSessions } from '../../hooks/useFileLogsSessions';
 
 const FileLogsGrid: React.FC = React.memo(() => {
   const { theme } = useTheme();
-  const isDark = theme === 'dark';
+  const isDark = theme === "dark";
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(null);
+  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(
+    null,
+  );
 
   const {
     rows,
@@ -34,32 +36,32 @@ const FileLogsGrid: React.FC = React.memo(() => {
   const columns = useMemo((): GridColDef[] => {
     return [
       {
-        field: 'uploadTimestamp',
-        headerName: 'Upload Timestamp',
+        field: "uploadTimestamp",
+        headerName: "Upload Timestamp",
         flex: 1.2,
         minWidth: 180,
         sortable: true,
         filterable: true,
       },
       {
-        field: 'totalFilesProcessed',
-        headerName: 'Total Files Processed',
+        field: "totalFilesProcessed",
+        headerName: "Total Files Processed",
         flex: 0.8,
         minWidth: 200,
         sortable: true,
         filterable: true,
-        align: 'center',
-        headerAlign: 'center',
+        align: "center",
+        headerAlign: "center",
       },
       {
-        field: 'status',
-        headerName: 'Status',
+        field: "status",
+        headerName: "Status",
         flex: 0.7,
         minWidth: 100,
         sortable: true,
         filterable: true,
-        align: 'center',
-        headerAlign: 'center',
+        align: "center",
+        headerAlign: "center",
         // renderCell: (params) => {
         //   const status = params.value;
         //   const isSuccess = status === 'Success';
@@ -79,32 +81,32 @@ const FileLogsGrid: React.FC = React.memo(() => {
         // },
       },
       {
-        field: 'message',
-        headerName: 'Message',
+        field: "message",
+        headerName: "Message",
         flex: 1.5,
         minWidth: 200,
         sortable: false,
         filterable: true,
       },
       {
-        field: 'uploadedBy',
-        headerName: 'Uploaded By',
+        field: "uploadedBy",
+        headerName: "Uploaded By",
         flex: 0.8,
         minWidth: 120,
         sortable: true,
         filterable: true,
-        align: 'center',
-        headerAlign: 'center',
+        align: "center",
+        headerAlign: "center",
       },
       {
-        field: 'actions',
-        headerName: 'Action',
+        field: "actions",
+        headerName: "Action",
         flex: 0.6,
         minWidth: 80,
         sortable: false,
         filterable: false,
-        align: 'center',
-        headerAlign: 'center',
+        align: "center",
+        headerAlign: "center",
         renderCell: (params) => (
           <>
             <IconButton
@@ -131,7 +133,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
             >
               <PlayCircleOutlineIcon
                 sx={{
-                  color: params?.row?.process_data === true ? "" : 'green',
+                  color: params?.row?.process_data === true ? "" : "green",
                 }}
               />
             </IconButton>
@@ -160,7 +162,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
           rowBufferPx={100}
           sx={getDataGridStyles(isDark, "auto")}
           showToolbar
-          getDetailPanelHeight={() => 'auto'}
+          getDetailPanelHeight={() => "auto"}
           getDetailPanelContent={({ row }) => (
             <FileLogsDetailPanel sessionData={row.sessionData} />
           )}
@@ -169,7 +171,7 @@ const FileLogsGrid: React.FC = React.memo(() => {
               printOptions: { disableToolbarButton: true },
               excelOptions: { disableToolbarButton: true },
               csvOptions: { disableToolbarButton: false },
-            }
+            },
           }}
         />
       </div>

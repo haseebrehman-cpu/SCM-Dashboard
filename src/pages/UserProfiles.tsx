@@ -16,7 +16,7 @@ export default function UserProfiles() {
         <UserMetaCard />
         <UserInfoCard />
         <UserAddressCard />
-      </div>
+      </div>  
     </>
   );
 }

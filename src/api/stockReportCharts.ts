@@ -1,5 +1,6 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { API_BASE_URL } from "./purchaseOrder";
+import { getAuthHeaders } from "../utils/apiHeaders";
 import {
   TopSellingItemsResponse,
   RegionalSummaryResponse,
@@ -33,6 +34,7 @@ async function fetchStockChartData<T>(chart: string, filters?: ChartFilters, sig
     signal,
     headers: {
       "Content-Type": "application/json",
+      ...getAuthHeaders(),
     },
   });
 

@@ -1,12 +1,48 @@
 import { SidebarProvider } from "../context/SidebarContext";
 import { useSidebar } from "../hooks/useSidebar";
-import { Outlet } from "react-router";
+import { Outlet, useNavigate, useLocation } from "react-router";
 import AppHeader from "./AppHeader";
 import Backdrop from "./Backdrop";
 import AppSidebar from "./AppSidebar";
+import { useEffect } from "react";
+import { usePermissions } from "../hooks/usePermissions";
+import secureStorage from "../utils/secureStorage";
 
 const LayoutContent: React.FC = () => {
   const { isExpanded, isMobileOpen } = useSidebar();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isFactory } = usePermissions();
+
+  useEffect(() => {
+    if (!secureStorage.isAuthenticated()) {
+      navigate("/signin");
+    } else if (isFactory) {
+      if (location.pathname === "/") {
+        navigate("/summary-dashboard", { replace: true });
+        return;
+      }
+      
+      const allowedPaths = ["/summary-dashboard", "/profile", "/access-denied"];
+      if (!allowedPaths.includes(location.pathname)) {
+        // Map paths to friendly names for the error message
+        const featureMap: Record<string, string> = {
+          "/purchase-order": "Purchase Order Report",
+          "/production-remaining-report": "Production Remaining Report",
+          "/stock-performance-report": "Stock Performance Report",
+          "/stock-report": "Stock Report",
+          "/wh-container-report": "WH Container Report",
+          "/combined-report": "Combined Report",
+        };
+
+        const featureName = featureMap[location.pathname] || "this feature";
+        navigate("/access-denied", { 
+          replace: true,
+          state: { feature: featureName }
+        });
+      }
+    }
+  }, [navigate, isFactory, location.pathname]);
 
   return (
     <div className="min-h-screen xl:flex">

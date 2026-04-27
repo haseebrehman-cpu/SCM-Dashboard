@@ -12,6 +12,7 @@ import {
   ScmUploadSuccess,
 } from "../types/Interfaces/interfaces";
 import toast from "react-hot-toast";
+import { getAuthHeaders } from "../utils/apiHeaders";
 
 // api base url
 const API_BASE_URL = import.meta.env.VITE_SCM_API_BASE_URL ?? "/scm/api";
@@ -38,6 +39,9 @@ async function uploadScmFiles({ payload, signal }: { payload: ScmUploadPayload; 
     method: "POST",
     body: formData,
     signal,
+    headers: {
+      ...getAuthHeaders(),
+    },
   });
 
   let data: LatestUploadSessionResponse;
@@ -86,6 +90,7 @@ async function processScmFiles({ session_id, signal }: { session_id: number; sig
     signal,
     headers: {
       "Content-Type": "application/json",
+      ...getAuthHeaders(),
     },
     body: JSON.stringify({ session_id }),
   });
@@ -136,6 +141,9 @@ async function fetchLatestUploadSession(signal?: AbortSignal): Promise<LatestUpl
   const response = await fetch(`${API_BASE_URL}/files/`, {
     method: "GET",
     signal,
+    headers: {
+      ...getAuthHeaders(),
+    },
   });
 
   let data: LatestUploadSessionResponse;
@@ -179,6 +187,9 @@ async function deleteFileUploads({ sessionId, signal }: { sessionId: number; sig
     {
       method: "DELETE",
       signal,
+      headers: {
+        ...getAuthHeaders(),
+      },
     },
   );
 
