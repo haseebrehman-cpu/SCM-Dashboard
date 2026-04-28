@@ -104,16 +104,7 @@ const FileLogsDialog: React.FC<FileLogsDialogProps> = ({
         valueFormatter: (value) => {
           if (!value) return "";
           const date = new Date(value);
-          return date.toLocaleString("en-US", {
-            timeZone: "Asia/Karachi",
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: true,
-          });
+          return date.toLocaleString("en-US");
         },
       },
     ];

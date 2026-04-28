@@ -41,7 +41,6 @@ export const usePermissions = () => {
 
     return false;
   };
-
   const canDelete = (): boolean => {
     return isAdmin || isScm || isDevelopment;
   };
