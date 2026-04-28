@@ -86,6 +86,7 @@ export const ProductionReportHeader: React.FC<ProductionReportHeaderProps> = ({
           Upload File
         </Button>
       )}
+      
       {isArchived && (
         <Button
           variant="contained"

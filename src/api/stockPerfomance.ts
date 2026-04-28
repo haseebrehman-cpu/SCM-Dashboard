@@ -10,6 +10,7 @@ import {
   PatchSummaryDashboardResponse,
   ProductionRemainingUploadFileResponse,
   StockPerformanceResponse,
+  SummaryDashFileLogs,
 } from "../types/Interfaces/interfaces";
 import { API_BASE_URL } from "./purchaseOrder";
 import toast from "react-hot-toast";
@@ -335,13 +336,70 @@ async function uploadSummaryDashboardFile({
   return data;
 }
 
-export const useUploadForecastedFile = (): UseMutationResult<ProductionRemainingUploadFileResponse, Error, { file: File; warehouse_code: string; signal?: AbortSignal }> => {
+export const useUploadForecastedFile = (): UseMutationResult<
+  ProductionRemainingUploadFileResponse,
+  Error,
+  { file: File; warehouse_code: string; signal?: AbortSignal }
+> => {
   const queryClient = useQueryClient();
 
-  return useMutation<ProductionRemainingUploadFileResponse, Error, { file: File; warehouse_code: string; signal?: AbortSignal }>({
-    mutationFn: ({ file, warehouse_code, signal }) => uploadSummaryDashboardFile({ file, warehouse_code, signal }),
+  return useMutation<
+    ProductionRemainingUploadFileResponse,
+    Error,
+    { file: File; warehouse_code: string; signal?: AbortSignal }
+  >({
+    mutationFn: ({ file, warehouse_code, signal }) =>
+      uploadSummaryDashboardFile({ file, warehouse_code, signal }),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: STOCK_PERFORMANCE_REPORT_QUERY_KEY });
-    }
+      await queryClient.invalidateQueries({
+        queryKey: STOCK_PERFORMANCE_REPORT_QUERY_KEY,
+      });
+    },
   });
 };
+
+async function fetchSummaryFileLogs(
+  signal?: AbortSignal,
+): Promise<SummaryDashFileLogs> {
+  const response = await apiClient(
+    `${API_BASE_URL}/stock-performance/audit-log`,
+    {
+      method: "GET",
+      signal,
+    },
+  );
+
+  const responseText = await response.text();
+
+  let data: SummaryDashFileLogs;
+
+  try {
+    data = JSON.parse(responseText) as SummaryDashFileLogs;
+  } catch (error) {
+    if ((error as Error).name === "AbortError") throw error;
+    if (response.status === 524) {
+      throw new Error(
+        "Cloudflare 524: Server Timeout. The server is taking too long to respond. Please try again later.",
+      );
+    }
+    if (!response.ok) {
+      throw new Error(responseText || response.statusText);
+    }
+    throw error;
+  }
+
+  if (!response.ok || data.success === false) {
+    throw new Error(responseText || response.statusText);
+  }
+  return data;
+}
+
+export const useSummaryDashFileLogs = (): UseQueryResult<
+  SummaryDashFileLogs,
+  Error
+> =>
+  useQuery<SummaryDashFileLogs, Error>({
+    queryKey: STOCK_PERFORMANCE_REPORT_QUERY_KEY,
+    queryFn: ({ signal }) => fetchSummaryFileLogs(signal),
+    staleTime: 60_000,
+  });

@@ -13,6 +13,7 @@ export const getDataGridStyles = (isDark: boolean, height: string = 'calc(100vh 
   '& .MuiDataGrid-container--top [role=row]': {
     backgroundColor: 'transparent',
   },
+  
   '& .MuiDataGrid-virtualScroller': {
     backgroundColor: 'transparent',
   },

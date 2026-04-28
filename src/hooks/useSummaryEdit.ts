@@ -38,8 +38,8 @@ interface UseSummaryEditReturn {
 export const useSummaryEdit = (
   setRows: React.Dispatch<React.SetStateAction<SummaryDashboardRow[]>>,
   patchSummaryDashboardMutation: PatchSummaryDashboardMutation,
-  refetchSummary?: () => Promise<unknown> | void
-  
+  refetchSummary?: () => Promise<unknown> | void,
+  refetchLogs?: () => Promise<unknown> | void
 ): UseSummaryEditReturn => {
   const [editingRowId, setEditingRowId] = useState<number | null>(null);
   const [editValues, setEditValues] = useState<EditValues | null>(null);
@@ -69,6 +69,7 @@ export const useSummaryEdit = (
       }, {
         onSuccess: () => {
           refetchSummary?.();
+          refetchLogs?.();
         }
       });
 

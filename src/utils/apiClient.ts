@@ -44,12 +44,12 @@ export async function apiClient(
       } catch (refreshError) {
         console.error("Token refresh failed:", refreshError);
         secureStorage.clear();
-        window.location.href = "/signin";
+        window.location.href = "/scm/signin";
         throw new Error("Session expired. Please log in again.");
       }
     } else {
       secureStorage.clear();
-      window.location.href = "/signin";
+      window.location.href = "/scm/signin";
       throw new Error("No authentication session found.");
     }
   }

@@ -41,7 +41,7 @@ export interface PurchaseOrderData {
   arrival_date: string | null;
   delivery_status: string | null;
   modified_by: string;
-  upload_date: string
+  upload_date: string;
 }
 
 export interface LatestUploadSessionResponse {
@@ -54,7 +54,24 @@ export interface PurchaseOrderReportResponse {
   success: boolean;
   message: string;
   total_records: number;
-  data: PurchaseOrderData[]
+  data: PurchaseOrderData[];
+}
+
+export interface SummaryLogsData {
+  id: number;
+  dashboard_id: number;
+  warehouse_code: string;
+  field_name: string;
+  old_value: string;
+  new_value: string;
+  changed_by: string;
+  changed_at: string;
+}
+
+export interface SummaryDashFileLogs {
+  success: boolean;
+  data: SummaryLogsData[];
+  total: number
 }
 
 export interface TopSellingItemsData {
@@ -148,7 +165,7 @@ export interface FilterOptionsResponse {
     sku?: string[];
   };
   active_filters: Record<string, string[]>;
-  message: string
+  message: string;
 }
 
 // Stock report API response (table=stock)
@@ -180,7 +197,7 @@ export interface StockReportApiResponse {
 
 export interface CancelRunningReportResponse {
   success: boolean;
-  message: string
+  message: string;
 }
 
 // Container report API response (table=container)
@@ -429,7 +446,6 @@ export interface ProductionRemainingLoadResponse {
   };
 }
 
-
 export interface ProductionRemainingUploadFileResponse {
   success: boolean;
   message: string;
@@ -518,7 +534,6 @@ export interface SummaryDashboardDataRowApi {
   edited_by?: string | null;
 }
 
-
 export interface StockPerformanceResponse {
   success: boolean;
   spr?: boolean;
@@ -543,14 +558,13 @@ export interface StockPerformanceResponse {
     total_pages: number;
     has_next: boolean;
     has_previous: boolean;
-    fetch_all: boolean
+    fetch_all: boolean;
   };
   message: string;
 }
-
 
 export interface PatchSummaryDashboardResponse {
   success: boolean;
   message: string;
   updated_fields: string[];
-} 
+}
