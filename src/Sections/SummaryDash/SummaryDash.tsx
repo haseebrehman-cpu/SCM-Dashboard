@@ -43,7 +43,7 @@ const SummaryDashGrid: React.FC = React.memo(() => {
   });
   const [isChangingPage, setIsChangingPage] = useState(false);
 
-  const { canWrite } = usePermissions();
+  const { canWrite, isAdmin, isDevelopment } = usePermissions();
   const canEditSummary = useMemo(
     () => canWrite("stock-performance", "sd", "PATCH"),
     [canWrite],
@@ -231,7 +231,19 @@ const SummaryDashGrid: React.FC = React.memo(() => {
           }}
         />
         <Box sx={{ mx: 2 }}>
-          <Button variant="contained"  sx={{ borderRadius: "20px", fontSize: "12px", bgcolor: "#047ADB" }} onClick={() => setIsLogsDialogOpen(true)}>
+          <Button
+            variant="contained"
+            sx={{ borderRadius: "20px", fontSize: "12px", bgcolor: "#047ADB" }}
+            onClick={() => {
+              if (isAdmin || isDevelopment) {
+                setIsLogsDialogOpen(true);
+              } else {
+                toast.error(
+                  "Permission not allowed: Only Admin and Development can view file logs.",
+                );
+              }
+            }}
+          >
             View File Logs
           </Button>
         </Box>
