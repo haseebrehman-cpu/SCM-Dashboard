@@ -16,7 +16,7 @@ const LayoutContent: React.FC = () => {
 
   useEffect(() => {
     if (!secureStorage.isAuthenticated()) {
-      navigate("/scm/signin");
+      navigate("/signin");
     } else if (isFactory) {
       if (location.pathname === "/") {
         navigate("/summary-dashboard", { replace: true });

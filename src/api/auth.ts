@@ -84,7 +84,7 @@ export const logout = async (): Promise<void> => {
     }
   } finally {
     secureStorage.clear();
-    window.location.href = "/scm/signin";
+    window.location.href = "/signin";
   }
 };
 

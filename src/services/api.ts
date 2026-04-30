@@ -143,7 +143,7 @@ export class ApiClient {
   private handleUnauthorized(): void {
     localStorage.removeItem('auth_token');
     sessionStorage.removeItem('auth_token');
-    window.location.href = '/scm/signin';
+    window.location.href = '/signin';
   }
 }
 
