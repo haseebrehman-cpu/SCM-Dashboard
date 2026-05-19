@@ -1,6 +1,6 @@
 import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
-import { Warehouse } from '../../types/stockPerformance';
-import { StockPerformanceRow } from '../../types/Interfaces/interfaces';
+import { Warehouse } from "../../types/stockPerformance";
+import { StockPerformanceRow } from "../../types/Interfaces/interfaces";
 
 export interface MappedStockPerformanceRow extends StockPerformanceRow {
   itemNumber: string;
@@ -31,13 +31,35 @@ interface ColumnGeneratorParams {
   data?: MappedStockPerformanceRow[];
 }
 
-const renderMultiLineHeader = (line1: string, line2?: string, isDark?: boolean) => (
-  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1.2 }}>
-    <span style={{ fontWeight: 600, fontSize: '0.7rem', color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>
+const renderMultiLineHeader = (
+  line1: string,
+  line2?: string,
+  isDark?: boolean,
+) => (
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      lineHeight: 1.2,
+    }}
+  >
+    <span
+      style={{
+        fontWeight: 600,
+        fontSize: "0.7rem",
+        color: isDark ? "rgba(255, 255, 255, 0.9)" : "rgb(31 41 55)",
+      }}
+    >
       {line1}
     </span>
     {line2 && (
-      <span style={{ fontSize: '0.65rem', color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)' }}>
+      <span
+        style={{
+          fontSize: "0.65rem",
+          color: isDark ? "rgba(255, 255, 255, 0.7)" : "rgb(107 114 128)",
+        }}
+      >
         {line2}
       </span>
     )}
@@ -104,7 +126,8 @@ const generateSalesColumns = (isDark: boolean): GridColDef[] => [
     headerAlign: "center",
     align: "center",
     type: "number",
-    renderHeader: () => renderMultiLineHeader("Linn-Last", "60 Days Sale", isDark),
+    renderHeader: () =>
+      renderMultiLineHeader("Linn-Last", "60 Days Sale", isDark),
   },
   {
     field: "linnWorksSales",
@@ -116,11 +139,29 @@ const generateSalesColumns = (isDark: boolean): GridColDef[] => [
     align: "center",
     type: "number",
     renderHeader: () => (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1.2 }}>
-        <span style={{ fontWeight: 600, fontSize: '0.65rem', color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgb(31 41 55)' }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          lineHeight: 1.2,
+        }}
+      >
+        <span
+          style={{
+            fontWeight: 600,
+            fontSize: "0.65rem",
+            color: isDark ? "rgba(255, 255, 255, 0.9)" : "rgb(31 41 55)",
+          }}
+        >
           Linn-Next
         </span>
-        <span style={{ fontSize: '0.6rem', color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgb(107 114 128)' }}>
+        <span
+          style={{
+            fontSize: "0.6rem",
+            color: isDark ? "rgba(255, 255, 255, 0.7)" : "rgb(107 114 128)",
+          }}
+        >
           60 Days sale from previous year
         </span>
       </div>
@@ -135,7 +176,8 @@ const generateSalesColumns = (isDark: boolean): GridColDef[] => [
     headerAlign: "center",
     align: "center",
     type: "number",
-    renderHeader: () => renderMultiLineHeader("FBA-last 30", "Days Sale", isDark),
+    renderHeader: () =>
+      renderMultiLineHeader("FBA-last 30", "Days Sale", isDark),
   },
   {
     field: "fbaLast7Days",
@@ -146,7 +188,8 @@ const generateSalesColumns = (isDark: boolean): GridColDef[] => [
     headerAlign: "center",
     align: "center",
     type: "number",
-    renderHeader: () => renderMultiLineHeader("FBA-last 7", "Days Sale", isDark),
+    renderHeader: () =>
+      renderMultiLineHeader("FBA-last 7", "Days Sale", isDark),
   },
   {
     field: "fbaStock",
@@ -160,7 +203,10 @@ const generateSalesColumns = (isDark: boolean): GridColDef[] => [
   },
 ];
 
-const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): GridColDef[] => [
+const generateSummaryColumns = (
+  selectedWarehouse: Warehouse,
+  isDark: boolean,
+): GridColDef[] => [
   {
     field: "allStock",
     headerName: "ALL IStock (WH+CTN+FBA)",
@@ -170,8 +216,11 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
     headerAlign: "center",
     align: "center",
     type: "number",
-    renderHeader: () => renderMultiLineHeader("ALL IStock", "(WH+CTN+FBA)", isDark),
-    renderCell: (params: GridRenderCellParams<MappedStockPerformanceRow>) => <span style={{ fontWeight: 600 }}>{params.value}</span>,
+    renderHeader: () =>
+      renderMultiLineHeader("ALL IStock", "(WH+CTN+FBA)", isDark),
+    renderCell: (params: GridRenderCellParams<MappedStockPerformanceRow>) => (
+      <span style={{ fontWeight: 600 }}>{params.value}</span>
+    ),
   },
   {
     field: "maxDc",
@@ -233,21 +282,21 @@ const generateSummaryColumns = (selectedWarehouse: Warehouse, isDark: boolean): 
     align: "center",
     type: "number",
   },
-  {
-    field: "oosDays",
-    headerName: "OOS DAYS",
-    width: 110,
-    sortable: true,
-    filterable: true,
-    headerAlign: "center",
-    align: "center",
-    type: "number",
-    renderCell: (params: GridRenderCellParams<MappedStockPerformanceRow>) => {
-      const value = params.value as number;
-      const color = value < 0 ? 'red' : '#10B981';
-      return <span style={{ fontWeight: 600, color }}>{value}</span>;
-    },
-  },
+  // {
+  //   field: "oosDays",
+  //   headerName: "OOS DAYS",
+  //   width: 110,
+  //   sortable: true,
+  //   filterable: true,
+  //   headerAlign: "center",
+  //   align: "center",
+  //   type: "number",
+  //   renderCell: (params: GridRenderCellParams<MappedStockPerformanceRow>) => {
+  //     const value = params.value as number;
+  //     const color = value < 0 ? 'red' : '#10B981';
+  //     return <span style={{ fontWeight: 600, color }}>{value}</span>;
+  //   },
+  // },
 ];
 
 export const generateStockPerformanceColumns = ({
@@ -262,30 +311,64 @@ export const generateStockPerformanceColumns = ({
   let dynamicColumns: GridColDef[] = [];
   if (data && data.length > 0) {
     const fixedKeys = [
-      "upload_date", "warehouse_code", "category_name", "item_number", "wh_stock",
-      "linn_last_60days_sale", "linn_next_60days_sale_previousyear", "fba_last_30days_sale",
-      "fba_last_07days_sale", "fba_stock", "max_daily_consumption", "total_ctn",
-      "all_stock", "days_cover", "days_cover_current_stock", "dispatch_date_cover",
-      "days_gap", "stock_after_arrival", "stock_days_after_arrival", "oos_days",
-      "FBA+WH_Cover_day", "id", "session_id", "itemNumber", "categoryName",
-      "itemTitle", "whStock", "linnLast60DaysSale", "linnWorksSales", "fbaLast30Days",
-      "fbaLast7Days", "fbaStock", "allStock", "maxDc", "totalCtn", "daysCover",
-      "daysCoverCurrentStock", "dispatchDateCover", "daysGap", "stockAfterArrival",
-      "stockDaysAfterArrival", "remWarehouse",
-      "oosDays", "item_title", "remaining"
+      "upload_date",
+      "warehouse_code",
+      "category_name",
+      "item_number",
+      "wh_stock",
+      "linn_last_60days_sale",
+      "linn_next_60days_sale_previousyear",
+      "fba_last_30days_sale",
+      "fba_last_07days_sale",
+      "fba_stock",
+      "max_daily_consumption",
+      "total_ctn",
+      "all_stock",
+      "days_cover",
+      "days_cover_current_stock",
+      "dispatch_date_cover",
+      "days_gap",
+      "stock_after_arrival",
+      "stock_days_after_arrival",
+      "oos_days",
+      "FBA+WH_Cover_day",
+      "id",
+      "session_id",
+      "itemNumber",
+      "categoryName",
+      "itemTitle",
+      "whStock",
+      "linnLast60DaysSale",
+      "linnWorksSales",
+      "fbaLast30Days",
+      "fbaLast7Days",
+      "fbaStock",
+      "allStock",
+      "maxDc",
+      "totalCtn",
+      "daysCover",
+      "daysCoverCurrentStock",
+      "dispatchDateCover",
+      "daysGap",
+      "stockAfterArrival",
+      "stockDaysAfterArrival",
+      "remWarehouse",
+      "oosDays",
+      "item_title",
+      "remaining",
     ];
 
     // Find all potential dynamic keys from first few rows to be safe
     const allKeys = new Set<string>();
-    data.slice(0, 10).forEach(row => {
-      Object.keys(row).forEach(key => allKeys.add(key));
+    data.slice(0, 10).forEach((row) => {
+      Object.keys(row).forEach((key) => allKeys.add(key));
     });
 
-    const dynamicKeys = Array.from(allKeys).filter(key =>
-      !fixedKeys.includes(key) && typeof data[0][key] === 'number'
+    const dynamicKeys = Array.from(allKeys).filter(
+      (key) => !fixedKeys.includes(key) && typeof data[0][key] === "number",
     );
 
-    dynamicColumns = dynamicKeys.map(key => ({
+    dynamicColumns = dynamicKeys.map((key) => ({
       field: key,
       headerName: `CTN # ${key}`,
       width: 260,
@@ -295,14 +378,21 @@ export const generateStockPerformanceColumns = ({
       align: "center",
       type: "number",
       renderCell: (params: GridRenderCellParams<MappedStockPerformanceRow>) => (
-        <span style={{ fontWeight: 600, color: isDark ? '#fbbf24' : '#d97706' }}>
-          {params.value ?? '0'}
+        <span
+          style={{ fontWeight: 600, color: isDark ? "#fbbf24" : "#d97706" }}
+        >
+          {params.value ?? "0"}
         </span>
-      )
+      ),
     }));
   }
 
   const summaryColumns = generateSummaryColumns(selectedWarehouse, isDark);
 
-  return [...basicColumns, ...salesColumns, ...dynamicColumns, ...summaryColumns];
+  return [
+    ...basicColumns,
+    ...salesColumns,
+    ...dynamicColumns,
+    ...summaryColumns,
+  ];
 };
