@@ -95,7 +95,7 @@ export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = React.memo(({
                               : "menu-dropdown-badge-inactive"
                               } menu-dropdown-badge`}
                           >
-                            new
+                            new 
                           </span>
                         )}
                         {subItem.pro && (
